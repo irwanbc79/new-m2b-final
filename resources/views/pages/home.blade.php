@@ -258,12 +258,11 @@
 <section id="about" style="padding:80px 40px;background:#fff;border-top:1px solid #e5e2dc">
   <div style="max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1.4fr;gap:56px;align-items:center">
     <div style="position:relative">
-      <div style="border-radius:16px;overflow:hidden;aspect-ratio:4/5;background-image:url(https://images.unsplash.com/photo-1573497019418-b400bb3ab074?auto=format&fit=crop&w=700&q=80);background-size:cover;background-position:center;border:1px solid #e5e2dc;box-shadow:0 16px 48px rgba(0,0,0,0.12)"></div>
-      <div style="position:absolute;bottom:-24px;left:-24px;background:#fff;padding:18px 22px;border-radius:12px;border:1px solid #e5e2dc;box-shadow:0 12px 36px rgba(0,0,0,0.1);display:flex;gap:14px;align-items:center">
-        <div style="width:44px;height:44px;border-radius:50%;background:rgba(30,58,95,0.1);border:2px solid rgba(30,58,95,0.2);display:flex;align-items:center;justify-content:center;font-size:20px">👋</div>
-        <div>
-          <div style="font-family:Syne;font-weight:800;font-size:14px">Eka Mayang Sari</div>
-          <div style="font-size:11px;color:#999">Direktur — PT. Mora Multi Berkah</div>
+      <div style="border-radius:16px;overflow:hidden;aspect-ratio:4/5;border:1px solid #e5e2dc;box-shadow:0 16px 48px rgba(0,0,0,0.12);position:relative">
+        <img src="{{ asset('images/director-eka.jpg') }}" alt="Eka Mayang Sari Harahap, S.E." style="width:100%;height:100%;object-fit:cover;object-position:center top;display:block">
+        <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(11,17,32,0.8),transparent);padding:20px 18px 16px">
+          <div style="font-family:Syne;font-weight:800;font-size:14px;color:#fff">Eka Mayang Sari Harahap, S.E.</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.7)">Direktur — PT. Mora Multi Berkah</div>
         </div>
       </div>
     </div>

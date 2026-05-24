@@ -82,13 +82,28 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
     <div style="flex-shrink:0;background:#1e3a5f;color:#fff;padding:2px 14px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;z-index:1;margin-left:0">TERKINI</div>
     <div style="flex:1;overflow:hidden">
       <div class="ticker-track" style="gap:60px">
-        @php $ticker = ['📘 FREE E-Book: Panduan Ekspor untuk Pemula — Download GRATIS di ebook.m2b.co.id','🚢 Pelabuhan Belawan aktif 24/7 — layanan ekspedisi reguler Asia Tenggara','📋 Update PERMENDAG: aturan baru impor barang kiriman berlaku Mei 2026','⚓ Jadwal kapal Medan–Shanghai — estimasi ETA 14–16 hari','📦 Kuota ekspor CPO Sumatera Utara Q2 2026 dibuka — info lengkap di Blog','📘 E-Book Ekspor Impor tersedia GRATIS — kunjungi ebook.m2b.co.id sekarang','🌐 M2B kini melayani rute door-to-door ke 25+ negara tujuan','💱 USD/IDR: 16.480 · CNY/IDR: 2.270 — update hari ini']; @endphp
+        @php
+        $ticker = [
+          // M2B own — gold
+          ['📘 FREE E-Book Ekspor Impor untuk Pemula — Download GRATIS di ebook.m2b.co.id', 'https://ebook.m2b.co.id', true],
+          ['📘 E-Book Ekspor Impor tersedia GRATIS — kunjungi ebook.m2b.co.id sekarang', 'https://ebook.m2b.co.id', true],
+          // Local media — bisnis & logistik
+          ['📰 Bisnis.com: Update terkini industri logistik & ekspor-impor Indonesia', 'https://ekonomi.bisnis.com/perdagangan', false],
+          ['🗞️ Kontan.co.id: Berita bisnis & perdagangan internasional', 'https://industri.kontan.co.id/logistik', false],
+          ['📊 Katadata: Analisis ekspor-impor & komoditas unggulan Indonesia', 'https://katadata.co.id/tags/ekspor-impor', false],
+          ['⚖️ Bea Cukai RI: Berita & regulasi kepabeanan terbaru', 'https://www.beacukai.go.id/berita.html', false],
+          ['🛳️ Pelindo: Update operasional pelabuhan utama Indonesia', 'https://www.pelindo.co.id/id/media/berita', false],
+          ['📋 DJPEN Kemendag: Peluang ekspor & pasar internasional', 'https://djpen.kemendag.go.id/app_frontend/contents/83-berita', false],
+          // International media
+          ['🌐 FreightWaves: Global freight & logistics news', 'https://www.freightwaves.com/news', false],
+          ['⚓ The Loadstar: International shipping & logistics updates', 'https://theloadstar.com', false],
+          ['🚢 JOC.com: Journal of Commerce — container shipping news', 'https://www.joc.com', false],
+          ['✈️ Air Cargo World: Global air freight industry news', 'https://aircargoworld.com/news/', false],
+          ['📦 Supply Chain Dive: Supply chain & logistics analysis', 'https://www.supplychaindive.com', false],
+        ];
+        @endphp
         @foreach(array_merge($ticker,$ticker) as $item)
-        @if(str_contains($item, 'ebook.m2b.co.id'))
-        <a href="https://ebook.m2b.co.id" target="_blank" style="color:#f5b91c;font-size:12px;white-space:nowrap;text-decoration:none;font-weight:600">{{ $item }} ↗</a>
-        @else
-        <span style="color:#d1d0cf;font-size:12px;white-space:nowrap">{{ $item }}</span>
-        @endif
+        <a href="{{ $item[1] }}" target="_blank" rel="noopener" style="color:{{ $item[2] ? '#f5b91c' : '#d1d0cf' }};font-size:12px;white-space:nowrap;text-decoration:none;{{ $item[2] ? 'font-weight:600' : '' }}" onmouseover="this.style.color='{{ $item[2] ? '#ffd44d' : '#fff' }}'" onmouseout="this.style.color='{{ $item[2] ? '#f5b91c' : '#d1d0cf' }}'">{{ $item[0] }} ↗</a>
         @endforeach
       </div>
     </div>
