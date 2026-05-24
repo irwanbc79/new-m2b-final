@@ -2,6 +2,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 class Post extends Model
@@ -21,6 +22,39 @@ class Post extends Model
             if (empty($post->slug)) {
                 $post->slug = Str::slug($post->title);
             }
+        });
+    }
+
+    protected static function booted(): void
+    {
+        static::saved(function (Post $post) {
+            // Forget this post's cache (current slug)
+            Cache::forget("blog_post_{$post->slug}");
+
+            // If slug changed, also forget old slug cache
+            if ($post->wasChanged('slug') && $post->getOriginal('slug')) {
+                Cache::forget("blog_post_{$post->getOriginal('slug')}");
+            }
+
+            // Forget related posts cache for this post
+            Cache::forget("blog_related_{$post->id}");
+
+            // Forget blog index pages (covers up to 150 pages of 9 posts = 1350 posts)
+            for ($i = 1; $i <= 20; $i++) {
+                Cache::forget("blog_index_{$i}");
+            }
+
+            // Forget categories list
+            Cache::forget('blog_categories');
+        });
+
+        static::deleted(function (Post $post) {
+            Cache::forget("blog_post_{$post->slug}");
+            Cache::forget("blog_related_{$post->id}");
+            for ($i = 1; $i <= 20; $i++) {
+                Cache::forget("blog_index_{$i}");
+            }
+            Cache::forget('blog_categories');
         });
     }
 
