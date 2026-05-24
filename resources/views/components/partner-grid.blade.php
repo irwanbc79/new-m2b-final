@@ -5,29 +5,27 @@
             Telah Terintegrasi &amp; Dipercaya Oleh
         </p>
 
-        <div class="grid grid-cols-2 gap-6 md:grid-cols-4 lg:grid-cols-8 items-center justify-items-center">
+        <div class="grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-10 gap-6 items-center justify-items-center">
             @foreach([
-                ['🏛️', 'Dirjen Bea & Cukai RI', 'partners/beacukai.png'],
-                ['⚓',  'PT Pelabuhan Indonesia', 'partners/pelindo.png'],
-                ['🌐', 'LNSW', 'partners/insw.png'],
-                ['🤝', 'ALFI', 'partners/alfi.png'],
-                ['🏢', 'PT. Dira Baraka Mulia', null],
-                ['🌊', 'PT. Mentari Samudera Abadi', null],
-                ['⚙️', 'PT. Supcon Technology', null],
-                ['🏭', 'PT. Graha Segara', null],
-            ] as [$icon, $name, $img])
-            <div class="group flex flex-col items-center justify-center gap-1 w-full transition-all duration-300">
-                @if($img && file_exists(public_path($img)))
-                    <img src="{{ asset($img) }}" alt="{{ $name }}"
-                         class="h-10 sm:h-12 object-contain opacity-60 grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300">
-                @else
-                    <div class="flex flex-col items-center gap-1 px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 opacity-60 group-hover:opacity-100 group-hover:border-blue-900 group-hover:bg-white transition-all duration-300 w-full">
-                        <span class="text-xl grayscale group-hover:grayscale-0 transition-all duration-300">{{ $icon }}</span>
-                        <span class="text-center text-[10px] font-bold text-gray-700 leading-tight">{{ $name }}</span>
-                    </div>
-                @endif
+                ['images/partners/ditjen_bea_cukai.jpg', 'Dirjen Bea & Cukai RI'],
+                ['images/partners/pelindo.png',          'PT Pelabuhan Indonesia'],
+                ['images/partners/lnsw.jpeg',            'LNSW'],
+                ['images/partners/alfi.png',             'ALFI'],
+                ['images/partners/kadin.jpeg',           'KADIN'],
+                ['images/partners/oss.png',              'OSS RI'],
+                ['images/partners/dira_baraka.jpg',      'PT. Dira Baraka Mulia'],
+                ['images/partners/mentarisamuderaabadi.jpeg', 'PT. Mentari Samudera Abadi'],
+                ['images/partners/supcon.jpeg',          'PT. Supcon Technology'],
+                ['images/partners/graha_segara.jpg',     'PT. Graha Segara'],
+            ] as [$img, $alt])
+            <div class="group flex justify-center w-full">
+                <img src="{{ asset($img) }}"
+                     alt="{{ $alt }}"
+                     class="h-10 sm:h-12 w-auto object-contain opacity-60 grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300"
+                     loading="lazy">
             </div>
             @endforeach
         </div>
+
     </div>
 </section>
