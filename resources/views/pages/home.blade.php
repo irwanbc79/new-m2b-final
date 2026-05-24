@@ -115,21 +115,6 @@
   </div>
 </section>
 
-{{-- ═══ TRUST BAR ═══ --}}
-<div style="background:#fff;border-bottom:1px solid #e5e2dc;padding:14px 40px">
-  <div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:24px;flex-wrap:wrap">
-    <span style="font-size:11px;color:#aaa;text-transform:uppercase;letter-spacing:1px;flex-shrink:0;font-weight:600">Terdaftar &amp; diakui oleh</span>
-    <div style="flex:1;display:flex;gap:12px;flex-wrap:wrap;align-items:center">
-      @foreach(['Dirjen Bea Cukai RI','ALFI','KADIN','LNSW','NIB','Pelindo'] as $l)
-      <div style="padding:5px 14px;border:1px solid #e5e2dc;border-radius:6px;font-size:12px;color:#666;font-weight:500;background:#fafaf8">{{ $l }}</div>
-      @endforeach
-    </div>
-    <div style="display:flex;gap:16px;font-size:12px;flex-shrink:0">
-      <span style="color:#888">📧 sales@m2b.co.id</span>
-      <span style="color:#888">📱 +62 812-6302-7818</span>
-    </div>
-  </div>
-</div>
 
 
 {{-- ═══ MITRA STRATEGIS ═══ --}}
