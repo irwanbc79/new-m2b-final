@@ -49,7 +49,7 @@
       <div style="position:absolute;bottom:-24px;left:-24px;background:#fff;padding:16px 20px;border-radius:12px;border:1px solid #e5e2dc;box-shadow:0 12px 36px rgba(0,0,0,0.1);display:flex;gap:14px;align-items:center" class="director-badge">
         <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#1e3a5f,#2a5298);display:flex;align-items:center;justify-content:center;font-family:Syne;font-weight:800;font-size:14px;color:#fff;flex-shrink:0">EMS</div>
         <div>
-          <div style="font-family:Syne;font-weight:800;font-size:14px">Eka Mayang Sari</div>
+          <div style="font-family:Syne;font-weight:800;font-size:14px">Eka Mayang Sari Harahap, S.E.</div>
           <div style="font-size:11px;color:#999">Direktur — PT. Mora Multi Berkah</div>
         </div>
       </div>

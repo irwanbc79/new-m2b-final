@@ -48,9 +48,29 @@
         <input type="text" placeholder="Masukkan nomor B/L atau AWB untuk lacak…" style="flex:1;background:transparent;border:none;outline:none;color:#fff;font-size:14px;font-family:'DM Sans';padding:12px 0">
         <a href="https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20mau%20lacak%20shipment%20nomor:" target="_blank" style="padding:10px 20px;border-radius:8px;background:#1e3a5f;color:#fff;border:none;font-weight:700;font-size:13px;text-decoration:none;white-space:nowrap">Lacak →</a>
       </div>
-      <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <div style="display:flex;gap:12px;flex-wrap:wrap" x-data="{ videoOpen: false }">
         <a href="https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20mau%20konsultasi%20gratis" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:13px 28px;border-radius:8px;background:#1e3a5f;color:#fff;text-decoration:none;font-weight:600;font-size:15px;transition:all .18s">💬 Konsultasi GRATIS</a>
-        <a href="#layanan" style="display:inline-flex;align-items:center;gap:8px;padding:13px 24px;border-radius:8px;color:#fff;text-decoration:none;font-weight:600;font-size:15px;border:1.5px solid rgba(255,255,255,0.4);background:rgba(255,255,255,0.08)">Lihat Layanan →</a>
+        <button @click="videoOpen = true" style="display:inline-flex;align-items:center;gap:8px;padding:13px 24px;border-radius:8px;color:#fff;font-weight:600;font-size:15px;border:1.5px solid rgba(255,255,255,0.4);background:rgba(255,255,255,0.08);cursor:pointer;font-family:'DM Sans'">▶ Tonton Profil M2B <span style="font-size:11px;opacity:.7">(16d)</span></button>
+        <a href="#layanan" style="display:inline-flex;align-items:center;gap:8px;padding:13px 24px;border-radius:8px;color:#fff;text-decoration:none;font-weight:600;font-size:15px;border:1.5px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.05)">Lihat Layanan →</a>
+
+        {{-- YouTube Modal --}}
+        <div x-show="videoOpen" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-end="opacity-0"
+          @keydown.escape.window="videoOpen = false"
+          style="position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;padding:20px"
+          @click.self="videoOpen = false">
+          <div style="position:relative;width:100%;max-width:800px;aspect-ratio:16/9;border-radius:16px;overflow:hidden;box-shadow:0 32px 80px rgba(0,0,0,0.6)">
+            <button @click="videoOpen = false" style="position:absolute;top:12px;right:12px;z-index:10;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.7);border:none;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">×</button>
+            {{-- Lazy load iframe: hanya render saat modal dibuka --}}
+            <template x-if="videoOpen">
+              <iframe
+                src="https://www.youtube.com/embed/ZkZVVKRXuuA?autoplay=1&rel=0&modestbranding=1"
+                style="width:100%;height:100%;border:0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+              </iframe>
+            </template>
+          </div>
+        </div>
       </div>
       <div style="display:flex;gap:32px;margin-top:48px;border-top:1px solid rgba(255,255,255,0.18);padding-top:28px;flex-wrap:wrap" class="home-stats">
         <div x-data="{ count: 0, done: false }" x-intersect.once="if(!done){ done=true; let i=setInterval(()=>{ count+=1; if(count>=5){count=5;clearInterval(i);} },60); }">
@@ -86,6 +106,36 @@
     <div style="display:flex;gap:16px;font-size:12px;flex-shrink:0">
       <span style="color:#888">📧 sales@m2b.co.id</span>
       <span style="color:#888">📱 +62 812-6302-7818</span>
+    </div>
+  </div>
+</div>
+
+
+{{-- ═══ MITRA STRATEGIS ═══ --}}
+<div style="background:#fafaf8;border-bottom:1px solid #e5e2dc;padding:28px 40px">
+  <div style="max-width:1200px;margin:0 auto">
+    <div style="text-align:center;margin-bottom:20px">
+      <span style="font-size:11px;color:#aaa;text-transform:uppercase;letter-spacing:1.5px;font-weight:600">Telah Terintegrasi & Dipercaya Oleh</span>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;align-items:center">
+      @foreach([
+        ['🏛️','Dirjen Bea & Cukai RI','Institusi Pemerintah'],
+        ['⚓','PT Pelabuhan Indonesia','Pelindo Persero'],
+        ['🌐','LNSW','Layanan Nasional Single Window'],
+        ['🤝','ALFI','Asosiasi Logistik & Forwarder'],
+        ['🏢','PT. Dira Baraka Mulia','Klien Korporat'],
+        ['🌊','PT. Mentari Samudera Abadi','Mitra Pelayaran'],
+        ['⚙️','PT. Supcon Technology','Klien Industri'],
+        ['🏭','PT. Graha Segara','Mitra Pelabuhan'],
+      ] as [$icon, $name, $desc])
+      <div style="display:flex;align-items:center;gap:8px;padding:8px 18px;border:1px solid #e5e2dc;border-radius:8px;background:#fff;filter:grayscale(1);opacity:.65;transition:all .2s" onmouseover="this.style.filter='grayscale(0)';this.style.opacity='1';this.style.borderColor='#1e3a5f'" onmouseout="this.style.filter='grayscale(1)';this.style.opacity='.65';this.style.borderColor='#e5e2dc'">
+        <span style="font-size:16px">{{ $icon }}</span>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#333;white-space:nowrap">{{ $name }}</div>
+          <div style="font-size:10px;color:#aaa">{{ $desc }}</div>
+        </div>
+      </div>
+      @endforeach
     </div>
   </div>
 </div>
