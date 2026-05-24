@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+
+    'adsense' => [
+        'publisher_id' => env('ADSENSE_PUBLISHER_ID', 'ca-pub-XXXXXXXXXXXXXXXX'),
+        'slot_id'      => env('ADSENSE_SLOT_ID', '0000000000'),
+    ],
+
 ];

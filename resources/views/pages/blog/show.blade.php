@@ -56,42 +56,31 @@
 window.addEventListener('scroll',function(){
   var el=document.getElementById('article-body');
   if(!el)return;
-  var rect=el.getBoundingClientRect();
   var start=el.offsetTop;
   var end=start+el.offsetHeight-window.innerHeight;
   var pct=Math.min(100,Math.max(0,((window.scrollY-start)/(end-start))*100));
   document.getElementById('reading-progress').style.width=pct+'%';
 });
 </script>
-
+{{-- Article JSON-LD --}}
 <script type="application/ld+json">
 {
   "@@context": "https://schema.org",
   "@@type": "Article",
   "headline": "{{ addslashes($post->title) }}",
-  "description": "{{ addslashes($post->excerpt ?? Str::limit(strip_tags($post->content), 160)) }}",
+  "description": "{{ addslashes($post->meta_description) }}",
   "datePublished": "{{ $post->published_at?->toISOString() }}",
   "dateModified": "{{ $post->updated_at?->toISOString() }}",
-  "author": {
-    "@@type": "Organization",
-    "name": "PT. Mora Multi Berkah (M2B)",
-    "url": "https://m2b.co.id"
-  },
-  "publisher": {
-    "@@type": "Organization",
-    "name": "PT. Mora Multi Berkah (M2B)",
-    "logo": {
-      "@@type": "ImageObject",
-      "url": "{{ asset('images/logo-m2b.png') }}"
-    }
-  },
+  "author": {"@@type":"Organization","name":"PT. Mora Multi Berkah (M2B)","url":"https://m2b.co.id"},
+  "publisher": {"@@type":"Organization","name":"PT. Mora Multi Berkah (M2B)","logo":{"@@type":"ImageObject","url":"{{ asset('images/logo-m2b.png') }}"}},
   "url": "{{ url()->current() }}",
   "mainEntityOfPage": "{{ url()->current() }}"
 }
 </script>
 @endsection
-@section('title', $post->title . ' — M2B Blog')
-@section('description', $post->excerpt ?? Str::limit(strip_tags($post->content), 160))
+
+@section('title', $post->meta_title)
+@section('description', $post->meta_description)
 
 @section('content')
 <div style="background:#0f0f14;padding:64px 40px 56px" class="blog-hero">
@@ -114,7 +103,16 @@ window.addEventListener('scroll',function(){
     @endif
 
     <div id="article-body" style="background:#fff;border-radius:16px;padding:48px;border:1px solid #e5e2dc" class="prose-m2b blog-article-box">
-      {!! preg_replace('/<!--.*?-->/s', '', $post->content) !!}
+      @php
+        $rawContent = preg_replace('/<!--.*?-->/s', '', $post->content);
+        $paragraphs = explode('</p>', $rawContent);
+        $total = count($paragraphs);
+      @endphp
+      @foreach($paragraphs as $i => $para)
+        {!! $para !!}@if($i < $total - 1)</p>@endif
+        @if($i === 2)<x-adsense-block />@endif
+        @if($i === 5)<x-adsense-block />@endif
+      @endforeach
     </div>
 
     {{-- Social Sharing --}}
@@ -137,7 +135,6 @@ window.addEventListener('scroll',function(){
       <a href="https://ebook.m2b.co.id" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:10px;background:#f5b91c;color:#0f0f14;text-decoration:none;font-weight:700;font-size:14px;white-space:nowrap;flex-shrink:0">Download Gratis ↗</a>
     </div>
 
-    {{-- WhatsApp CTA --}}
     <div style="margin-top:16px;text-align:center">
       <a href="https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20baca%20artikel:%20{{ urlencode($post->title) }}" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:8px;background:#25D366;color:#fff;text-decoration:none;font-weight:600;font-size:13px">💬 Ada pertanyaan seputar artikel ini? Chat kami</a>
     </div>

@@ -52,13 +52,23 @@
         <a href="https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20mau%20konsultasi%20gratis" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:13px 28px;border-radius:8px;background:#1e3a5f;color:#fff;text-decoration:none;font-weight:600;font-size:15px;transition:all .18s">💬 Konsultasi GRATIS</a>
         <a href="#layanan" style="display:inline-flex;align-items:center;gap:8px;padding:13px 24px;border-radius:8px;color:#fff;text-decoration:none;font-weight:600;font-size:15px;border:1.5px solid rgba(255,255,255,0.4);background:rgba(255,255,255,0.08)">Lihat Layanan →</a>
       </div>
-      <div style="display:flex;gap:32px;margin-top:48px;border-top:1px solid rgba(255,255,255,0.18);padding-top:28px;flex-wrap:wrap">
-        @foreach([['5+','Tahun berpengalaman'],['100+','Klien aktif'],['20+','Negara tujuan'],['A–Z','Layanan end-to-end']] as [$num,$label])
-        <div>
-          <div style="font-family:Syne;font-weight:800;font-size:28px;color:#4a9eda;line-height:1">{{ $num }}</div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.55);margin-top:6px">{{ $label }}</div>
+      <div style="display:flex;gap:32px;margin-top:48px;border-top:1px solid rgba(255,255,255,0.18);padding-top:28px;flex-wrap:wrap" class="home-stats">
+        <div x-data="{ count: 0, done: false }" x-intersect.once="if(!done){ done=true; let i=setInterval(()=>{ count+=1; if(count>=5){count=5;clearInterval(i);} },60); }">
+          <div style="font-family:Syne;font-weight:800;font-size:28px;color:#4a9eda;line-height:1"><span x-text="count + '+'">5+</span></div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.55);margin-top:6px">Tahun berpengalaman</div>
         </div>
-        @endforeach
+        <div x-data="{ count: 0, done: false }" x-intersect.once="if(!done){ done=true; let i=setInterval(()=>{ count+=3; if(count>=100){count=100;clearInterval(i);} },30); }">
+          <div style="font-family:Syne;font-weight:800;font-size:28px;color:#4a9eda;line-height:1"><span x-text="count + '+'">100+</span></div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.55);margin-top:6px">Klien aktif</div>
+        </div>
+        <div x-data="{ count: 0, done: false }" x-intersect.once="if(!done){ done=true; let i=setInterval(()=>{ count+=1; if(count>=20){count=20;clearInterval(i);} },50); }">
+          <div style="font-family:Syne;font-weight:800;font-size:28px;color:#4a9eda;line-height:1"><span x-text="count + '+'">20+</span></div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.55);margin-top:6px">Negara tujuan</div>
+        </div>
+        <div>
+          <div style="font-family:Syne;font-weight:800;font-size:28px;color:#4a9eda;line-height:1">A–Z</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.55);margin-top:6px">Layanan end-to-end</div>
+        </div>
       </div>
     </div>
   </div>
