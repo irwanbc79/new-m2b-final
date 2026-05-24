@@ -29,28 +29,23 @@
 <section style="padding:80px 40px;background:#fff" class="about-section">
   <div style="max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1.4fr;gap:56px;align-items:center" class="about-intro-grid">
     <div style="position:relative">
-      {{-- Coverage map as hero visual --}}
-      <div style="border-radius:16px;overflow:hidden;aspect-ratio:4/5;background:#0f1e38;display:flex;flex-direction:column;box-shadow:0 16px 48px rgba(0,0,0,0.14)">
-        <img src="{{ asset('images/coverage-map.jpg') }}" alt="Jaringan pengiriman M2B ke 20+ negara" style="width:100%;height:60%;object-fit:cover;object-position:center">
-        <div style="flex:1;padding:20px 22px;background:linear-gradient(180deg,#0f1e38,#1e3a5f)">
-          <div style="font-family:Syne;font-weight:800;font-size:14px;color:#4a9eda;margin-bottom:8px;letter-spacing:0.5px">JANGKAUAN GLOBAL M2B</div>
-          <div style="font-size:13px;color:rgba(255,255,255,0.65);line-height:1.7">Pelabuhan Belawan (Medan) sebagai hub utama menghubungkan Sumatera Utara ke jaringan pengiriman internasional — Asia, Eropa, Amerika, dan Australia.</div>
-          <div style="display:flex;gap:16px;margin-top:14px">
+      {{-- Director photo --}}
+      <div style="border-radius:16px;overflow:hidden;aspect-ratio:4/5;box-shadow:0 16px 48px rgba(0,0,0,0.14);position:relative">
+        <img src="{{ asset('images/director-eka.jpg') }}"
+             alt="Eka Mayang Sari Harahap, S.E. — Direktur PT. Mora Multi Berkah"
+             style="width:100%;height:100%;object-fit:cover;object-position:center top;display:block">
+        {{-- Gradient overlay at bottom --}}
+        <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(11,17,32,0.85) 0%,rgba(11,17,32,0) 60%);padding:24px 22px 22px">
+          <div style="font-family:Syne;font-weight:800;font-size:15px;color:#fff">Eka Mayang Sari Harahap, S.E.</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.7);margin-top:3px">Direktur — PT. Mora Multi Berkah</div>
+          <div style="display:flex;gap:14px;margin-top:12px">
             @foreach([['20+','Negara'],['5+','Tahun'],['100+','Klien']] as [$n,$l])
             <div style="text-align:center">
-              <div style="font-family:Syne;font-weight:800;font-size:18px;color:#fff">{{ $n }}</div>
-              <div style="font-size:10px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px">{{ $l }}</div>
+              <div style="font-family:Syne;font-weight:800;font-size:16px;color:#4a9eda">{{ $n }}</div>
+              <div style="font-size:10px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.5px">{{ $l }}</div>
             </div>
             @endforeach
           </div>
-        </div>
-      </div>
-      {{-- Director badge --}}
-      <div style="position:absolute;bottom:-24px;left:-24px;background:#fff;padding:16px 20px;border-radius:12px;border:1px solid #e5e2dc;box-shadow:0 12px 36px rgba(0,0,0,0.1);display:flex;gap:14px;align-items:center" class="director-badge">
-        <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#1e3a5f,#2a5298);display:flex;align-items:center;justify-content:center;font-family:Syne;font-weight:800;font-size:14px;color:#fff;flex-shrink:0">EMS</div>
-        <div>
-          <div style="font-family:Syne;font-weight:800;font-size:14px">Eka Mayang Sari Harahap, S.E.</div>
-          <div style="font-size:11px;color:#999">Direktur — PT. Mora Multi Berkah</div>
         </div>
       </div>
     </div>
