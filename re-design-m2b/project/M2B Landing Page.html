@@ -1,0 +1,4456 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>M2B — Freight Forwarder & Customs Broker Indonesia</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap"
+      rel="stylesheet"
+    />
+    <script
+      src="https://unpkg.com/react@18.3.1/umd/react.development.js"
+      integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"
+      integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"
+      integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y"
+      crossorigin="anonymous"
+    ></script>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        background: #f7f5f0;
+        font-family: "DM Sans", sans-serif;
+        color: #0f0f14;
+        font-size: 15px;
+        line-height: 1.6;
+      }
+
+      /* Ticker animation */
+      @keyframes ticker {
+        0% {
+          transform: translateX(0);
+        }
+        100% {
+          transform: translateX(-50%);
+        }
+      }
+      .ticker-track {
+        display: flex;
+        animation: ticker 28s linear infinite;
+        white-space: nowrap;
+      }
+      .ticker-track:hover {
+        animation-play-state: paused;
+      }
+
+      /* Fade-in sections */
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(18px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Map route animation */
+      @keyframes dashDraw {
+        from {
+          stroke-dashoffset: 400;
+        }
+        to {
+          stroke-dashoffset: 0;
+        }
+      }
+      .route-line {
+        stroke-dasharray: 6 4;
+        stroke-dashoffset: 400;
+        animation: dashDraw 2.5s ease forwards;
+      }
+
+      /* WhatsApp pulse */
+      @keyframes wapulse {
+        0%,
+        100% {
+          transform: scale(1);
+          box-shadow: 0 8px 24px rgba(37, 211, 102, 0.4);
+        }
+        50% {
+          transform: scale(1.05);
+          box-shadow: 0 12px 36px rgba(37, 211, 102, 0.55);
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes modalSlide {
+        from {
+          opacity: 0;
+          transform: translateY(20px) scale(0.98);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+      @keyframes scrollBtn {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Scrollbar */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f0ede8;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #c0bdb7;
+        border-radius: 3px;
+      }
+    </style>
+  </head>
+  <body>
+    <script type="text/babel" src="tweaks-panel.jsx"></script>
+    <script type="text/babel">
+      const { useState, useEffect, useRef, useContext } = React;
+
+      // ─── i18n ─────────────────────────────────────────────────────────────────
+      const LangContext = React.createContext({
+        lang: "id",
+        setLang: () => {},
+        t: (i, e) => i,
+      });
+      function useLang() {
+        return useContext(LangContext);
+      }
+
+      // ─── Animated Counter Hook ────────────────────────────────────────────────
+      function useCounter(target, duration = 1600, startWhen = true) {
+        const [value, setValue] = useState(0);
+        const startedRef = useRef(false);
+
+        useEffect(() => {
+          if (!startWhen || startedRef.current) return;
+          startedRef.current = true;
+
+          const numStr = String(target).replace(/[^0-9]/g, "");
+          const numTarget = parseInt(numStr, 10) || 0;
+
+          if (numTarget === 0) {
+            setValue(0);
+            return;
+          }
+
+          const start = performance.now();
+          const step = (now) => {
+            const t = Math.min(1, (now - start) / duration);
+            const eased = 1 - Math.pow(1 - t, 3); // easeOutCubic
+            setValue(Math.floor(numTarget * eased));
+            if (t < 1) requestAnimationFrame(step);
+            else setValue(numTarget);
+          };
+
+          requestAnimationFrame(step);
+        }, [target, duration, startWhen]);
+
+        return value;
+      }
+
+      function useThrottledScroll(threshold = 0) {
+        const [passed, setPassed] = useState(() => window.scrollY > threshold);
+
+        useEffect(() => {
+          let rafId = null;
+          const onScroll = () => {
+            if (rafId !== null) return;
+            rafId = requestAnimationFrame(() => {
+              setPassed(window.scrollY > threshold);
+              rafId = null;
+            });
+          };
+
+          window.addEventListener("scroll", onScroll, { passive: true });
+          onScroll();
+
+          return () => {
+            window.removeEventListener("scroll", onScroll);
+            if (rafId !== null) cancelAnimationFrame(rafId);
+          };
+        }, [threshold]);
+
+        return passed;
+      }
+
+      function useInView(threshold = 0.3) {
+        const ref = useRef(null);
+        const [inView, setInView] = useState(false);
+        useEffect(() => {
+          if (!ref.current) return;
+          const obs = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((e) => {
+                if (e.isIntersecting) {
+                  setInView(true);
+                  obs.disconnect();
+                }
+              });
+            },
+            { threshold },
+          );
+          obs.observe(ref.current);
+          return () => obs.disconnect();
+        }, [threshold]);
+        return [ref, inView];
+      }
+
+      // ─── Design Tokens ────────────────────────────────────────────────────────
+      const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/ {
+        accentColor: "#1e3a5f",
+        heroImage: "port",
+        showCurrencyWidget: true,
+        showCoverageMap: true,
+        newsColumns: "3",
+        roundness: "8",
+      }; /*EDITMODE-END*/
+
+      const IMGS = {
+        hero_port:
+          "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?auto=format&fit=crop&w=1600&q=80",
+        hero_ship:
+          "https://images.unsplash.com/photo-1605281317010-fe5ffe798166?auto=format&fit=crop&w=1600&q=80",
+        hero_cargo:
+          "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1600&q=80",
+        news1:
+          "https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=800&q=80",
+        news2:
+          "https://images.unsplash.com/photo-1553413077-190dd305871c?auto=format&fit=crop&w=800&q=80",
+        news3:
+          "https://images.unsplash.com/photo-1598135753163-6167c1a1ad65?auto=format&fit=crop&w=800&q=80",
+        news4:
+          "https://images.unsplash.com/photo-1579547621113-e4bb2a19bdd6?auto=format&fit=crop&w=800&q=80",
+        portal:
+          "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=900&q=80",
+      };
+
+      // ─── Shared UI atoms ──────────────────────────────────────────────────────
+      const Tag = ({ children, color = "#1a56db", bg }) => (
+        <span
+          style={{
+            display: "inline-block",
+            padding: "3px 10px",
+            borderRadius: 20,
+            background: bg || color + "14",
+            color,
+            fontSize: 11,
+            fontWeight: 600,
+            letterSpacing: 0.3,
+            textTransform: "uppercase",
+          }}
+        >
+          {children}
+        </span>
+      );
+
+      const Btn = ({
+        children,
+        variant = "primary",
+        accent,
+        r = 8,
+        style,
+        onClick,
+      }) => {
+        const [hov, setHov] = useState(false);
+        const isPrimary = variant === "primary";
+        return (
+          <button
+            onClick={onClick}
+            onMouseEnter={() => setHov(true)}
+            onMouseLeave={() => setHov(false)}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              padding: "11px 24px",
+              borderRadius: r,
+              border: "none",
+              cursor: "pointer",
+              fontFamily: "DM Sans",
+              fontWeight: 600,
+              fontSize: 14,
+              transition: "all .18s",
+              background: isPrimary
+                ? hov
+                  ? shadeColor(accent, -15)
+                  : accent
+                : hov
+                  ? "#f0ede8"
+                  : "transparent",
+              color: isPrimary ? "#fff" : "#0f0f14",
+              border: isPrimary ? "none" : "1.5px solid #d0cdc8",
+              boxShadow: isPrimary && hov ? `0 4px 16px ${accent}44` : "none",
+              ...style,
+            }}
+          >
+            {children}
+          </button>
+        );
+      };
+
+      function shadeColor(hex, pct) {
+        const num = parseInt(hex.replace("#", ""), 16);
+        const r = Math.min(255, Math.max(0, (num >> 16) + pct));
+        const g = Math.min(255, Math.max(0, ((num >> 8) & 0xff) + pct));
+        const b = Math.min(255, Math.max(0, (num & 0xff) + pct));
+        return (
+          "#" + ((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1)
+        );
+      }
+
+      // ─── News Ticker ──────────────────────────────────────────────────────────
+      const tickerItems = [
+        "🚢 Pelabuhan Belawan aktif 24/7 — layanan ekspedisi reguler Asia Tenggara",
+        "📋 Update PERMENDAG: aturan baru impor barang kiriman berlaku Mei 2026",
+        "⚓ Jadwal kapal Medan–Shanghai diperbarui — estimasi ETA 14–16 hari",
+        "📦 Kuota ekspor CPO Sumatera Utara Q2 2026 dibuka — informasi lengkap di Blog",
+        "🌐 M2B kini melayani rute door-to-door ke 25+ negara tujuan",
+        "💱 USD/IDR: 16.480 · CNY/IDR: 2.270 — update hari ini",
+      ];
+
+      function NewsTicker({ accent }) {
+        const items = [...tickerItems, ...tickerItems];
+        return (
+          <div
+            style={{
+              background: "#0f0f14",
+              overflow: "hidden",
+              padding: "8px 0",
+              borderBottom: `2px solid ${accent}`,
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+              <div
+                style={{
+                  flexShrink: 0,
+                  background: accent,
+                  color: "#fff",
+                  padding: "2px 14px",
+                  fontSize: 11,
+                  fontWeight: 700,
+                  letterSpacing: 1,
+                  textTransform: "uppercase",
+                  zIndex: 1,
+                  marginLeft: 0,
+                }}
+              >
+                TERKINI
+              </div>
+              <div style={{ flex: 1, overflow: "hidden" }}>
+                <div className="ticker-track" style={{ gap: 60 }}>
+                  {items.map((t, i) => (
+                    <span
+                      key={i}
+                      style={{
+                        color: "#d1d0cf",
+                        fontSize: 12,
+                        fontFamily: "DM Sans",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      // ─── Nav ──────────────────────────────────────────────────────────────────
+      function Nav({ accent, r }) {
+        const { lang, setLang, t } = useLang();
+        const scrolled = useThrottledScroll(40);
+
+        const links = [
+          { id: "layanan", label: t("Layanan", "Services") },
+          { id: "proses", label: t("Proses", "Process") },
+          { id: "berita", label: t("Berita", "News") },
+          { id: "blog", label: t("Blog", "Blog"), href: "M2B Blog.html" },
+          { id: "about", label: t("About", "About") },
+        ];
+
+        return (
+          <nav
+            style={{
+              position: "sticky",
+              top: 0,
+              zIndex: 100,
+              background: scrolled ? "rgba(247,245,240,0.95)" : "#f7f5f0",
+              backdropFilter: scrolled ? "blur(12px)" : "none",
+              borderBottom: "1px solid #e5e2dc",
+              boxShadow: scrolled ? "0 2px 16px rgba(0,0,0,0.06)" : "none",
+              transition: "all .25s",
+              padding: "0 40px",
+            }}
+          >
+            <div
+              style={{
+                maxWidth: 1200,
+                margin: "0 auto",
+                display: "flex",
+                alignItems: "center",
+                height: 96,
+                gap: 32,
+              }}
+            >
+              {/* Logo */}
+              <a
+                href="#"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 16,
+                  flexShrink: 0,
+                  textDecoration: "none",
+                }}
+              >
+                <img
+                  src="assets/logo-m2b-clean.png"
+                  alt="M2B Logo"
+                  loading="lazy"
+                  decoding="async"
+                  style={{
+                    height: 64,
+                    width: "auto",
+                    display: "block",
+                    filter: "drop-shadow(0 4px 12px rgba(11,17,32,0.18))",
+                  }}
+                />
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    lineHeight: 1.1,
+                    borderLeft: "1.5px solid #d5d0c8",
+                    paddingLeft: 18,
+                  }}
+                >
+                  <span
+                    style={{
+                      fontFamily: "Syne",
+                      fontWeight: 800,
+                      fontSize: 17,
+                      color: "#0B1120",
+                      letterSpacing: -0.3,
+                      marginBottom: 4,
+                    }}
+                  >
+                    PT. Mora Multi Berkah
+                  </span>
+                  <span
+                    style={{
+                      fontSize: 10.5,
+                      color: "#8b1e2b",
+                      fontWeight: 700,
+                      letterSpacing: 1.6,
+                    }}
+                  >
+                    LOGISTIC · SOLUTION · PARTNER
+                  </span>
+                </div>
+              </a>
+
+              {/* Links */}
+              <div
+                style={{
+                  display: "flex",
+                  gap: 24,
+                  flex: 1,
+                  justifyContent: "center",
+                }}
+              >
+                {links.map((l) => (
+                  <a
+                    key={l.id}
+                    href={l.href || `#${l.id}`}
+                    style={{
+                      fontSize: 13,
+                      textDecoration: "none",
+                      fontWeight: 500,
+                      paddingBottom: 2,
+                      borderBottom:
+                        l.id === "berita"
+                          ? `2px solid ${accent}`
+                          : "2px solid transparent",
+                      color: l.id === "berita" ? accent : "#555",
+                      transition: "color .15s",
+                    }}
+                  >
+                    {l.label}
+                  </a>
+                ))}
+              </div>
+
+              {/* Language toggle — functional */}
+              <div
+                style={{
+                  display: "flex",
+                  gap: 4,
+                  fontSize: 12,
+                  padding: 3,
+                  background: "#f0ede8",
+                  borderRadius: 6,
+                }}
+              >
+                <button
+                  onClick={() => setLang("id")}
+                  style={{
+                    border: "none",
+                    cursor: "pointer",
+                    padding: "4px 10px",
+                    borderRadius: 4,
+                    fontWeight: 700,
+                    fontSize: 11,
+                    fontFamily: "DM Sans",
+                    background: lang === "id" ? "#fff" : "transparent",
+                    color: lang === "id" ? "#0f0f14" : "#888",
+                    boxShadow:
+                      lang === "id" ? "0 1px 4px rgba(0,0,0,0.08)" : "none",
+                    transition: "all .15s",
+                  }}
+                >
+                  🇮🇩 ID
+                </button>
+                <button
+                  onClick={() => setLang("en")}
+                  style={{
+                    border: "none",
+                    cursor: "pointer",
+                    padding: "4px 10px",
+                    borderRadius: 4,
+                    fontWeight: 700,
+                    fontSize: 11,
+                    fontFamily: "DM Sans",
+                    background: lang === "en" ? "#fff" : "transparent",
+                    color: lang === "en" ? "#0f0f14" : "#888",
+                    boxShadow:
+                      lang === "en" ? "0 1px 4px rgba(0,0,0,0.08)" : "none",
+                    transition: "all .15s",
+                  }}
+                >
+                  🇬🇧 EN
+                </button>
+              </div>
+
+              <Btn accent={accent} r={r}>
+                💬 {t("Konsultasi Gratis", "Free Consultation")}
+              </Btn>
+            </div>
+          </nav>
+        );
+      }
+
+      // ─── Hero ─────────────────────────────────────────────────────────────────
+      function Hero({ accent, heroImg, r }) {
+        const { t } = useLang();
+        const heroSrc =
+          heroImg === "ship"
+            ? IMGS.hero_ship
+            : heroImg === "cargo"
+              ? IMGS.hero_cargo
+              : IMGS.hero_port;
+        const [statsRef, statsInView] = useInView(0.5);
+        const [trackInput, setTrackInput] = useState("");
+
+        return (
+          <section
+            style={{
+              position: "relative",
+              minHeight: 640,
+              display: "flex",
+              alignItems: "center",
+              overflow: "hidden",
+            }}
+          >
+            {/* BG Image */}
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                backgroundImage: `url(${heroSrc})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                transform: "scale(1.05)",
+              }}
+            />
+            {/* Overlay gradient */}
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                background:
+                  "linear-gradient(105deg, rgba(11,17,32,0.92) 40%, rgba(11,17,32,0.55) 75%, rgba(11,17,32,0.25) 100%)",
+              }}
+            />
+
+            <div
+              style={{
+                position: "relative",
+                maxWidth: 1200,
+                margin: "0 auto",
+                padding: "80px 40px",
+                width: "100%",
+              }}
+            >
+              <div style={{ maxWidth: 620 }}>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: 8,
+                    marginBottom: 22,
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <Tag color="#fff" bg="rgba(255,255,255,0.15)">
+                    Freight Forwarder
+                  </Tag>
+                  <Tag color="#fff" bg="rgba(255,255,255,0.15)">
+                    Customs Broker
+                  </Tag>
+                  <Tag color={accent} bg={accent + "40"}>
+                    Medan · Indonesia
+                  </Tag>
+                </div>
+
+                <h1
+                  style={{
+                    fontFamily: "Syne",
+                    fontWeight: 800,
+                    fontSize: 54,
+                    lineHeight: 1.06,
+                    color: "#fff",
+                    letterSpacing: -1.8,
+                    marginBottom: 22,
+                  }}
+                >
+                  {t("Ekspor & Impor", "Export & Import")}
+                  <br />
+                  <span style={{ color: accent }}>
+                    {t("Lebih Mudah,", "Made Easy,")}
+                  </span>
+                  <br />
+                  {t("Lebih Aman.", "Made Safe.")}
+                </h1>
+
+                <p
+                  style={{
+                    fontSize: 17,
+                    color: "rgba(255,255,255,0.78)",
+                    marginBottom: 36,
+                    lineHeight: 1.7,
+                    maxWidth: 480,
+                  }}
+                >
+                  {t(
+                    "End-to-end freight forwarding & customs brokerage. Dari dokumen, bea cukai, hingga door-to-door delivery — M2B handle semuanya.",
+                    "End-to-end freight forwarding & customs brokerage. From paperwork to customs clearance to door-to-door delivery — M2B handles it all.",
+                  )}
+                </p>
+
+                {/* Track Shipment Widget */}
+                <div
+                  style={{
+                    background: "rgba(255,255,255,0.08)",
+                    backdropFilter: "blur(16px)",
+                    borderRadius: r * 1.5,
+                    padding: 6,
+                    border: "1px solid rgba(255,255,255,0.18)",
+                    display: "flex",
+                    gap: 6,
+                    alignItems: "center",
+                    marginBottom: 20,
+                    maxWidth: 520,
+                    boxShadow: "0 12px 36px rgba(0,0,0,0.25)",
+                  }}
+                >
+                  <div
+                    style={{
+                      padding: "0 12px",
+                      fontSize: 18,
+                      color: "rgba(255,255,255,0.6)",
+                    }}
+                  >
+                    🔍
+                  </div>
+                  <input
+                    type="text"
+                    value={trackInput}
+                    onChange={(e) => setTrackInput(e.target.value)}
+                    placeholder={t(
+                      "Masukkan nomor B/L atau AWB untuk lacak…",
+                      "Enter B/L or AWB number to track…",
+                    )}
+                    style={{
+                      flex: 1,
+                      background: "transparent",
+                      border: "none",
+                      outline: "none",
+                      color: "#fff",
+                      fontSize: 14,
+                      fontFamily: "DM Sans",
+                      padding: "12px 0",
+                    }}
+                  />
+                  <button
+                    style={{
+                      padding: "10px 20px",
+                      borderRadius: r,
+                      background: accent,
+                      color: "#fff",
+                      border: "none",
+                      fontWeight: 700,
+                      fontSize: 13,
+                      cursor: "pointer",
+                      fontFamily: "DM Sans",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {t("Lacak", "Track")} →
+                  </button>
+                </div>
+
+                <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+                  <Btn
+                    accent={accent}
+                    r={r}
+                    style={{ padding: "13px 28px", fontSize: 15 }}
+                  >
+                    💬 {t("Konsultasi GRATIS", "FREE Consultation")}
+                  </Btn>
+                  <Btn
+                    variant="outline"
+                    accent={accent}
+                    r={r}
+                    style={{
+                      padding: "13px 24px",
+                      fontSize: 15,
+                      color: "#fff",
+                      borderColor: "rgba(255,255,255,0.4)",
+                      background: "rgba(255,255,255,0.08)",
+                    }}
+                  >
+                    {t("Lihat Layanan", "See Services")} →
+                  </Btn>
+                </div>
+
+                {/* Animated stats */}
+                <div
+                  ref={statsRef}
+                  style={{
+                    display: "flex",
+                    gap: 32,
+                    marginTop: 48,
+                    borderTop: "1px solid rgba(255,255,255,0.18)",
+                    paddingTop: 28,
+                  }}
+                >
+                  {[
+                    {
+                      num: 5,
+                      suffix: "+",
+                      labelId: "Tahun berpengalaman",
+                      labelEn: "Years experience",
+                    },
+                    {
+                      num: 100,
+                      suffix: "+",
+                      labelId: "Klien aktif",
+                      labelEn: "Active clients",
+                    },
+                    {
+                      num: 20,
+                      suffix: "+",
+                      labelId: "Negara tujuan",
+                      labelEn: "Destinations",
+                    },
+                    {
+                      num: null,
+                      str: "A–Z",
+                      labelId: "Layanan end-to-end",
+                      labelEn: "End-to-end",
+                    },
+                  ].map((s, i) => (
+                    <AnimatedStat
+                      key={i}
+                      stat={s}
+                      accent={accent}
+                      inView={statsInView}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+        );
+      }
+
+      function AnimatedStat({ stat, accent, inView }) {
+        const { lang } = useLang();
+        // Use counter only for numeric
+        const count = useCounter(
+          stat.num !== null ? stat.num : 0,
+          1400,
+          inView,
+        );
+        const shown =
+          stat.num === null ? stat.str : count + (stat.suffix || "");
+        return (
+          <div>
+            <div
+              style={{
+                fontFamily: "Syne",
+                fontWeight: 800,
+                fontSize: 28,
+                color: accent,
+                lineHeight: 1,
+              }}
+            >
+              {shown}
+            </div>
+            <div
+              style={{
+                fontSize: 12,
+                color: "rgba(255,255,255,0.55)",
+                marginTop: 6,
+              }}
+            >
+              {lang === "id" ? stat.labelId : stat.labelEn}
+            </div>
+          </div>
+        );
+      }
+
+      // ─── Trust Bar ────────────────────────────────────────────────────────────
+      function TrustBar({ accent }) {
+        const logos = [
+          "Dirjen Bea Cukai RI",
+          "ALFI",
+          "KADIN",
+          "LNSW",
+          "NIB",
+          "Pelindo",
+        ];
+        return (
+          <div
+            style={{
+              background: "#fff",
+              borderBottom: "1px solid #e5e2dc",
+              padding: "14px 40px",
+            }}
+          >
+            <div
+              style={{
+                maxWidth: 1200,
+                margin: "0 auto",
+                display: "flex",
+                alignItems: "center",
+                gap: 24,
+                flexWrap: "wrap",
+              }}
+            >
+              <span
+                style={{
+                  fontSize: 11,
+                  color: "#aaa",
+                  textTransform: "uppercase",
+                  letterSpacing: 1,
+                  flexShrink: 0,
+                  fontWeight: 600,
+                }}
+              >
+                Terdaftar & diakui oleh
+              </span>
+              <div
+                style={{
+                  flex: 1,
+                  display: "flex",
+                  gap: 16,
+                  flexWrap: "wrap",
+                  alignItems: "center",
+                }}
+              >
+                {logos.map((l) => (
+                  <div
+                    key={l}
+                    style={{
+                      padding: "5px 14px",
+                      border: "1px solid #e5e2dc",
+                      borderRadius: 6,
+                      fontSize: 12,
+                      color: "#666",
+                      fontWeight: 500,
+                      background: "#fafaf8",
+                    }}
+                  >
+                    {l}
+                  </div>
+                ))}
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  gap: 16,
+                  fontSize: 12,
+                  flexShrink: 0,
+                }}
+              >
+                <span style={{ color: "#888" }}>📧 sales@m2b.co.id</span>
+                <span style={{ color: "#888" }}>📱 +62 812-6302-7818</span>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      // ─── Services ───────────────────────────────────────────────────────────
+      function Services({ accent, r }) {
+        const [openService, setOpenService] = useState(null);
+
+        const services = [
+          {
+            icon: "📤",
+            title: "Export Handling",
+            badge: "Paling Populer",
+            tagline: "Bisnismu siap mendunia. Dokumen yang menahanmu.",
+            desc: "PEB, packing list, COO/SKA, dan pengiriman ke 20+ negara. Legal & tepat waktu.",
+            img: "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?auto=format&fit=crop&w=1200&q=80",
+            pitch:
+              "Setiap hari kamu menunda ekspor, kompetitor kamu sudah mengirim 5 kontainer. Kami pastikan dokumenmu lolos di pemeriksaan pertama — bukan ketiga.",
+            bullets: [
+              "PEB (Pemberitahuan Ekspor Barang) — proses 1×24 jam",
+              "COO/SKA Form A, D, E, AK — sesuai negara tujuan",
+              "Packing List & Commercial Invoice dengan format internasional",
+              "Bill of Lading & Sea Waybill koordinasi langsung dengan shipping line",
+              "Konsultasi HS Code untuk hindari salah klasifikasi",
+              "Tracking real-time hingga barang diterima",
+            ],
+            stat: { num: "500+", label: "Shipment ekspor selesai tahun lalu" },
+            cta: "Mulai Ekspor Sekarang",
+          },
+          {
+            icon: "📥",
+            title: "Import Handling",
+            badge: null,
+            tagline: "Stop bayar 2× untuk barang yang sama.",
+            desc: "PIB, estimasi bea & pajak (PDRI), hingga penyerahan ke gudang. Tanpa hidden cost.",
+            img: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1200&q=80",
+            pitch:
+              "Bea masuk Rp 5 juta dijanjikan, tagihan akhir Rp 12 juta. Itu cerita yang kami benci. Kami hitung detail bea & pajak SEBELUM kamu setujui — tanpa kejutan.",
+            bullets: [
+              "PIB (Pemberitahuan Impor Barang) — full digital di CEISA 4.0",
+              "Kalkulasi Bea Masuk + PPN + PPh 22 transparan",
+              "Pengawalan jalur hijau & merah di Bea Cukai",
+              "Customs Clearance Belawan, Tanjung Priok, Tanjung Perak",
+              "Storage minimal — kami koordinasi pickup di hari yang sama",
+              "Asuransi all-risk tersedia untuk peace of mind",
+            ],
+            stat: { num: "0", label: "Hidden cost dalam quote kami" },
+            cta: "Konsultasi Impor Gratis",
+          },
+          {
+            icon: "🛃",
+            title: "Customs Clearance",
+            badge: null,
+            tagline: "Setiap menit di Bea Cukai = uang yang menguap.",
+            desc: "Bea cukai di pelabuhan utama Indonesia — Belawan, Tanjung Priok, Soekarno-Hatta.",
+            img: "https://images.unsplash.com/photo-1577415124269-fc1140a69e91?auto=format&fit=crop&w=1200&q=80",
+            pitch:
+              "Storage Rp 800.000/hari per kontainer. Demurrage US$ 100/hari. Kami pastikan barangmu tidak menunggu lebih lama dari seharusnya. Track record 2024: 0 jalur merah.",
+            bullets: [
+              "Pengurusan PIB & PEB sesuai PMK terbaru",
+              "NHI (Nota Hasil Intelijen) preemptive check",
+              "Penanganan Lartas (barang dilarang/terbatas)",
+              "Pendampingan pemeriksaan fisik (jalur merah)",
+              "Banding & keberatan jika ada penetapan",
+              "Update regulasi PMK & PER-BC real-time",
+            ],
+            stat: { num: "1-3 hari", label: "Rata-rata waktu clearance" },
+            cta: "Cek Status Bea Cukai",
+          },
+          {
+            icon: "🚚",
+            title: "Door-to-Door",
+            badge: null,
+            tagline: "Dari gudangmu ke pintu pembeli. Kami yang tanggung.",
+            desc: "Layanan end-to-end dari gudang pengirim ke pintu penerima, lintas negara.",
+            img: "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=1200&q=80",
+            pitch:
+              "Bayar 1 invoice, kami urus semuanya: pickup di gudangmu, customs di Indonesia, customs di tujuan, last-mile delivery. Buyer kamu cukup tanda tangan.",
+            bullets: [
+              "Pickup dari gudang/pabrik dengan armada terpercaya",
+              "Konsolidasi LCL & FCL untuk biaya optimal",
+              "Customs clearance di Indonesia & negara tujuan",
+              "Last-mile delivery ke alamat penerima",
+              "Single point of contact — 1 PIC dari awal hingga akhir",
+              "Proof of Delivery digital langsung ke email",
+            ],
+            stat: { num: "25+", label: "Negara tujuan door-to-door" },
+            cta: "Hitung Biaya Door-to-Door",
+          },
+          {
+            icon: "📝",
+            title: "Undername Import",
+            badge: "Untuk UMKM",
+            tagline: "Belum punya API/NIB? Tetap bisa impor — legal.",
+            desc: "Solusi bagi importir tanpa API (Angka Pengenal Impor). 100% legal dan aman.",
+            img: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=1200&q=80",
+            pitch:
+              "Mendaftarkan API butuh 3-6 bulan + jutaan rupiah. Sementara itu, peluang bisnismu hilang. Pakai identitas resmi M2B — kamu tetap pemilik barang, kami yang urus formalitas impor.",
+            bullets: [
+              "100% legal — kami terdaftar resmi sebagai importir di Bea Cukai",
+              "Kontrak jelas: kamu pemilik barang, kami hanya importir of record",
+              "Cocok untuk first-time importer & UMKM",
+              "Pengurusan PIB pakai data M2B",
+              "Bea masuk + pajak dibayar oleh M2B, kamu reimburse",
+              "Berlanjut ke API/NIB sendiri saat bisnis sudah scale",
+            ],
+            stat: { num: "60+", label: "UMKM kami bantu via undername" },
+            cta: "Tanyakan Skema Undername",
+          },
+          {
+            icon: "💡",
+            title: "Konsultasi Logistik",
+            badge: "Gratis",
+            tagline: "Sebelum salah pilih, tanyakan dulu — tanpa bayar.",
+            desc: "Panduan ekspor-impor dari tim ahli — perencanaan moda hingga estimasi biaya.",
+            img: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=1200&q=80",
+            pitch:
+              '15 menit konsultasi bisa menyelamatkanmu dari kerugian Rp 50 juta. Kami audit kebutuhan logistikmu, kasih saran jujur — bahkan kalau saranya adalah "jangan pakai jasa kami untuk case ini".',
+            bullets: [
+              "Audit kebutuhan logistik bisnismu — gratis 30 menit",
+              "Pemilihan moda: sea freight, air freight, atau multimoda",
+              "Optimasi rute & jadwal pengiriman",
+              "Estimasi total cost (freight + bea + pajak + handling)",
+              "Strategi negosiasi dengan supplier/buyer luar negeri",
+              "Rekomendasi Incoterms (FOB, CIF, DDP) sesuai bisnismu",
+            ],
+            stat: { num: "5 menit", label: "Rata-rata respon WhatsApp" },
+            cta: "Jadwalkan Konsultasi Gratis",
+          },
+        ];
+
+        return (
+          <section
+            id="layanan"
+            style={{ padding: "80px 40px", background: "#f7f5f0" }}
+          >
+            <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+              <div style={{ textAlign: "center", marginBottom: 48 }}>
+                <Tag color={accent}>Layanan</Tag>
+                <h2
+                  style={{
+                    fontFamily: "Syne",
+                    fontWeight: 800,
+                    fontSize: 36,
+                    letterSpacing: -0.8,
+                    marginTop: 12,
+                    marginBottom: 12,
+                  }}
+                >
+                  Semua Kebutuhan Logistik, Satu Atap
+                </h2>
+                <p
+                  style={{
+                    color: "#666",
+                    fontSize: 16,
+                    maxWidth: 500,
+                    margin: "0 auto",
+                  }}
+                >
+                  Klik setiap layanan untuk pelajari detail lengkap — apa yang
+                  kami lakukan & berapa biayanya.
+                </p>
+              </div>
+
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(3, 1fr)",
+                  gap: 16,
+                }}
+              >
+                {services.map((s, i) => (
+                  <ServiceCard
+                    key={i}
+                    s={s}
+                    accent={accent}
+                    r={r}
+                    featured={i === 0}
+                    onClick={() => setOpenService(s)}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {openService && (
+              <ServiceModal
+                service={openService}
+                accent={accent}
+                r={r}
+                onClose={() => setOpenService(null)}
+              />
+            )}
+          </section>
+        );
+      }
+
+      function ServiceCard({ s, accent, r, featured, onClick }) {
+        const [hov, setHov] = useState(false);
+        return (
+          <div
+            onClick={onClick}
+            onMouseEnter={() => setHov(true)}
+            onMouseLeave={() => setHov(false)}
+            style={{
+              background: featured ? "#0f0f14" : "#fff",
+              border: `1px solid ${featured ? "#0f0f14" : hov ? accent : "#e5e2dc"}`,
+              borderRadius: r * 1.5,
+              padding: "28px 24px",
+              transition: "all .2s",
+              boxShadow: hov
+                ? `0 12px 36px rgba(0,0,0,0.12)`
+                : "0 1px 4px rgba(0,0,0,0.04)",
+              transform: hov ? "translateY(-3px)" : "none",
+              position: "relative",
+              cursor: "pointer",
+            }}
+          >
+            {s.badge && (
+              <div
+                style={{
+                  position: "absolute",
+                  top: 20,
+                  right: 20,
+                  background: accent,
+                  color: "#fff",
+                  fontSize: 10,
+                  padding: "3px 10px",
+                  borderRadius: 10,
+                  fontWeight: 700,
+                  letterSpacing: 0.5,
+                  textTransform: "uppercase",
+                }}
+              >
+                {s.badge}
+              </div>
+            )}
+            <div style={{ fontSize: 28, marginBottom: 14 }}>{s.icon}</div>
+            <div
+              style={{
+                fontFamily: "Syne",
+                fontWeight: 700,
+                fontSize: 17,
+                marginBottom: 8,
+                color: featured ? "#fff" : "#0f0f14",
+              }}
+            >
+              {s.title}
+            </div>
+            <div
+              style={{
+                fontSize: 13,
+                color: featured ? "rgba(255,255,255,0.55)" : "#777",
+                lineHeight: 1.7,
+                marginBottom: 14,
+              }}
+            >
+              {s.desc}
+            </div>
+            <div
+              style={{
+                marginTop: "auto",
+                fontSize: 12,
+                color: featured ? accent : accent,
+                fontWeight: 700,
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                opacity: hov ? 1 : 0.7,
+                transition: "all .15s",
+              }}
+            >
+              Pelajari lebih lanjut{" "}
+              <span
+                style={{
+                  transform: hov ? "translateX(4px)" : "translateX(0)",
+                  transition: "transform .15s",
+                }}
+              >
+                →
+              </span>
+            </div>
+          </div>
+        );
+      }
+
+      function ServiceModal({ service: s, accent, r, onClose }) {
+        useEffect(() => {
+          document.body.style.overflow = "hidden";
+          const escFn = (e) => e.key === "Escape" && onClose();
+          window.addEventListener("keydown", escFn);
+          return () => {
+            document.body.style.overflow = "";
+            window.removeEventListener("keydown", escFn);
+          };
+        }, [onClose]);
+
+        return (
+          <div
+            onClick={onClose}
+            style={{
+              position: "fixed",
+              inset: 0,
+              zIndex: 1000,
+              background: "rgba(11,17,32,0.78)",
+              backdropFilter: "blur(8px)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: 24,
+              animation: "fadeIn .2s ease",
+            }}
+          >
+            <div
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                background: "#fff",
+                borderRadius: 20,
+                maxWidth: 1000,
+                width: "100%",
+                maxHeight: "92vh",
+                overflow: "hidden",
+                display: "grid",
+                gridTemplateColumns: "1.1fr 1fr",
+                boxShadow: "0 32px 80px rgba(0,0,0,0.5)",
+                animation: "modalSlide .3s ease",
+              }}
+            >
+              {/* Left: Image with overlay */}
+              <div
+                style={{
+                  position: "relative",
+                  minHeight: 520,
+                  background: "#0B1120",
+                }}
+              >
+                <img
+                  src={s.img}
+                  alt={s.title}
+                  loading="lazy"
+                  decoding="async"
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    opacity: 0.7,
+                  }}
+                />
+                <div
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    background:
+                      "linear-gradient(180deg, rgba(11,17,32,0.3) 0%, rgba(11,17,32,0.9) 100%)",
+                  }}
+                />
+                <div
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    padding: 36,
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <div>
+                    <div style={{ fontSize: 48, marginBottom: 16 }}>
+                      {s.icon}
+                    </div>
+                    {s.badge && (
+                      <span
+                        style={{
+                          display: "inline-block",
+                          padding: "4px 12px",
+                          borderRadius: 20,
+                          background: accent,
+                          color: "#fff",
+                          fontSize: 10,
+                          fontWeight: 800,
+                          letterSpacing: 1.2,
+                          textTransform: "uppercase",
+                          marginBottom: 18,
+                        }}
+                      >
+                        {s.badge}
+                      </span>
+                    )}
+                    <h2
+                      style={{
+                        fontFamily: "Syne",
+                        fontWeight: 800,
+                        fontSize: 32,
+                        color: "#fff",
+                        letterSpacing: -1,
+                        lineHeight: 1.1,
+                        marginBottom: 14,
+                      }}
+                    >
+                      {s.title}
+                    </h2>
+                    <p
+                      style={{
+                        fontFamily: "Lora",
+                        fontStyle: "italic",
+                        fontSize: 18,
+                        color: "#f5b91c",
+                        lineHeight: 1.45,
+                      }}
+                    >
+                      "{s.tagline}"
+                    </p>
+                  </div>
+                  {/* Stat */}
+                  <div
+                    style={{
+                      padding: "20px 24px",
+                      background: "rgba(245,185,28,0.12)",
+                      border: "1px solid rgba(245,185,28,0.35)",
+                      borderRadius: 14,
+                      backdropFilter: "blur(8px)",
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontFamily: "Syne",
+                        fontWeight: 800,
+                        fontSize: 36,
+                        color: "#f5b91c",
+                        lineHeight: 1,
+                      }}
+                    >
+                      {s.stat.num}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: 12,
+                        color: "rgba(255,255,255,0.75)",
+                        marginTop: 4,
+                      }}
+                    >
+                      {s.stat.label}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right: Content */}
+              <div
+                style={{
+                  padding: "40px 36px",
+                  overflowY: "auto",
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                {/* Close button */}
+                <button
+                  onClick={onClose}
+                  style={{
+                    position: "absolute",
+                    top: 16,
+                    right: 16,
+                    width: 36,
+                    height: 36,
+                    borderRadius: "50%",
+                    background: "#fff",
+                    border: "1px solid #e5e2dc",
+                    cursor: "pointer",
+                    fontSize: 18,
+                    color: "#666",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                  }}
+                >
+                  ✕
+                </button>
+
+                <p
+                  style={{
+                    fontSize: 15,
+                    color: "#0f0f14",
+                    lineHeight: 1.8,
+                    marginBottom: 24,
+                    fontWeight: 500,
+                  }}
+                >
+                  {s.pitch}
+                </p>
+
+                <div
+                  style={{
+                    fontSize: 11,
+                    color: "#999",
+                    fontWeight: 700,
+                    letterSpacing: 1.4,
+                    textTransform: "uppercase",
+                    marginBottom: 14,
+                  }}
+                >
+                  Yang Kami Lakukan
+                </div>
+                <div style={{ marginBottom: 24, flex: 1 }}>
+                  {s.bullets.map((b, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        display: "flex",
+                        gap: 12,
+                        padding: "10px 0",
+                        borderBottom:
+                          i < s.bullets.length - 1
+                            ? "1px solid #f0ede8"
+                            : "none",
+                        alignItems: "flex-start",
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: 20,
+                          height: 20,
+                          borderRadius: "50%",
+                          background: accent + "22",
+                          color: accent,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: 11,
+                          fontWeight: 800,
+                          flexShrink: 0,
+                          marginTop: 1,
+                        }}
+                      >
+                        ✓
+                      </div>
+                      <div
+                        style={{
+                          fontSize: 13.5,
+                          color: "#1A1F2E",
+                          lineHeight: 1.65,
+                          flex: 1,
+                        }}
+                      >
+                        {b}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* CTA */}
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 10,
+                    paddingTop: 20,
+                    borderTop: "1px solid #e5e2dc",
+                  }}
+                >
+                  <a
+                    href="https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20tertarik%20dengan%20layanan%20"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      background: "#25D366",
+                      color: "#fff",
+                      textAlign: "center",
+                      padding: "13px",
+                      borderRadius: 10,
+                      textDecoration: "none",
+                      fontWeight: 800,
+                      fontSize: 14,
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 8,
+                    }}
+                  >
+                    💬 {s.cta} via WhatsApp
+                  </a>
+                  <a
+                    href="mailto:sales@m2b.co.id"
+                    style={{
+                      background: "transparent",
+                      color: "#0f0f14",
+                      textAlign: "center",
+                      padding: "12px",
+                      borderRadius: 10,
+                      textDecoration: "none",
+                      fontWeight: 700,
+                      fontSize: 13,
+                      border: "1.5px solid #d0cdc8",
+                    }}
+                  >
+                    📧 Atau email sales@m2b.co.id
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      // ─── Coverage Map ─────────────────────────────────────────────────────────
+      function CoverageMap({ accent }) {
+        // Simple SVG map of SE Asia + key trade routes from Medan
+        const routes = [
+          { d: "M 152 148 Q 200 120 260 110", label: "China" },
+          { d: "M 152 148 Q 180 140 230 145", label: "Malaysia/Singapura" },
+          { d: "M 152 148 Q 160 160 200 175", label: "Jawa / Jakarta" },
+          { d: "M 152 148 Q 130 130 100 115", label: "India" },
+          { d: "M 152 148 Q 90 100 60 70", label: "Eropa / Timur Tengah" },
+        ];
+
+        return (
+          <section
+            id="coverage"
+            style={{
+              padding: "72px 40px",
+              background: "#fff",
+              borderTop: "1px solid #e5e2dc",
+              borderBottom: "1px solid #e5e2dc",
+            }}
+          >
+            <div
+              style={{
+                maxWidth: 1200,
+                margin: "0 auto",
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: 60,
+                alignItems: "center",
+              }}
+            >
+              <div>
+                <Tag color={accent}>Jangkauan</Tag>
+                <h2
+                  style={{
+                    fontFamily: "Syne",
+                    fontWeight: 800,
+                    fontSize: 34,
+                    letterSpacing: -0.8,
+                    marginTop: 12,
+                    marginBottom: 16,
+                  }}
+                >
+                  Dari Medan ke Seluruh Dunia
+                </h2>
+                <p style={{ color: "#666", lineHeight: 1.8, marginBottom: 28 }}>
+                  Beroperasi dari Pelabuhan Belawan, M2B melayani rute
+                  ekspor-impor ke 20+ negara di Asia, Eropa, Timur Tengah, dan
+                  Amerika.
+                </p>
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1fr",
+                    gap: 12,
+                  }}
+                >
+                  {[
+                    ["🇨🇳 China", "Rute utama impor"],
+                    ["🇸🇬 Singapura", "Hub transhipment"],
+                    ["🇲🇾 Malaysia", "Darat & laut"],
+                    ["🇯🇵 Jepang", "FCL & LCL"],
+                    ["🇳🇱 Eropa", "Via hub global"],
+                    ["🌍 +15 Negara", "Lainnya"],
+                  ].map(([c, d]) => (
+                    <div
+                      key={c}
+                      style={{
+                        display: "flex",
+                        gap: 10,
+                        alignItems: "flex-start",
+                        padding: "10px 0",
+                        borderBottom: "1px solid #f0ede8",
+                      }}
+                    >
+                      <div>
+                        <div style={{ fontSize: 13, fontWeight: 600 }}>{c}</div>
+                        <div style={{ fontSize: 11, color: "#999" }}>{d}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* World Map Image with glow routes */}
+              <div
+                style={{
+                  background: "#1a1a1a",
+                  borderRadius: 16,
+                  padding: 0,
+                  border: "1px solid #e5e2dc",
+                  overflow: "hidden",
+                  position: "relative",
+                  boxShadow: "0 12px 40px rgba(0,0,0,0.18)",
+                }}
+              >
+                <img
+                  src="assets/coverage-map.png"
+                  alt="Peta jangkauan M2B — rute ekspor-impor dari Medan ke seluruh dunia"
+                  loading="lazy"
+                  decoding="async"
+                  style={{ width: "100%", height: "auto", display: "block" }}
+                />
+                {/* Caption overlay */}
+                <div
+                  style={{
+                    position: "absolute",
+                    bottom: 16,
+                    left: 16,
+                    right: 16,
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "flex-end",
+                    pointerEvents: "none",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: 8,
+                      alignItems: "center",
+                      background: "rgba(15,15,20,0.55)",
+                      padding: "6px 12px",
+                      borderRadius: 20,
+                      backdropFilter: "blur(8px)",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: 8,
+                        height: 8,
+                        borderRadius: "50%",
+                        background: accent,
+                        boxShadow: `0 0 12px ${accent}`,
+                      }}
+                    />
+                    <span
+                      style={{ color: "#fff", fontSize: 12, fontWeight: 600 }}
+                    >
+                      Medan, Indonesia · Hub Utama M2B
+                    </span>
+                  </div>
+                  <span
+                    style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}
+                  >
+                    20+ negara tujuan
+                  </span>
+                </div>
+              </div>
+            </div>
+          </section>
+        );
+      }
+
+      // ─── Process ──────────────────────────────────────────────────────────────
+      function Process({ accent, r }) {
+        const steps = [
+          {
+            n: "01",
+            icon: "💬",
+            title: "Konsultasi Gratis",
+            desc: "Hubungi kami via WhatsApp atau form. Ceritakan kebutuhan ekspor/impor kamu.",
+          },
+          {
+            n: "02",
+            icon: "📄",
+            title: "Penawaran Transparan",
+            desc: "Kami kirim quote detail — biaya, estimasi waktu, dokumen. Tanpa hidden fee.",
+          },
+          {
+            n: "03",
+            icon: "⚙️",
+            title: "Proses Dokumen",
+            desc: "Tim M2B mengurus semua dokumen dan bea cukai. Kamu update via portal real-time.",
+          },
+          {
+            n: "04",
+            icon: "✅",
+            title: "Barang Terkirim",
+            desc: "Barang tiba aman di tujuan. Tracking tersedia hingga pengiriman selesai.",
+          },
+        ];
+
+        return (
+          <section
+            id="proses"
+            style={{ padding: "80px 40px", background: "#f7f5f0" }}
+          >
+            <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+              <div style={{ textAlign: "center", marginBottom: 52 }}>
+                <Tag color={accent}>Cara Kerja</Tag>
+                <h2
+                  style={{
+                    fontFamily: "Syne",
+                    fontWeight: 800,
+                    fontSize: 34,
+                    letterSpacing: -0.8,
+                    marginTop: 12,
+                    marginBottom: 12,
+                  }}
+                >
+                  4 Langkah Mudah
+                </h2>
+                <p style={{ color: "#666", maxWidth: 440, margin: "0 auto" }}>
+                  Prosesnya sederhana — kami yang kerja keras, kamu yang tenang.
+                </p>
+              </div>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(4, 1fr)",
+                  gap: 0,
+                  position: "relative",
+                }}
+              >
+                {/* connector line */}
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 44,
+                    left: "12.5%",
+                    right: "12.5%",
+                    height: 2,
+                    background: `linear-gradient(90deg, ${accent}, #c7d7f9)`,
+                    zIndex: 0,
+                  }}
+                />
+                {steps.map((s, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      textAlign: "center",
+                      padding: "0 20px",
+                      position: "relative",
+                      zIndex: 1,
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: 56,
+                        height: 56,
+                        borderRadius: "50%",
+                        background: "#fff",
+                        border: `3px solid ${accent}`,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        margin: "0 auto 16px",
+                        fontSize: 22,
+                        boxShadow: `0 0 0 6px #f7f5f0`,
+                      }}
+                    >
+                      {s.icon}
+                    </div>
+                    <div
+                      style={{
+                        fontFamily: "Syne",
+                        fontWeight: 800,
+                        fontSize: 34,
+                        color: accent + "22",
+                        position: "absolute",
+                        top: -8,
+                        left: "50%",
+                        transform: "translateX(-50%)",
+                        fontSize: 52,
+                        lineHeight: 1,
+                      }}
+                    >
+                      {s.n}
+                    </div>
+                    <div
+                      style={{
+                        fontFamily: "Syne",
+                        fontWeight: 700,
+                        fontSize: 15,
+                        marginBottom: 8,
+                      }}
+                    >
+                      {s.title}
+                    </div>
+                    <div
+                      style={{ fontSize: 13, color: "#777", lineHeight: 1.7 }}
+                    >
+                      {s.desc}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        );
+      }
+
+      // ─── News Section ─────────────────────────────────────────────────────────
+      const newsData = [
+        {
+          id: 1,
+          cat: "Regulasi",
+          date: "24 Apr 2026",
+          title:
+            "Aturan Baru Bea Cukai 2026: Merk, Tipe & Satuan Terkecil Wajib Dicantumkan",
+          excerpt:
+            "Direktorat Jenderal Bea dan Cukai resmi menerapkan aturan baru tentang pencantuman merk, tipe, dan satuan terkecil pada dokumen impor. Berlaku efektif Januari 2026.",
+          img: IMGS.news1,
+          featured: true,
+        },
+        {
+          id: 2,
+          cat: "Tips & Info",
+          date: "22 Apr 2026",
+          title:
+            "Cara Pilih Freight Forwarder Terpercaya: 7 Kriteria Wajib Diketahui",
+          excerpt:
+            "Memilih freight forwarder yang tepat menentukan kelancaran ekspor-impormu. Berikut panduan lengkap dari tim M2B.",
+          img: IMGS.news2,
+          featured: false,
+        },
+        {
+          id: 3,
+          cat: "Shipment News",
+          date: "20 Apr 2026",
+          title:
+            "Jadwal Kapal Rute Medan–Shanghai Q2 2026: ETA 14–16 Hari, Slot FCL Terbatas",
+          excerpt:
+            "Volume impor menjelang Lebaran meningkat. M2B merangkum jadwal terbaru rute China–Belawan dan rekomendasi booking awal.",
+          img: IMGS.news3,
+          featured: false,
+        },
+        {
+          id: 4,
+          cat: "Port Update",
+          date: "18 Apr 2026",
+          title:
+            "Pelabuhan Belawan Tambah Kapasitas Bongkar Muat — Target 4 Juta TEU 2026",
+          excerpt:
+            "Pelindo 1 umumkan penambahan crane dan lapangan penumpukan peti kemas BICT. Waktu tunggu rata-rata turun dari 2 hari ke 18 jam.",
+          img: IMGS.news4,
+          featured: false,
+        },
+      ];
+
+      const catColors = {
+        "Port Update": "#0ea5e9",
+        Regulasi: "#7c3aed",
+        "Shipment News": "#16a34a",
+        "Tips & Info": "#d97706",
+        Market: "#d97706",
+      };
+
+      function NewsSection({ accent, r }) {
+        const [activeTab, setActiveTab] = useState("Semua");
+        const tabs = [
+          "Semua",
+          "Port Update",
+          "Regulasi",
+          "Shipment News",
+          "Market",
+        ];
+        const filtered =
+          activeTab === "Semua"
+            ? newsData
+            : newsData.filter((n) => n.cat === activeTab);
+        const featured = filtered.find((n) => n.featured) || filtered[0];
+        const rest = filtered.filter((n) => n !== featured);
+
+        return (
+          <section
+            id="berita"
+            style={{
+              padding: "80px 40px",
+              background: "#fff",
+              borderTop: "1px solid #e5e2dc",
+            }}
+          >
+            <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "flex-end",
+                  marginBottom: 32,
+                  flexWrap: "wrap",
+                  gap: 16,
+                }}
+              >
+                <div>
+                  <Tag color={accent}>Berita Terkini</Tag>
+                  <h2
+                    style={{
+                      fontFamily: "Syne",
+                      fontWeight: 800,
+                      fontSize: 34,
+                      letterSpacing: -0.8,
+                      marginTop: 12,
+                      marginBottom: 6,
+                    }}
+                  >
+                    Update Logistik & Shipment
+                  </h2>
+                  <p style={{ color: "#666", fontSize: 15 }}>
+                    Info terkini seputar pelabuhan, regulasi, dan kegiatan
+                    pengiriman.
+                  </p>
+                </div>
+                <a
+                  href="#"
+                  style={{
+                    fontSize: 13,
+                    color: accent,
+                    fontWeight: 600,
+                    textDecoration: "none",
+                  }}
+                >
+                  Lihat semua berita →
+                </a>
+              </div>
+
+              {/* Category Tabs */}
+              <div
+                style={{
+                  display: "flex",
+                  gap: 8,
+                  marginBottom: 28,
+                  flexWrap: "wrap",
+                }}
+              >
+                {tabs.map((t) => (
+                  <button
+                    key={t}
+                    onClick={() => setActiveTab(t)}
+                    style={{
+                      padding: "6px 16px",
+                      borderRadius: 20,
+                      border: "none",
+                      cursor: "pointer",
+                      background: activeTab === t ? accent : "#f0ede8",
+                      color: activeTab === t ? "#fff" : "#666",
+                      fontSize: 13,
+                      fontWeight: 500,
+                      fontFamily: "DM Sans",
+                      transition: "all .15s",
+                    }}
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
+
+              {/* News Grid */}
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1.4fr 1fr",
+                  gap: 20,
+                }}
+              >
+                {/* Featured */}
+                {featured && (
+                  <div
+                    style={{
+                      borderRadius: r * 1.5,
+                      overflow: "hidden",
+                      border: "1px solid #e5e2dc",
+                      display: "flex",
+                      flexDirection: "column",
+                      cursor: "pointer",
+                      transition: "box-shadow .2s",
+                      boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+                    }}
+                  >
+                    <div
+                      style={{
+                        height: 260,
+                        backgroundImage: `url(${featured.img})`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                        position: "relative",
+                      }}
+                    >
+                      <div
+                        style={{
+                          position: "absolute",
+                          inset: 0,
+                          background:
+                            "linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.7))",
+                        }}
+                      />
+                      <div
+                        style={{ position: "absolute", bottom: 16, left: 16 }}
+                      >
+                        <span
+                          style={{
+                            background: catColors[featured.cat] || accent,
+                            color: "#fff",
+                            fontSize: 10,
+                            fontWeight: 700,
+                            padding: "3px 8px",
+                            borderRadius: 4,
+                            textTransform: "uppercase",
+                          }}
+                        >
+                          {featured.cat}
+                        </span>
+                      </div>
+                    </div>
+                    <div style={{ padding: "20px 24px 24px", flex: 1 }}>
+                      <div
+                        style={{ fontSize: 11, color: "#aaa", marginBottom: 8 }}
+                      >
+                        {featured.date}
+                      </div>
+                      <h3
+                        style={{
+                          fontFamily: "Syne",
+                          fontWeight: 700,
+                          fontSize: 18,
+                          lineHeight: 1.35,
+                          marginBottom: 10,
+                          color: "#0f0f14",
+                        }}
+                      >
+                        {featured.title}
+                      </h3>
+                      <p
+                        style={{ fontSize: 13, color: "#777", lineHeight: 1.7 }}
+                      >
+                        {featured.excerpt}
+                      </p>
+                      <div
+                        style={{
+                          marginTop: 16,
+                          fontSize: 13,
+                          color: accent,
+                          fontWeight: 600,
+                        }}
+                      >
+                        Baca selengkapnya →
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Right column — smaller cards */}
+                <div
+                  style={{ display: "flex", flexDirection: "column", gap: 14 }}
+                >
+                  {rest.slice(0, 3).map((n) => (
+                    <NewsCard key={n.id} n={n} accent={accent} r={r} />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+        );
+      }
+
+      function NewsCard({ n, accent, r }) {
+        const [hov, setHov] = useState(false);
+        return (
+          <div
+            onMouseEnter={() => setHov(true)}
+            onMouseLeave={() => setHov(false)}
+            style={{
+              display: "flex",
+              gap: 14,
+              borderRadius: r,
+              border: `1px solid ${hov ? accent + "44" : "#e5e2dc"}`,
+              overflow: "hidden",
+              cursor: "pointer",
+              transition: "all .18s",
+              background: hov ? "#fafaf8" : "#fff",
+              boxShadow: hov ? "0 4px 16px rgba(0,0,0,0.07)" : "none",
+            }}
+          >
+            <div
+              style={{
+                width: 100,
+                flexShrink: 0,
+                backgroundImage: `url(${n.img})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            />
+            <div style={{ padding: "14px 14px 14px 0", flex: 1 }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  marginBottom: 6,
+                }}
+              >
+                <span
+                  style={{
+                    background: catColors[n.cat] || accent,
+                    color: "#fff",
+                    fontSize: 9,
+                    fontWeight: 700,
+                    padding: "2px 6px",
+                    borderRadius: 3,
+                    textTransform: "uppercase",
+                  }}
+                >
+                  {n.cat}
+                </span>
+                <span style={{ fontSize: 11, color: "#bbb" }}>{n.date}</span>
+              </div>
+              <div
+                style={{
+                  fontFamily: "Syne",
+                  fontWeight: 700,
+                  fontSize: 13,
+                  lineHeight: 1.4,
+                  color: "#0f0f14",
+                  marginBottom: 6,
+                }}
+              >
+                {n.title}
+              </div>
+              <div style={{ fontSize: 12, color: accent, fontWeight: 600 }}>
+                Baca →
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      // ─── Currency Widget ──────────────────────────────────────────────────────
+      function CurrencyWidget({ accent }) {
+        const rates = [
+          { pair: "USD/IDR", rate: "16.480", change: "+0.3%", up: true },
+          { pair: "CNY/IDR", rate: "2.270", change: "-0.1%", up: false },
+          { pair: "SGD/IDR", rate: "12.340", change: "+0.2%", up: true },
+          { pair: "JPY/IDR", rate: "110", change: "+0.5%", up: true },
+        ];
+        return (
+          <div style={{ background: "#0f0f14", padding: "20px 40px" }}>
+            <div
+              style={{
+                maxWidth: 1200,
+                margin: "0 auto",
+                display: "flex",
+                alignItems: "center",
+                gap: 40,
+                flexWrap: "wrap",
+              }}
+            >
+              <div
+                style={{
+                  fontSize: 11,
+                  color: "#666",
+                  textTransform: "uppercase",
+                  letterSpacing: 1,
+                  flexShrink: 0,
+                  fontWeight: 600,
+                }}
+              >
+                Kurs Referensi · BI Rate
+              </div>
+              <div
+                style={{ display: "flex", gap: 32, flex: 1, flexWrap: "wrap" }}
+              >
+                {rates.map((r) => (
+                  <div
+                    key={r.pair}
+                    style={{ display: "flex", gap: 10, alignItems: "center" }}
+                  >
+                    <span
+                      style={{ fontSize: 12, color: "#888", fontWeight: 600 }}
+                    >
+                      {r.pair}
+                    </span>
+                    <span
+                      style={{
+                        fontSize: 14,
+                        color: "#fff",
+                        fontWeight: 700,
+                        fontFamily: "Syne",
+                      }}
+                    >
+                      {r.rate}
+                    </span>
+                    <span
+                      style={{
+                        fontSize: 11,
+                        color: r.up ? "#22c55e" : "#ef4444",
+                      }}
+                    >
+                      {r.up ? "▲" : "▼"} {r.change}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <div style={{ fontSize: 11, color: "#444", flexShrink: 0 }}>
+                Update 24 Apr 2026 · 09.00 WIB
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      // ─── Portal Feature ───────────────────────────────────────────────────────
+      function PortalFeature({ accent, r }) {
+        return (
+          <section
+            style={{
+              padding: "80px 40px",
+              background: "#f7f5f0",
+              borderTop: "1px solid #e5e2dc",
+            }}
+          >
+            <div
+              style={{
+                maxWidth: 1200,
+                margin: "0 auto",
+                display: "grid",
+                gridTemplateColumns: "1fr 1.2fr",
+                gap: 60,
+                alignItems: "center",
+              }}
+            >
+              <div>
+                <Tag color={accent}>Portal M2B</Tag>
+                <h2
+                  style={{
+                    fontFamily: "Syne",
+                    fontWeight: 800,
+                    fontSize: 34,
+                    letterSpacing: -0.8,
+                    marginTop: 12,
+                    marginBottom: 16,
+                  }}
+                >
+                  Tracking & Dokumen Real-Time
+                </h2>
+                <p style={{ color: "#666", lineHeight: 1.8, marginBottom: 28 }}>
+                  Pantau status shipment, unduh dokumen, dan cek invoice
+                  langsung dari dashboard online M2B — kapan saja, di mana saja.
+                </p>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 14,
+                    marginBottom: 32,
+                  }}
+                >
+                  {[
+                    [
+                      "📍 Live Tracking",
+                      "Status pengiriman real-time dari port ke tujuan",
+                    ],
+                    [
+                      "📋 Dokumen Digital",
+                      "PIB, PEB, B/L tersedia langsung di dashboard",
+                    ],
+                    [
+                      "💰 Invoice Transparan",
+                      "Rincian biaya lengkap, tanpa kejutan",
+                    ],
+                  ].map(([t, d]) => (
+                    <div
+                      key={t}
+                      style={{
+                        display: "flex",
+                        gap: 12,
+                        alignItems: "flex-start",
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: 8,
+                          height: 8,
+                          borderRadius: "50%",
+                          background: accent,
+                          marginTop: 7,
+                          flexShrink: 0,
+                        }}
+                      />
+                      <div>
+                        <div style={{ fontWeight: 600, fontSize: 14 }}>{t}</div>
+                        <div style={{ fontSize: 13, color: "#777" }}>{d}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <Btn accent={accent} r={r}>
+                  Coba Portal M2B ↗
+                </Btn>
+              </div>
+              <div
+                style={{
+                  borderRadius: 16,
+                  overflow: "hidden",
+                  border: "1px solid #e5e2dc",
+                  boxShadow: "0 8px 40px rgba(0,0,0,0.1)",
+                }}
+              >
+                <img
+                  src={IMGS.portal}
+                  alt="Portal M2B"
+                  loading="lazy"
+                  decoding="async"
+                  style={{ width: "100%", height: "auto", display: "block" }}
+                />
+              </div>
+            </div>
+          </section>
+        );
+      }
+
+      // ─── Testimonials ─────────────────────────────────────────────────────────
+      function Testimonials({ accent, r }) {
+        const items = [
+          {
+            q: '"Penanganan impor dengan biaya yang jelas dan terukur, tepat waktu. Sangat layak menjadi rekan bisnis Anda."',
+            name: "Edy Serdawanto",
+            co: "Direktur — PT. Dira Baraka Mulia",
+            star: 5,
+          },
+          {
+            q: '"Game-changer for our business! The team at M2B is reliable, efficient, and always responsive."',
+            name: "Mr. Jhonson",
+            co: "GM — Anhui Imp & Export Co., Ltd",
+            star: 5,
+          },
+          {
+            q: '"Tim M2B sangat suportif dan transparan. Tidak ada biaya tersembunyi — ini yang kami cari."',
+            name: "Sarah Aulia",
+            co: "Online Business Owner — Medan",
+            star: 5,
+          },
+        ];
+        return (
+          <section
+            style={{
+              padding: "80px 40px",
+              background: "#fff",
+              borderTop: "1px solid #e5e2dc",
+            }}
+          >
+            <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+              <div style={{ textAlign: "center", marginBottom: 48 }}>
+                <Tag color={accent}>Testimoni</Tag>
+                <h2
+                  style={{
+                    fontFamily: "Syne",
+                    fontWeight: 800,
+                    fontSize: 34,
+                    letterSpacing: -0.8,
+                    marginTop: 12,
+                    marginBottom: 12,
+                  }}
+                >
+                  Dipercaya Ratusan Klien
+                </h2>
+                <p style={{ color: "#666" }}>
+                  Dari UKM hingga perusahaan ekspor skala besar.
+                </p>
+              </div>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(3, 1fr)",
+                  gap: 20,
+                }}
+              >
+                {items.map((item, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      background: "#f7f5f0",
+                      borderRadius: r * 1.5,
+                      padding: "28px 24px",
+                      border: "1px solid #e5e2dc",
+                    }}
+                  >
+                    <div style={{ marginBottom: 12 }}>
+                      {"★".repeat(item.star)}
+                      <span style={{ color: accent }}>
+                        {"★".repeat(item.star)}
+                      </span>
+                    </div>
+                    <p
+                      style={{
+                        fontSize: 14,
+                        color: "#444",
+                        lineHeight: 1.75,
+                        marginBottom: 20,
+                        fontStyle: "italic",
+                      }}
+                    >
+                      {item.q}
+                    </p>
+                    <div
+                      style={{ display: "flex", gap: 10, alignItems: "center" }}
+                    >
+                      <div
+                        style={{
+                          width: 40,
+                          height: 40,
+                          borderRadius: "50%",
+                          background: accent + "22",
+                          border: `2px solid ${accent}33`,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontFamily: "Syne",
+                          fontWeight: 800,
+                          color: accent,
+                          fontSize: 16,
+                        }}
+                      >
+                        {item.name[0]}
+                      </div>
+                      <div>
+                        <div style={{ fontWeight: 700, fontSize: 14 }}>
+                          {item.name}
+                        </div>
+                        <div style={{ fontSize: 12, color: "#999" }}>
+                          {item.co}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        );
+      }
+
+      // ─── CTA ──────────────────────────────────────────────────────────────────
+      function CTA({ accent, r }) {
+        return (
+          <section style={{ padding: "80px 40px", background: "#0f0f14" }}>
+            <div
+              style={{ maxWidth: 700, margin: "0 auto", textAlign: "center" }}
+            >
+              <h2
+                style={{
+                  fontFamily: "Syne",
+                  fontWeight: 800,
+                  fontSize: 40,
+                  color: "#fff",
+                  letterSpacing: -1,
+                  marginBottom: 16,
+                  lineHeight: 1.1,
+                }}
+              >
+                Siap Ekspor atau Impor?
+                <br />
+                <span style={{ color: accent }}>Mulai Hari Ini.</span>
+              </h2>
+              <p
+                style={{
+                  color: "rgba(255,255,255,0.5)",
+                  fontSize: 16,
+                  marginBottom: 36,
+                  lineHeight: 1.7,
+                }}
+              >
+                Konsultasi gratis, quote transparan, respon cepat. Tidak ada
+                komitmen sebelum kamu setuju.
+              </p>
+              <div
+                style={{
+                  display: "flex",
+                  gap: 14,
+                  justifyContent: "center",
+                  flexWrap: "wrap",
+                }}
+              >
+                <Btn
+                  accent={accent}
+                  r={r}
+                  style={{ padding: "14px 32px", fontSize: 16 }}
+                >
+                  💬 Chat WhatsApp Sekarang
+                </Btn>
+                <Btn
+                  variant="outline"
+                  accent={accent}
+                  r={r}
+                  style={{
+                    padding: "14px 28px",
+                    fontSize: 16,
+                    color: "#fff",
+                    borderColor: "rgba(255,255,255,0.25)",
+                    background: "rgba(255,255,255,0.06)",
+                  }}
+                >
+                  📧 Email Kami
+                </Btn>
+              </div>
+            </div>
+          </section>
+        );
+      }
+
+      // ─── Footer ───────────────────────────────────────────────────────────────
+      function Footer({ accent }) {
+        const cols = [
+          {
+            title: "Layanan",
+            links: [
+              ["Export Handling", "#layanan"],
+              ["Import Handling", "#layanan"],
+              ["Customs Clearance", "#layanan"],
+              ["Door-to-Door", "#layanan"],
+              ["Undername", "#layanan"],
+              ["Konsultasi", "https://wa.me/6281263027818"],
+            ],
+          },
+          {
+            title: "Perusahaan",
+            links: [
+              ["About M2B", "M2B About.html"],
+              ["Tim Kami", "M2B Tim.html"],
+              ["Karir", "M2B Karir.html"],
+              ["Portal M2B ↗", "#"],
+            ],
+          },
+          {
+            title: "Konten",
+            links: [
+              ["Berita Terkini", "#berita"],
+              ["Blog & Artikel", "M2B Blog.html"],
+              ["FAQ", "#faq"],
+              ["Download E-Book ↗", "https://ebook.m2b.co.id"],
+            ],
+          },
+        ];
+        return (
+          <footer
+            style={{
+              background: "#ffffff",
+              borderTop: `4px solid ${accent}`,
+              padding: "64px 40px 32px",
+              color: "#555",
+              position: "relative",
+              overflow: "hidden",
+            }}
+          >
+            {/* Subtle bg pattern */}
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                opacity: 0.04,
+                pointerEvents: "none",
+                backgroundImage: `radial-gradient(circle at 20% 50%, ${accent} 1px, transparent 1px)`,
+                backgroundSize: "32px 32px",
+              }}
+            />
+
+            <div
+              style={{ maxWidth: 1200, margin: "0 auto", position: "relative" }}
+            >
+              {/* Top section — Big logo + cols */}
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1.4fr 1fr 1fr 1fr",
+                  gap: 48,
+                  marginBottom: 48,
+                }}
+              >
+                {/* Brand col */}
+                <div>
+                  <img
+                    src="assets/logo-m2b-clean.png"
+                    alt="M2B"
+                    loading="lazy"
+                    decoding="async"
+                    style={{
+                      height: 80,
+                      width: "auto",
+                      display: "block",
+                      marginBottom: 18,
+                      filter: "drop-shadow(0 6px 18px rgba(30,58,95,0.18))",
+                    }}
+                  />
+                  <div
+                    style={{
+                      fontFamily: "Syne",
+                      fontWeight: 700,
+                      fontSize: 14,
+                      color: "#1e3a5f",
+                      marginBottom: 6,
+                      letterSpacing: -0.2,
+                    }}
+                  >
+                    PT. Mora Multi Berkah
+                  </div>
+                  <div
+                    style={{
+                      fontSize: 12,
+                      color: "#888",
+                      marginBottom: 16,
+                      lineHeight: 1.75,
+                    }}
+                  >
+                    Freight Forwarder & Customs Broker.
+                    <br />
+                    Mitra logistik tepercaya dari Medan untuk Indonesia & dunia.
+                  </div>
+                  {/* Social */}
+                  <div style={{ display: "flex", gap: 8 }}>
+                    {[
+                      ["💼", "LinkedIn"],
+                      ["📷", "Instagram"],
+                      ["📘", "Facebook"],
+                      ["▶", "YouTube"],
+                    ].map(([i, n]) => (
+                      <a
+                        key={n}
+                        href="#"
+                        title={n}
+                        style={{
+                          width: 36,
+                          height: 36,
+                          borderRadius: 8,
+                          border: `1px solid #e5e2dc`,
+                          background: "#fafaf8",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: 14,
+                          textDecoration: "none",
+                          transition: "all .15s",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = accent;
+                          e.currentTarget.style.borderColor = accent;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = "#fafaf8";
+                          e.currentTarget.style.borderColor = "#e5e2dc";
+                        }}
+                      >
+                        <span>{i}</span>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+                {/* Link columns */}
+                {cols.map((col) => (
+                  <div key={col.title}>
+                    <div
+                      style={{
+                        fontFamily: "Syne",
+                        fontWeight: 700,
+                        fontSize: 12,
+                        color: accent,
+                        marginBottom: 18,
+                        textTransform: "uppercase",
+                        letterSpacing: 1,
+                      }}
+                    >
+                      {col.title}
+                    </div>
+                    {col.links.map(([label, href]) => (
+                      <div
+                        key={label}
+                        style={{ fontSize: 13, marginBottom: 12 }}
+                      >
+                        <a
+                          href={href}
+                          target={href.startsWith("http") ? "_blank" : "_self"}
+                          rel={
+                            href.startsWith("http") ? "noopener noreferrer" : ""
+                          }
+                          style={{
+                            color: "#555",
+                            textDecoration: "none",
+                            transition: "color .15s",
+                          }}
+                          onMouseEnter={(e) => (e.target.style.color = accent)}
+                          onMouseLeave={(e) => (e.target.style.color = "#555")}
+                        >
+                          {label}
+                        </a>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+
+              {/* Contact card strip */}
+              <div
+                style={{
+                  background: "#fafaf8",
+                  border: "1px solid #e5e2dc",
+                  borderRadius: 14,
+                  padding: "20px 28px",
+                  marginBottom: 32,
+                  display: "grid",
+                  gridTemplateColumns: "repeat(4, 1fr)",
+                  gap: 24,
+                }}
+              >
+                {[
+                  ["📍", "Kantor", "Medan, Sumatera Utara"],
+                  ["📧", "Email", "sales@m2b.co.id"],
+                  ["📱", "WhatsApp", "+62 812-6302-7818"],
+                  ["🕒", "Jam Operasional", "Senin–Sabtu · 08–17 WIB"],
+                ].map(([icon, label, val]) => (
+                  <div
+                    key={label}
+                    style={{
+                      display: "flex",
+                      gap: 12,
+                      alignItems: "flex-start",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: 36,
+                        height: 36,
+                        borderRadius: 10,
+                        background: accent + "12",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: 16,
+                        flexShrink: 0,
+                      }}
+                    >
+                      {icon}
+                    </div>
+                    <div>
+                      <div
+                        style={{
+                          fontSize: 11,
+                          color: "#999",
+                          textTransform: "uppercase",
+                          letterSpacing: 0.5,
+                          fontWeight: 600,
+                          marginBottom: 2,
+                        }}
+                      >
+                        {label}
+                      </div>
+                      <div
+                        style={{
+                          fontSize: 13,
+                          color: "#1e3a5f",
+                          fontWeight: 600,
+                        }}
+                      >
+                        {val}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Legalitas badges */}
+              <div
+                style={{
+                  display: "flex",
+                  gap: 8,
+                  flexWrap: "wrap",
+                  marginBottom: 24,
+                  alignItems: "center",
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: 11,
+                    color: "#999",
+                    fontWeight: 600,
+                    textTransform: "uppercase",
+                    letterSpacing: 1,
+                    marginRight: 8,
+                  }}
+                >
+                  Legalitas:
+                </span>
+                {["NIB", "NPWP", "ALFI", "KADIN", "LNSW", "Bea Cukai RI"].map(
+                  (l) => (
+                    <span
+                      key={l}
+                      style={{
+                        padding: "4px 10px",
+                        border: "1px solid #e5e2dc",
+                        borderRadius: 4,
+                        fontSize: 11,
+                        color: "#666",
+                        background: "#fff",
+                        fontWeight: 500,
+                      }}
+                    >
+                      {l}
+                    </span>
+                  ),
+                )}
+              </div>
+
+              {/* Bottom row */}
+              <div
+                style={{
+                  borderTop: "1px solid #e5e2dc",
+                  paddingTop: 24,
+                  display: "flex",
+                  justifyContent: "space-between",
+                  flexWrap: "wrap",
+                  gap: 12,
+                  fontSize: 12,
+                  color: "#888",
+                }}
+              >
+                <span>
+                  © {new Date().getFullYear()} PT. Mora Multi Berkah. All rights
+                  reserved.
+                </span>
+                <span style={{ display: "flex", gap: 16 }}>
+                  <a href="#" style={{ color: "#888", textDecoration: "none" }}>
+                    Privacy Policy
+                  </a>
+                  <a href="#" style={{ color: "#888", textDecoration: "none" }}>
+                    Terms of Service
+                  </a>
+                  <span style={{ color: "#ccc" }}>·</span>
+                  <span style={{ color: accent, fontWeight: 600 }}>
+                    LOGISTIC · SOLUTION · PARTNER
+                  </span>
+                </span>
+              </div>
+            </div>
+          </footer>
+        );
+      }
+
+      // ─── About / Director ─────────────────────────────────────────────────────
+      function About({ accent, r }) {
+        return (
+          <section
+            id="about"
+            style={{
+              padding: "80px 40px",
+              background: "#fff",
+              borderTop: "1px solid #e5e2dc",
+            }}
+          >
+            <div
+              style={{
+                maxWidth: 1100,
+                margin: "0 auto",
+                display: "grid",
+                gridTemplateColumns: "1fr 1.4fr",
+                gap: 56,
+                alignItems: "center",
+              }}
+            >
+              {/* Director image card */}
+              <div style={{ position: "relative" }}>
+                <div
+                  style={{
+                    borderRadius: r * 2,
+                    overflow: "hidden",
+                    aspectRatio: "4/5",
+                    backgroundImage:
+                      "url(https://images.unsplash.com/photo-1573497019418-b400bb3ab074?auto=format&fit=crop&w=700&q=80)",
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    border: "1px solid #e5e2dc",
+                    boxShadow: "0 16px 48px rgba(0,0,0,0.12)",
+                  }}
+                />
+                {/* Floating badge */}
+                <div
+                  style={{
+                    position: "absolute",
+                    bottom: -24,
+                    left: -24,
+                    background: "#fff",
+                    padding: "18px 22px",
+                    borderRadius: r * 1.5,
+                    border: "1px solid #e5e2dc",
+                    boxShadow: "0 12px 36px rgba(0,0,0,0.1)",
+                    display: "flex",
+                    gap: 14,
+                    alignItems: "center",
+                  }}
+                >
+                  <div
+                    style={{
+                      width: 44,
+                      height: 44,
+                      borderRadius: "50%",
+                      background: accent + "14",
+                      border: `2px solid ${accent}33`,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: 20,
+                    }}
+                  >
+                    👋
+                  </div>
+                  <div>
+                    <div
+                      style={{
+                        fontFamily: "Syne",
+                        fontWeight: 800,
+                        fontSize: 14,
+                      }}
+                    >
+                      Eka Mayang Sari
+                    </div>
+                    <div style={{ fontSize: 11, color: "#999" }}>
+                      Direktur — PT. Mora Multi Berkah
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {/* Text */}
+              <div>
+                <Tag color={accent}>Tentang Kami</Tag>
+                <h2
+                  style={{
+                    fontFamily: "Syne",
+                    fontWeight: 800,
+                    fontSize: 32,
+                    letterSpacing: -0.8,
+                    marginTop: 12,
+                    marginBottom: 18,
+                    lineHeight: 1.2,
+                  }}
+                >
+                  Freight Forwarder & Jasa Logistik
+                  <br />
+                  <span style={{ color: accent }}>
+                    Terpercaya di Indonesia.
+                  </span>
+                </h2>
+                <p
+                  style={{
+                    fontSize: 15,
+                    color: "#555",
+                    lineHeight: 1.85,
+                    marginBottom: 18,
+                  }}
+                >
+                  Kami adalah perusahaan <strong>freight forwarder</strong>{" "}
+                  sekaligus <strong>PPJK</strong> (kami sendiri) yang berbasis
+                  di Medan, Sumatera Utara — Indonesia. Kami menyediakan dan
+                  dukung layanan logistik ekspor-impor secara menyeluruh, mulai
+                  dari pengurusan dokumen, customs clearance, hingga pengiriman
+                  barang ke berbagai destinasi nasional maupun internasional.
+                </p>
+                <p
+                  style={{
+                    fontSize: 15,
+                    color: "#555",
+                    lineHeight: 1.85,
+                    marginBottom: 24,
+                  }}
+                >
+                  Kami hadir untuk membantu UMKM maupun perusahaan besar dengan
+                  solusi logistik yang andal dan terukur sesuai kebutuhan Anda.
+                </p>
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(3, 1fr)",
+                    gap: 16,
+                  }}
+                >
+                  {[
+                    ["🏆", "5+ Tahun", "Berpengalaman"],
+                    ["🌍", "20+", "Negara Tujuan"],
+                    ["🤝", "100+", "Klien Aktif"],
+                  ].map(([icon, big, sub]) => (
+                    <div
+                      key={sub}
+                      style={{
+                        padding: "14px 16px",
+                        borderRadius: r,
+                        border: "1px solid #e5e2dc",
+                        background: "#fafaf8",
+                      }}
+                    >
+                      <div style={{ fontSize: 18, marginBottom: 4 }}>
+                        {icon}
+                      </div>
+                      <div
+                        style={{
+                          fontFamily: "Syne",
+                          fontWeight: 800,
+                          fontSize: 16,
+                          color: accent,
+                        }}
+                      >
+                        {big}
+                      </div>
+                      <div style={{ fontSize: 11, color: "#888" }}>{sub}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+        );
+      }
+
+      // ─── Why Choose Us ────────────────────────────────────────────────────────
+      function WhyUs({ accent, r }) {
+        const reasons = [
+          {
+            icon: "✓",
+            t: "Terdaftar dan Berpengalaman",
+            d: "Resmi terdaftar di Dirjen Bea Cukai, NIB, dan asosiasi industri logistik Indonesia.",
+          },
+          {
+            icon: "💎",
+            t: "Harga Transparan, Tanpa Biaya Tersembunyi",
+            d: "Quote rinci dan jujur. Tidak ada surprise di akhir transaksi.",
+          },
+          {
+            icon: "⚓",
+            t: "Jaringan Kuat di Pelabuhan Utama",
+            d: "Akses langsung ke Belawan, Tanjung Priok, dan Tanjung Perak.",
+          },
+          {
+            icon: "⚡",
+            t: "Komunikasi Cepat & Profesional",
+            d: "Respon rapi via WhatsApp, email, atau Portal M2B kapan saja.",
+          },
+          {
+            icon: "🎯",
+            t: "Dukungan Personal Sesuai Kebutuhan",
+            d: "Setiap shipment ditangani konsultan dedikasi, bukan template generik.",
+          },
+          {
+            icon: "🛡",
+            t: "Penanganan Barang Aman & Terjamin",
+            d: "Proteksi penuh dari gudang hingga tujuan akhir. Asuransi tersedia.",
+          },
+        ];
+        return (
+          <section
+            style={{
+              padding: "80px 40px",
+              background: "#0f0f14",
+              color: "#fff",
+            }}
+          >
+            <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+              <div style={{ textAlign: "center", marginBottom: 48 }}>
+                <Tag color={accent} bg={accent + "22"}>
+                  Keunggulan
+                </Tag>
+                <h2
+                  style={{
+                    fontFamily: "Syne",
+                    fontWeight: 800,
+                    fontSize: 36,
+                    letterSpacing: -0.8,
+                    marginTop: 12,
+                    marginBottom: 12,
+                    color: "#fff",
+                  }}
+                >
+                  Mengapa Memilih Kami?
+                </h2>
+                <p
+                  style={{
+                    color: "rgba(255,255,255,0.55)",
+                    maxWidth: 540,
+                    margin: "0 auto",
+                    fontSize: 15,
+                  }}
+                >
+                  Lebih dari sekadar jasa ekspedisi — M2B adalah mitra strategis
+                  untuk kelancaran bisnismu.
+                </p>
+              </div>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(3, 1fr)",
+                  gap: 20,
+                }}
+              >
+                {reasons.map((r, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      padding: "24px 22px",
+                      borderRadius: 14,
+                      background: "rgba(255,255,255,0.03)",
+                      border: "1px solid rgba(255,255,255,0.08)",
+                      transition: "all .2s",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: 44,
+                        height: 44,
+                        borderRadius: 12,
+                        background: accent + "22",
+                        color: accent,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: 20,
+                        fontWeight: 700,
+                        marginBottom: 16,
+                      }}
+                    >
+                      {r.icon}
+                    </div>
+                    <div
+                      style={{
+                        fontFamily: "Syne",
+                        fontWeight: 700,
+                        fontSize: 16,
+                        color: "#fff",
+                        marginBottom: 8,
+                      }}
+                    >
+                      {r.t}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: 13,
+                        color: "rgba(255,255,255,0.55)",
+                        lineHeight: 1.7,
+                      }}
+                    >
+                      {r.d}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        );
+      }
+
+      // ─── FAQ ──────────────────────────────────────────────────────────────────
+      function FAQ({ accent, r }) {
+        const faqs = [
+          {
+            q: "Dokumen apa saja yang dibutuhkan untuk ekspor?",
+            a: "Untuk ekspor, dokumen utama yang dibutuhkan: PEB (Pemberitahuan Ekspor Barang), Invoice, Packing List, Bill of Lading (B/L), dan SKA (Surat Keterangan Asal) bila diperlukan. Tim M2B akan membantu menyiapkan semua dokumen ini.",
+          },
+          {
+            q: "Berapa lama proses pengiriman barang internasional?",
+            a: "Tergantung rute dan moda transportasi. Untuk pengiriman laut (sea freight) ke Asia Tenggara umumnya 5–10 hari, ke Eropa 25–35 hari. Pengiriman udara (air freight) jauh lebih cepat: 3–7 hari ke sebagian besar destinasi.",
+          },
+          {
+            q: "Apakah saya bisa impor barang tanpa memiliki API/NIB?",
+            a: "Bisa! M2B menyediakan layanan Undername Import, di mana proses impor menggunakan identitas resmi M2B. Cocok untuk UMKM atau importir pemula yang belum memiliki dokumen perusahaan lengkap.",
+          },
+          {
+            q: "Apakah biaya layanan M2B sudah termasuk bea masuk dan pajak?",
+            a: "Quote yang kami berikan biasanya memisahkan jasa M2B (handling fee) dengan komponen bea masuk dan pajak impor (PPN, PPh) — semuanya transparan dan dirinci jelas di quotation, tidak ada biaya tersembunyi.",
+          },
+          {
+            q: "Bagaimana cara melacak status barang saya?",
+            a: "Setelah barang dikirim, Anda mendapat akses ke Portal M2B untuk tracking real-time. Tim kami juga memberi update via WhatsApp di setiap milestone penting: keberangkatan, transit, customs, dan pengiriman akhir.",
+          },
+        ];
+        const [open, setOpen] = useState(0);
+
+        return (
+          <section style={{ padding: "80px 40px", background: "#f7f5f0" }}>
+            <div style={{ maxWidth: 900, margin: "0 auto" }}>
+              <div style={{ textAlign: "center", marginBottom: 40 }}>
+                <Tag color={accent}>FAQ</Tag>
+                <h2
+                  style={{
+                    fontFamily: "Syne",
+                    fontWeight: 800,
+                    fontSize: 32,
+                    letterSpacing: -0.8,
+                    marginTop: 12,
+                    marginBottom: 10,
+                  }}
+                >
+                  Bea Cukai & Regulasi Perdagangan
+                </h2>
+                <p style={{ color: "#666" }}>
+                  Pertanyaan paling sering ditanyakan klien kami.
+                </p>
+              </div>
+              <div
+                style={{ display: "flex", flexDirection: "column", gap: 12 }}
+              >
+                {faqs.map((f, i) => (
+                  <FAQItem
+                    key={i}
+                    f={f}
+                    accent={accent}
+                    r={r}
+                    isOpen={open === i}
+                    onToggle={() => setOpen(open === i ? -1 : i)}
+                  />
+                ))}
+              </div>
+              <div
+                style={{
+                  marginTop: 32,
+                  textAlign: "center",
+                  fontSize: 14,
+                  color: "#666",
+                }}
+              >
+                Tidak menemukan jawabanmu?{" "}
+                <a
+                  href="#"
+                  style={{
+                    color: accent,
+                    fontWeight: 600,
+                    textDecoration: "none",
+                  }}
+                >
+                  Hubungi tim kami →
+                </a>
+              </div>
+            </div>
+          </section>
+        );
+      }
+
+      function FAQItem({ f, accent, r, isOpen, onToggle }) {
+        return (
+          <div
+            style={{
+              background: "#fff",
+              borderRadius: r * 1.5,
+              border: `1px solid ${isOpen ? accent + "55" : "#e5e2dc"}`,
+              overflow: "hidden",
+              boxShadow: isOpen
+                ? `0 8px 24px ${accent}1a`
+                : "0 1px 4px rgba(0,0,0,0.04)",
+              transition: "all .2s",
+            }}
+          >
+            <button
+              onClick={onToggle}
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                padding: "20px 24px",
+                background: "transparent",
+                border: "none",
+                cursor: "pointer",
+                fontFamily: "DM Sans",
+                fontSize: 15,
+                fontWeight: 600,
+                color: "#0f0f14",
+                textAlign: "left",
+              }}
+            >
+              <span>{f.q}</span>
+              <span
+                style={{
+                  width: 28,
+                  height: 28,
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  background: isOpen ? accent : "#f0ede8",
+                  color: isOpen ? "#fff" : "#555",
+                  fontSize: 16,
+                  fontWeight: 700,
+                  flexShrink: 0,
+                  transform: isOpen ? "rotate(45deg)" : "rotate(0)",
+                  transition: "transform .2s, background .2s",
+                }}
+              >
+                +
+              </span>
+            </button>
+            {isOpen && (
+              <div
+                style={{
+                  padding: "0 24px 22px",
+                  fontSize: 14,
+                  color: "#666",
+                  lineHeight: 1.75,
+                }}
+              >
+                {f.a}
+              </div>
+            )}
+          </div>
+        );
+      }
+
+      // ─── Partners ─────────────────────────────────────────────────────────────
+      function Partners({ accent, r }) {
+        const partners = [
+          "PT. Atlanta Kalan Indo",
+          "PT. Pelaksana Indonesia (Persero)",
+          "Anhui Imp & Export Co.",
+          "PT. Dira Baraka Mulia",
+          "PT. Sumatra Trade",
+          "Belawan Logistics",
+          "CMA CGM",
+          "Maersk Line",
+        ];
+        return (
+          <section
+            style={{
+              padding: "64px 40px",
+              background: "#fff",
+              borderTop: "1px solid #e5e2dc",
+            }}
+          >
+            <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+              <div style={{ textAlign: "center", marginBottom: 32 }}>
+                <Tag color={accent}>Mitra Kami</Tag>
+                <h2
+                  style={{
+                    fontFamily: "Syne",
+                    fontWeight: 800,
+                    fontSize: 26,
+                    letterSpacing: -0.6,
+                    marginTop: 12,
+                  }}
+                >
+                  Dipercaya oleh Mitra Bisnis Lintas Negara
+                </h2>
+              </div>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(4, 1fr)",
+                  gap: 0,
+                  border: "1px solid #e5e2dc",
+                  borderRadius: r * 1.5,
+                  overflow: "hidden",
+                }}
+              >
+                {partners.map((p, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      padding: "28px 16px",
+                      textAlign: "center",
+                      fontFamily: "Syne",
+                      fontWeight: 700,
+                      fontSize: 13,
+                      color: "#555",
+                      borderRight:
+                        (i + 1) % 4 !== 0 ? "1px solid #e5e2dc" : "none",
+                      borderBottom: i < 4 ? "1px solid #e5e2dc" : "none",
+                      background: "#fafaf8",
+                      transition: "background .15s",
+                    }}
+                  >
+                    {p}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        );
+      }
+
+      // ─── CS / Contact CTA ─────────────────────────────────────────────────────
+      function CSContact({ accent, r }) {
+        const { t } = useLang();
+        return (
+          <section
+            style={{
+              padding: "80px 40px",
+              background: "#f7f5f0",
+              borderTop: "1px solid #e5e2dc",
+            }}
+          >
+            <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1.4fr",
+                  gap: 48,
+                  alignItems: "stretch",
+                }}
+              >
+                {/* Left: Contact Info */}
+                <div
+                  style={{
+                    background: "#fff",
+                    borderRadius: r * 2,
+                    border: "1px solid #e5e2dc",
+                    padding: 32,
+                    boxShadow: "0 8px 32px rgba(11,17,32,0.06)",
+                  }}
+                >
+                  <Tag color={accent}>{t("Hubungi Kami", "Contact Us")}</Tag>
+                  <h2
+                    style={{
+                      fontFamily: "Syne",
+                      fontWeight: 800,
+                      fontSize: 30,
+                      letterSpacing: -0.8,
+                      marginTop: 12,
+                      marginBottom: 14,
+                      lineHeight: 1.1,
+                    }}
+                  >
+                    {t("Siap Ekspor", "Ready to Export")}
+                    <br />
+                    {t("atau Impor?", "or Import?")}
+                  </h2>
+                  <p
+                    style={{
+                      fontSize: 14,
+                      color: "#555",
+                      lineHeight: 1.75,
+                      marginBottom: 24,
+                    }}
+                  >
+                    {t(
+                      "Konsultasikan kebutuhanmu langsung dengan tim ahli M2B — gratis, tanpa komitmen.",
+                      "Discuss your needs directly with our expert team — free, no commitment.",
+                    )}
+                  </p>
+
+                  {/* Contact cards */}
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 10,
+                      marginBottom: 24,
+                    }}
+                  >
+                    {[
+                      [
+                        "📍",
+                        t("Kantor Pusat", "Head Office"),
+                        "Medan, Sumatera Utara, Indonesia",
+                      ],
+                      ["📱", "WhatsApp", "+62 812-6302-7818"],
+                      ["📧", "Email", "sales@m2b.co.id"],
+                      [
+                        "🕒",
+                        t("Jam Operasional", "Operating Hours"),
+                        t(
+                          "Senin–Sabtu · 08.00 – 17.00 WIB",
+                          "Mon–Sat · 08:00 – 17:00 WIB",
+                        ),
+                      ],
+                    ].map(([icon, label, val]) => (
+                      <div
+                        key={label}
+                        style={{
+                          display: "flex",
+                          gap: 12,
+                          alignItems: "flex-start",
+                          padding: "12px 14px",
+                          borderRadius: r,
+                          background: "#fafaf8",
+                          border: "1px solid #f0ede8",
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: 36,
+                            height: 36,
+                            borderRadius: 10,
+                            background: accent + "14",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            fontSize: 16,
+                            flexShrink: 0,
+                          }}
+                        >
+                          {icon}
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div
+                            style={{
+                              fontSize: 10,
+                              color: "#999",
+                              textTransform: "uppercase",
+                              letterSpacing: 0.5,
+                              fontWeight: 600,
+                            }}
+                          >
+                            {label}
+                          </div>
+                          <div
+                            style={{
+                              fontSize: 13,
+                              color: "#0f0f14",
+                              fontWeight: 600,
+                              marginTop: 2,
+                            }}
+                          >
+                            {val}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                    <a
+                      href="https://wa.me/6281263027818"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        flex: 1,
+                        minWidth: 0,
+                        padding: "12px 18px",
+                        borderRadius: r,
+                        background: "#25D366",
+                        color: "#fff",
+                        fontWeight: 700,
+                        fontSize: 14,
+                        textDecoration: "none",
+                        textAlign: "center",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 6,
+                      }}
+                    >
+                      💬 WhatsApp
+                    </a>
+                    <a
+                      href="mailto:sales@m2b.co.id"
+                      style={{
+                        flex: 1,
+                        minWidth: 0,
+                        padding: "12px 18px",
+                        borderRadius: r,
+                        background: "transparent",
+                        color: "#0f0f14",
+                        border: "1.5px solid #d0cdc8",
+                        fontWeight: 600,
+                        fontSize: 14,
+                        textDecoration: "none",
+                        textAlign: "center",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 6,
+                      }}
+                    >
+                      📧 Email
+                    </a>
+                  </div>
+                </div>
+
+                {/* Right: Map */}
+                <div
+                  style={{ display: "flex", flexDirection: "column", gap: 0 }}
+                >
+                  <div
+                    style={{
+                      borderRadius: r * 2,
+                      overflow: "hidden",
+                      border: "1px solid #e5e2dc",
+                      boxShadow: "0 16px 48px rgba(11,17,32,0.12)",
+                      flex: 1,
+                      position: "relative",
+                      minHeight: 420,
+                    }}
+                  >
+                    <iframe
+                      title="M2B Office Location"
+                      src="https://www.google.com/maps?q=PT+Mora+Multi+Berkah+Medan&output=embed"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        border: 0,
+                        display: "block",
+                        minHeight: 420,
+                      }}
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                    />
+                    {/* Map overlay label */}
+                    <div
+                      style={{
+                        position: "absolute",
+                        top: 16,
+                        left: 16,
+                        background: "rgba(255,255,255,0.95)",
+                        backdropFilter: "blur(8px)",
+                        padding: "10px 14px",
+                        borderRadius: r,
+                        boxShadow: "0 4px 16px rgba(11,17,32,0.12)",
+                        display: "flex",
+                        gap: 10,
+                        alignItems: "center",
+                        pointerEvents: "none",
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: 32,
+                          height: 32,
+                          borderRadius: 8,
+                          background: accent + "14",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: 14,
+                        }}
+                      >
+                        📍
+                      </div>
+                      <div>
+                        <div
+                          style={{
+                            fontSize: 11,
+                            color: "#888",
+                            fontWeight: 600,
+                            textTransform: "uppercase",
+                            letterSpacing: 0.5,
+                          }}
+                        >
+                          {t("Kantor Pusat M2B", "M2B Office")}
+                        </div>
+                        <div
+                          style={{
+                            fontFamily: "Syne",
+                            fontWeight: 700,
+                            fontSize: 13,
+                            color: "#0f0f14",
+                          }}
+                        >
+                          PT. Mora Multi Berkah
+                        </div>
+                      </div>
+                    </div>
+                    <a
+                      href="https://maps.app.goo.gl/qxDf2EHjkEngXNGP7"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        position: "absolute",
+                        bottom: 16,
+                        right: 16,
+                        background: accent,
+                        color: "#fff",
+                        padding: "10px 16px",
+                        borderRadius: r,
+                        fontSize: 13,
+                        fontWeight: 700,
+                        textDecoration: "none",
+                        boxShadow: "0 6px 20px rgba(30,58,95,0.4)",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 6,
+                      }}
+                    >
+                      🧭 {t("Buka di Google Maps", "Open in Maps")} ↗
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        );
+      }
+
+      // ─── WhatsApp Floating Button ────────────────────────────────────────────
+      function WhatsAppFloat() {
+        const { t } = useLang();
+        const [hover, setHover] = useState(false);
+        return (
+          <a
+            href="https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20ingin%20konsultasi%20ekspor-impor"
+            target="_blank"
+            rel="noopener noreferrer"
+            onMouseEnter={() => setHover(true)}
+            onMouseLeave={() => setHover(false)}
+            style={{
+              position: "fixed",
+              bottom: 24,
+              right: 24,
+              zIndex: 50,
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              background: "#25D366",
+              color: "#fff",
+              padding: hover ? "14px 20px" : "14px 16px",
+              borderRadius: 999,
+              boxShadow: hover
+                ? "0 12px 40px rgba(37,211,102,0.5)"
+                : "0 8px 24px rgba(37,211,102,0.4)",
+              textDecoration: "none",
+              fontFamily: "DM Sans",
+              fontWeight: 700,
+              fontSize: 14,
+              transition: "all .25s",
+              animation: "wapulse 2.5s ease-in-out infinite",
+            }}
+          >
+            {/* WhatsApp SVG */}
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="#fff"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+            </svg>
+            <span
+              style={{
+                maxWidth: hover ? 200 : 0,
+                overflow: "hidden",
+                whiteSpace: "nowrap",
+                transition: "max-width .25s",
+              }}
+            >
+              {t("Chat dengan kami", "Chat with us")}
+            </span>
+            {/* Online indicator */}
+            <span
+              style={{
+                position: "absolute",
+                top: 8,
+                right: 8,
+                width: 10,
+                height: 10,
+                borderRadius: "50%",
+                background: "#fff",
+                border: "2px solid #25D366",
+                animation: "wapulse 1.5s ease-in-out infinite",
+              }}
+            />
+          </a>
+        );
+      }
+
+      // ─── E-Book CTA Strip ─────────────────────────────────────────────────────
+      function EBookStrip({ accent, r }) {
+        const { t } = useLang();
+        return (
+          <section
+            style={{
+              background: "#0B1120",
+              padding: "56px 40px",
+              position: "relative",
+              overflow: "hidden",
+            }}
+          >
+            {/* Decorative gradient */}
+            <div
+              style={{
+                position: "absolute",
+                top: -100,
+                right: -100,
+                width: 400,
+                height: 400,
+                background: `radial-gradient(circle, ${accent}33 0%, transparent 70%)`,
+                pointerEvents: "none",
+              }}
+            />
+            <div
+              style={{
+                maxWidth: 1200,
+                margin: "0 auto",
+                display: "grid",
+                gridTemplateColumns: "1.4fr 1fr",
+                gap: 48,
+                alignItems: "center",
+                position: "relative",
+              }}
+            >
+              <div>
+                <Tag color="#FFB300" bg="rgba(255,179,0,0.15)">
+                  {t("Belajar Gratis", "Free Learning")}
+                </Tag>
+                <h2
+                  style={{
+                    fontFamily: "Syne",
+                    fontWeight: 800,
+                    fontSize: 32,
+                    letterSpacing: -0.8,
+                    marginTop: 14,
+                    marginBottom: 12,
+                    color: "#F8F5EE",
+                    lineHeight: 1.15,
+                  }}
+                >
+                  {t("Panduan Ekspor-Impor", "Export-Import Guide")}
+                  <br />
+                  <span style={{ color: "#FFB300" }}>
+                    {t("untuk Pemula & UMKM", "for Beginners & SMEs")}
+                  </span>
+                </h2>
+                <p
+                  style={{
+                    color: "rgba(248,245,238,0.6)",
+                    fontSize: 15,
+                    lineHeight: 1.7,
+                    marginBottom: 24,
+                    maxWidth: 520,
+                  }}
+                >
+                  {t(
+                    "Download e-book gratis: cara menghitung biaya impor, dokumen wajib, hingga strategi pilih freight forwarder. Disusun oleh tim ahli M2B.",
+                    "Download our free e-book: how to calculate import costs, required documents, and how to pick the right freight forwarder. Written by M2B experts.",
+                  )}
+                </p>
+                <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+                  <a
+                    href="https://ebook.m2b.co.id"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      padding: "13px 26px",
+                      borderRadius: r,
+                      background: "#FFB300",
+                      color: "#0B1120",
+                      fontFamily: "DM Sans",
+                      fontWeight: 700,
+                      fontSize: 14,
+                      textDecoration: "none",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 8,
+                      boxShadow: "0 8px 24px rgba(255,179,0,0.3)",
+                    }}
+                  >
+                    📚 {t("Beli E-Book Sekarang", "Get E-Book Now")}
+                  </a>
+                  <a
+                    href="https://blog.m2b.co.id"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      padding: "13px 26px",
+                      borderRadius: r,
+                      background: "transparent",
+                      color: "#fff",
+                      border: "1.5px solid rgba(255,255,255,0.25)",
+                      fontFamily: "DM Sans",
+                      fontWeight: 600,
+                      fontSize: 14,
+                      textDecoration: "none",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 8,
+                    }}
+                  >
+                    {t("Baca Blog Kami", "Read Our Blog")} →
+                  </a>
+                </div>
+              </div>
+              {/* E-book mockup */}
+              <div
+                style={{
+                  position: "relative",
+                  height: 280,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <div
+                  style={{
+                    position: "absolute",
+                    width: 180,
+                    height: 240,
+                    borderRadius: 6,
+                    background:
+                      "linear-gradient(135deg, #1E2D4A 0%, #0B1120 100%)",
+                    border: "1px solid rgba(255,179,0,0.3)",
+                    boxShadow:
+                      "0 24px 64px rgba(0,0,0,0.5), -8px 16px 32px rgba(0,0,0,0.4)",
+                    transform: "rotate(-8deg)",
+                    padding: "24px 18px",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <div>
+                    <div
+                      style={{
+                        fontSize: 9,
+                        color: "#FFB300",
+                        letterSpacing: 1,
+                        fontWeight: 700,
+                        marginBottom: 6,
+                      }}
+                    >
+                      E-BOOK
+                    </div>
+                    <div
+                      style={{
+                        fontFamily: "Syne",
+                        fontSize: 16,
+                        color: "#fff",
+                        fontWeight: 800,
+                        lineHeight: 1.15,
+                        marginBottom: 8,
+                      }}
+                    >
+                      Panduan
+                      <br />
+                      Ekspor-Impor
+                    </div>
+                    <div
+                      style={{ fontSize: 9, color: "rgba(255,255,255,0.5)" }}
+                    >
+                      Untuk UMKM &<br />
+                      Importer Pemula
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      borderTop: "1px solid rgba(255,179,0,0.3)",
+                      paddingTop: 10,
+                    }}
+                  >
+                    <div
+                      style={{ fontSize: 9, color: "rgba(255,255,255,0.5)" }}
+                    >
+                      by
+                    </div>
+                    <div
+                      style={{
+                        fontFamily: "Syne",
+                        fontSize: 11,
+                        color: "#FFB300",
+                        fontWeight: 700,
+                      }}
+                    >
+                      M2B Team
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        );
+      }
+
+      // ─── Scroll-to-Top Button ────────────────────────────────────────────────
+      function ScrollToTop() {
+        const visible = useThrottledScroll(600);
+        if (!visible) return null;
+        return (
+          <button
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            style={{
+              position: "fixed",
+              bottom: 100,
+              right: 28,
+              zIndex: 49,
+              width: 44,
+              height: 44,
+              borderRadius: "50%",
+              background: "#0B1120",
+              color: "#fff",
+              border: "none",
+              cursor: "pointer",
+              boxShadow: "0 8px 24px rgba(11,17,32,0.3)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: 18,
+              fontWeight: 700,
+              animation: "scrollBtn .3s ease",
+            }}
+          >
+            ↑
+          </button>
+        );
+      }
+
+      // ─── Tanya Mora — AI Assistant ──────────────────────────────────────────
+      function TanyaMora() {
+        const [open, setOpen] = useState(false);
+        const [messages, setMessages] = useState([
+          {
+            role: "assistant",
+            content:
+              "Halo! Saya Mora 🌸 — asisten virtual M2B. Tanya apa saja tentang ekspor-impor, bea cukai, atau layanan kami!",
+          },
+        ]);
+        const [input, setInput] = useState("");
+        const [loading, setLoading] = useState(false);
+        const msgEndRef = useRef(null);
+
+        useEffect(() => {
+          if (open && msgEndRef.current) {
+            msgEndRef.current.scrollIntoView({
+              behavior: "smooth",
+              block: "nearest",
+            });
+          }
+        }, [messages, open]);
+
+        const send = async (presetMessage) => {
+          const finalMessage = (
+            typeof presetMessage === "string" ? presetMessage : input
+          ).trim();
+          if (!finalMessage || loading) return;
+          const userMsg = finalMessage;
+          setMessages((m) => [...m, { role: "user", content: userMsg }]);
+          setInput("");
+          setLoading(true);
+          try {
+            const sysPrompt = `Kamu adalah "Mora", asisten virtual ramah dari PT. Mora Multi Berkah (M2B), freight forwarder & customs broker di Medan, Indonesia. Jawab pertanyaan tentang ekspor-impor, bea cukai, dan layanan M2B dalam Bahasa Indonesia yang hangat dan jelas. Untuk pertanyaan teknis spesifik, arahkan ke konsultasi gratis via WhatsApp +62 812-6302-7818. Maksimal 3 kalimat per jawaban.`;
+            const reply = await window.claude.complete({
+              messages: [
+                {
+                  role: "user",
+                  content: sysPrompt + "\n\nPertanyaan klien: " + userMsg,
+                },
+              ],
+            });
+            setMessages((m) => [...m, { role: "assistant", content: reply }]);
+          } catch (err) {
+            setMessages((m) => [
+              ...m,
+              {
+                role: "assistant",
+                content:
+                  "Maaf, saya sedang ada gangguan koneksi. Silakan langsung WhatsApp tim kami di +62 812-6302-7818 ya! 🙏",
+              },
+            ]);
+          } finally {
+            setLoading(false);
+          }
+        };
+
+        const quickQs = [
+          "Berapa biaya impor dari China?",
+          "Apa itu undername impor?",
+          "Dokumen ekspor apa saja?",
+        ];
+
+        return (
+          <>
+            {!open && (
+              <button
+                onClick={() => setOpen(true)}
+                style={{
+                  position: "fixed",
+                  bottom: 100,
+                  right: 90,
+                  zIndex: 49,
+                  background:
+                    "linear-gradient(135deg, #f5b91c 0%, #d99e0e 100%)",
+                  color: "#0B1120",
+                  padding: "12px 18px",
+                  border: "none",
+                  cursor: "pointer",
+                  borderRadius: 999,
+                  fontWeight: 800,
+                  fontSize: 14,
+                  fontFamily: "DM Sans, sans-serif",
+                  boxShadow: "0 8px 24px rgba(245,185,28,0.45)",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  animation: "scrollBtn .3s ease",
+                }}
+              >
+                <span style={{ fontSize: 18 }}>💬</span> Tanya Mora
+              </button>
+            )}
+
+            {open && (
+              <div
+                style={{
+                  position: "fixed",
+                  bottom: 24,
+                  right: 24,
+                  zIndex: 51,
+                  width: 380,
+                  maxHeight: "70vh",
+                  background: "#fff",
+                  borderRadius: 16,
+                  boxShadow: "0 24px 64px rgba(0,0,0,0.3)",
+                  display: "flex",
+                  flexDirection: "column",
+                  overflow: "hidden",
+                  animation: "modalSlide .25s ease",
+                }}
+              >
+                {/* Header */}
+                <div
+                  style={{
+                    background:
+                      "linear-gradient(135deg, #0B1120 0%, #1E2D4A 100%)",
+                    color: "#fff",
+                    padding: "16px 18px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 12,
+                  }}
+                >
+                  <div
+                    style={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: "50%",
+                      background: "linear-gradient(135deg, #f5b91c, #d99e0e)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: 20,
+                      flexShrink: 0,
+                      boxShadow: "0 0 0 3px rgba(245,185,28,0.2)",
+                    }}
+                  >
+                    🌸
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div
+                      style={{
+                        fontFamily: "Syne",
+                        fontWeight: 800,
+                        fontSize: 15,
+                        lineHeight: 1.1,
+                      }}
+                    >
+                      Mora
+                    </div>
+                    <div
+                      style={{
+                        fontSize: 11,
+                        color: "rgba(255,255,255,0.6)",
+                        marginTop: 2,
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 5,
+                      }}
+                    >
+                      <span
+                        style={{
+                          width: 6,
+                          height: 6,
+                          borderRadius: "50%",
+                          background: "#22c55e",
+                        }}
+                      />
+                      Asisten virtual M2B
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setOpen(false)}
+                    style={{
+                      background: "rgba(255,255,255,0.1)",
+                      border: "none",
+                      color: "#fff",
+                      width: 28,
+                      height: 28,
+                      borderRadius: "50%",
+                      cursor: "pointer",
+                      fontSize: 14,
+                    }}
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                {/* Messages */}
+                <div
+                  style={{
+                    flex: 1,
+                    overflowY: "auto",
+                    padding: "16px",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 10,
+                    background: "#fafaf6",
+                  }}
+                >
+                  {messages.map((m, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        alignSelf:
+                          m.role === "user" ? "flex-end" : "flex-start",
+                        maxWidth: "85%",
+                        padding: "10px 14px",
+                        borderRadius: 14,
+                        background: m.role === "user" ? "#0B1120" : "#fff",
+                        color: m.role === "user" ? "#fff" : "#1A1F2E",
+                        fontSize: 13,
+                        lineHeight: 1.6,
+                        border:
+                          m.role === "user" ? "none" : "1px solid #e5e2dc",
+                        boxShadow:
+                          m.role === "assistant"
+                            ? "0 1px 4px rgba(0,0,0,0.04)"
+                            : "none",
+                      }}
+                    >
+                      {m.content}
+                    </div>
+                  ))}
+                  {loading && (
+                    <div
+                      style={{
+                        alignSelf: "flex-start",
+                        padding: "10px 14px",
+                        borderRadius: 14,
+                        background: "#fff",
+                        border: "1px solid #e5e2dc",
+                        fontSize: 13,
+                        color: "#666",
+                      }}
+                    >
+                      Mora sedang mengetik...
+                    </div>
+                  )}
+                  <div ref={msgEndRef} />
+                </div>
+
+                {/* Quick questions */}
+                {messages.length <= 1 && (
+                  <div
+                    style={{
+                      padding: "8px 16px",
+                      display: "flex",
+                      gap: 6,
+                      flexWrap: "wrap",
+                      background: "#fafaf6",
+                    }}
+                  >
+                    {quickQs.map((q, i) => (
+                      <button
+                        key={i}
+                        onClick={() => send(q)}
+                        style={{
+                          padding: "6px 12px",
+                          borderRadius: 14,
+                          background: "#fff",
+                          border: "1px solid #e5e2dc",
+                          fontSize: 11,
+                          color: "#1A1F2E",
+                          cursor: "pointer",
+                          fontFamily: "inherit",
+                        }}
+                      >
+                        {q}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* Input */}
+                <div
+                  style={{
+                    padding: 12,
+                    background: "#fff",
+                    borderTop: "1px solid #e5e2dc",
+                    display: "flex",
+                    gap: 8,
+                  }}
+                >
+                  <input
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && send()}
+                    placeholder="Tanya tentang ekspor-impor..."
+                    style={{
+                      flex: 1,
+                      padding: "10px 14px",
+                      borderRadius: 8,
+                      border: "1px solid #e5e2dc",
+                      outline: "none",
+                      fontSize: 13,
+                      fontFamily: "inherit",
+                      background: "#fafaf6",
+                    }}
+                  />
+                  <button
+                    onClick={send}
+                    disabled={loading || !input.trim()}
+                    style={{
+                      padding: "10px 16px",
+                      borderRadius: 8,
+                      background:
+                        "linear-gradient(135deg, #f5b91c 0%, #d99e0e 100%)",
+                      color: "#0B1120",
+                      border: "none",
+                      cursor:
+                        input.trim() && !loading ? "pointer" : "not-allowed",
+                      fontWeight: 800,
+                      fontSize: 13,
+                      fontFamily: "inherit",
+                      opacity: input.trim() && !loading ? 1 : 0.5,
+                    }}
+                  >
+                    Kirim
+                  </button>
+                </div>
+                <div
+                  style={{
+                    padding: "6px 12px 10px",
+                    background: "#fff",
+                    textAlign: "center",
+                    fontSize: 10,
+                    color: "#999",
+                  }}
+                >
+                  Powered by AI · Untuk masalah urgent, langsung WhatsApp tim
+                </div>
+              </div>
+            )}
+          </>
+        );
+      }
+
+      // ─── App ──────────────────────────────────────────────────────────────────
+      function App() {
+        const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
+        const accent = tweaks.accentColor;
+        const r = parseInt(tweaks.roundness);
+        const [lang, setLang] = useState(
+          () => localStorage.getItem("m2b-lang") || "id",
+        );
+        useEffect(() => {
+          localStorage.setItem("m2b-lang", lang);
+        }, [lang]);
+        const t = React.useCallback(
+          (id, en) => (lang === "id" ? id : en),
+          [lang],
+        );
+
+        return (
+          <LangContext.Provider value={{ lang, setLang, t }}>
+            <NewsTicker accent={accent} />
+            <Nav accent={accent} r={r} />
+            <Hero accent={accent} heroImg={tweaks.heroImage} r={r} />
+            <TrustBar accent={accent} />
+            <About accent={accent} r={r} />
+            <Services accent={accent} r={r} />
+            <WhyUs accent={accent} r={r} />
+            {tweaks.showCoverageMap && <CoverageMap accent={accent} r={r} />}
+            <Process accent={accent} r={r} />
+            <NewsSection accent={accent} r={r} />
+            <EBookStrip accent={accent} r={r} />
+            {tweaks.showCurrencyWidget && <CurrencyWidget accent={accent} />}
+            <PortalFeature accent={accent} r={r} />
+            <Testimonials accent={accent} r={r} />
+            <FAQ accent={accent} r={r} />
+            <Partners accent={accent} r={r} />
+            <CSContact accent={accent} r={r} />
+            <CTA accent={accent} r={r} />
+            <Footer accent={accent} />
+
+            <WhatsAppFloat />
+            <TanyaMora />
+            <ScrollToTop />
+
+            <TweaksPanel>
+              <TweakSection title="Warna & Bentuk">
+                <TweakColor id="accentColor" label="Warna Aksen" />
+                <TweakSlider
+                  id="roundness"
+                  label="Sudut Tombol"
+                  min={0}
+                  max={24}
+                  step={2}
+                />
+              </TweakSection>
+              <TweakSection title="Hero Image">
+                <TweakRadio
+                  id="heroImage"
+                  label="Foto Hero"
+                  options={[
+                    { value: "port", label: "Pelabuhan Aerial" },
+                    { value: "ship", label: "Kapal Kargo" },
+                    { value: "cargo", label: "Gudang Logistik" },
+                  ]}
+                />
+              </TweakSection>
+              <TweakSection title="Widget">
+                <TweakToggle
+                  id="showCoverageMap"
+                  label="Tampilkan Peta Jangkauan"
+                />
+                <TweakToggle
+                  id="showCurrencyWidget"
+                  label="Tampilkan Kurs Mata Uang"
+                />
+              </TweakSection>
+            </TweaksPanel>
+          </LangContext.Provider>
+        );
+      }
+
+      const root = ReactDOM.createRoot(document.getElementById("root"));
+      root.render(<App />);
+    </script>
+    <div id="root"></div>
+  </body>
+</html>

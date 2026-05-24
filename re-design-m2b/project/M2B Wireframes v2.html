@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M2B Landing Page v2 — Termius-style</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>* { box-sizing: border-box; margin: 0; padding: 0; } body { background: #1a1a1a; }</style>
+</head>
+<body>
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel">
+
+// ─── Shared Primitives ──────────────────────────────────────────────────────
+const sans = "'DM Sans', sans-serif";
+const head = "'Syne', sans-serif";
+
+// placeholder box
+const Placeholder = ({ w, h, label, style }) => (
+  <div style={{
+    width: w, height: h,
+    border: '1.5px dashed rgba(255,255,255,0.2)',
+    borderRadius: 8,
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    fontSize: 11, color: 'rgba(255,255,255,0.3)',
+    fontFamily: sans, textAlign: 'center', padding: 8,
+    background: 'rgba(255,255,255,0.04)',
+    flexShrink: 0,
+    ...style
+  }}>{label}</div>
+);
+
+const PlaceholderLight = ({ w, h, label, style }) => (
+  <div style={{
+    width: w, height: h,
+    border: '1.5px dashed rgba(0,0,0,0.18)',
+    borderRadius: 8,
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    fontSize: 11, color: 'rgba(0,0,0,0.3)',
+    fontFamily: sans, textAlign: 'center', padding: 8,
+    background: 'rgba(0,0,0,0.04)',
+    flexShrink: 0,
+    ...style
+  }}>{label}</div>
+);
+
+// ─── VARIANT A: Dark Termius-style ─────────────────────────────────────────
+// Dark near-black bg, green accent (logistics=go, safe), bento grid features
+function VariantA() {
+  const bg = '#0b0c10';
+  const surface = '#13151c';
+  const accent = '#00d97e';
+  const muted = 'rgba(255,255,255,0.45)';
+  const border = 'rgba(255,255,255,0.08)';
+
+  const Chip = ({ children }) => (
+    <span style={{ display: 'inline-block', padding: '3px 10px', borderRadius: 20, border: `1px solid ${border}`, fontSize: 11, color: muted, fontFamily: sans, marginRight: 6 }}>{children}</span>
+  );
+
+  const BentoCard = ({ children, style }) => (
+    <div style={{ background: surface, border: `1px solid ${border}`, borderRadius: 12, padding: 16, ...style }}>
+      {children}
+    </div>
+  );
+
+  return (
+    <div style={{ width: 440, background: bg, fontFamily: sans, fontSize: 14, color: '#fff' }}>
+
+      {/* Nav */}
+      <div style={{ padding: '14px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: `1px solid ${border}` }}>
+        <div style={{ fontFamily: head, fontWeight: 800, fontSize: 20, letterSpacing: -0.5 }}>M2B</div>
+        <div style={{ display: 'flex', gap: 20, fontSize: 13, color: muted }}>
+          {['Layanan','Proses','About','Blog'].map(n => <span key={n}>{n}</span>)}
+        </div>
+        <div style={{ background: accent, color: '#000', padding: '6px 14px', borderRadius: 6, fontSize: 12, fontWeight: 600 }}>
+          Konsultasi Gratis
+        </div>
+      </div>
+
+      {/* Hero — centered, Termius style */}
+      <div style={{ padding: '56px 24px 48px', textAlign: 'center' }}>
+        <div style={{ display: 'inline-block', padding: '4px 12px', borderRadius: 20, border: `1px solid ${border}`, fontSize: 11, color: accent, marginBottom: 20, fontWeight: 500 }}>
+          Freight Forwarder · Customs Broker · Medan
+        </div>
+        <div style={{ fontFamily: head, fontSize: 36, fontWeight: 800, lineHeight: 1.1, marginBottom: 16, letterSpacing: -1 }}>
+          Ekspor & Impor<br/>
+          <span style={{ color: accent }}>Tanpa Ribet.</span>
+        </div>
+        <div style={{ fontSize: 15, color: muted, maxWidth: 300, margin: '0 auto 28px', lineHeight: 1.65 }}>
+          Urus semua dokumen, bea cukai, dan logistik — M2B handle dari A sampai Z.
+        </div>
+        <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginBottom: 40 }}>
+          <div style={{ background: accent, color: '#000', padding: '10px 20px', borderRadius: 8, fontWeight: 600, fontSize: 14 }}>
+            Mulai Konsultasi
+          </div>
+          <div style={{ border: `1px solid ${border}`, padding: '10px 20px', borderRadius: 8, fontSize: 14, color: muted }}>
+            Lihat Layanan →
+          </div>
+        </div>
+        {/* Trust badges — Termius style */}
+        <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
+          {[['5+','Tahun Pengalaman'],['100+','Klien Aktif'],['20+','Negara Tujuan'],['✓','End-to-End']].map(([n,l]) => (
+            <div key={l} style={{ border: `1px solid ${border}`, borderRadius: 8, padding: '8px 14px', textAlign: 'center' }}>
+              <div style={{ fontFamily: head, fontWeight: 700, fontSize: 18, color: accent }}>{n}</div>
+              <div style={{ fontSize: 11, color: muted }}>{l}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Legalitas/Trust logos row */}
+      <div style={{ padding: '16px 20px', borderTop: `1px solid ${border}`, borderBottom: `1px solid ${border}` }}>
+        <div style={{ fontSize: 11, color: muted, textAlign: 'center', marginBottom: 12 }}>Terdaftar & diakui oleh</div>
+        <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
+          {['Bea Cukai','ALFI','KADIN','LNSW','NIB'].map(l => (
+            <div key={l} style={{ padding: '4px 10px', border: `1px solid ${border}`, borderRadius: 6, fontSize: 11, color: muted }}>{l}</div>
+          ))}
+        </div>
+      </div>
+
+      {/* Bento features — Termius pattern */}
+      <div style={{ padding: '32px 20px' }}>
+        <div style={{ fontFamily: head, fontSize: 22, fontWeight: 700, textAlign: 'center', marginBottom: 6 }}>Layanan Lengkap, Satu Atap</div>
+        <div style={{ fontSize: 13, color: muted, textAlign: 'center', marginBottom: 24, lineHeight: 1.6 }}>
+          Dari dokumen ekspor hingga bea cukai impor,<br/>semua ditangani oleh tim berpengalaman M2B.
+        </div>
+
+        {/* Bento grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+          {/* Large card */}
+          <BentoCard style={{ gridColumn: '1 / -1' }}>
+            <div style={{ fontSize: 11, color: accent, fontWeight: 600, marginBottom: 8 }}>LAYANAN UTAMA</div>
+            <div style={{ fontFamily: head, fontSize: 17, fontWeight: 700, marginBottom: 6 }}>Export & Import Handling</div>
+            <div style={{ fontSize: 12, color: muted, lineHeight: 1.6, marginBottom: 14 }}>Pengurusan PEB (ekspor) dan PIB (impor) secara legal, cepat, dan transparan. Termasuk estimasi bea & pajak.</div>
+            <Placeholder w="100%" h={80} label="diagram alur dokumen ekspor/impor" />
+          </BentoCard>
+
+          <BentoCard>
+            <div style={{ fontSize: 20, marginBottom: 8 }}>🛃</div>
+            <div style={{ fontFamily: head, fontSize: 14, fontWeight: 700, marginBottom: 4 }}>Customs Clearance</div>
+            <div style={{ fontSize: 11, color: muted, lineHeight: 1.5 }}>Pengurusan bea cukai di pelabuhan utama Indonesia. Legal & cepat.</div>
+          </BentoCard>
+
+          <BentoCard>
+            <div style={{ fontSize: 20, marginBottom: 8 }}>🚚</div>
+            <div style={{ fontFamily: head, fontSize: 14, fontWeight: 700, marginBottom: 4 }}>Door-to-Door</div>
+            <div style={{ fontSize: 11, color: muted, lineHeight: 1.5 }}>Dari gudang ke pintu pelanggan, di manapun di dunia.</div>
+          </BentoCard>
+
+          <BentoCard>
+            <div style={{ fontSize: 20, marginBottom: 8 }}>📝</div>
+            <div style={{ fontFamily: head, fontSize: 14, fontWeight: 700, marginBottom: 4 }}>Undername</div>
+            <div style={{ fontSize: 11, color: muted, lineHeight: 1.5 }}>Belum punya izin impor? Gunakan nama perusahaan kami.</div>
+          </BentoCard>
+
+          <BentoCard>
+            <div style={{ fontSize: 20, marginBottom: 8 }}>💡</div>
+            <div style={{ fontFamily: head, fontSize: 14, fontWeight: 700, marginBottom: 4 }}>Konsultasi</div>
+            <div style={{ fontSize: 11, color: muted, lineHeight: 1.5 }}>Tim berpengalaman kami siap bantu perencanaan logistikmu.</div>
+          </BentoCard>
+        </div>
+      </div>
+
+      {/* Feature highlight — Termius "feature section" style */}
+      <div style={{ padding: '24px 20px', borderTop: `1px solid ${border}` }}>
+        <div style={{ fontFamily: head, fontSize: 20, fontWeight: 700, marginBottom: 6 }}>
+          Portal M2B — Tracking Real-Time
+        </div>
+        <div style={{ fontSize: 13, color: muted, marginBottom: 18, lineHeight: 1.6 }}>
+          Pantau status pengiriman, dokumen, dan invoice langsung dari dashboard online. Transparan, akurat, real-time.
+        </div>
+        <Placeholder w="100%" h={140} label="mockup dashboard portal M2B — tracking & dokumen" />
+      </div>
+
+      {/* Process steps — Termius numbered feature style */}
+      <div style={{ padding: '32px 20px', borderTop: `1px solid ${border}` }}>
+        <div style={{ fontFamily: head, fontSize: 22, fontWeight: 700, textAlign: 'center', marginBottom: 6 }}>Cara Kerjanya?</div>
+        <div style={{ fontSize: 13, color: muted, textAlign: 'center', marginBottom: 24 }}>4 langkah mudah, selesai.</div>
+        {[
+          ['01','Konsultasi Gratis','Chat WA, ceritakan kebutuhan ekspormu'],
+          ['02','Penawaran Transparan','Kami kirim quote detail, tanpa hidden fee'],
+          ['03','Proses Dokumen','Tim M2B urus semua dokumen & bea cukai'],
+          ['04','Barang Terkirim','Tracking real-time hingga tujuan akhir'],
+        ].map(([n, t, d]) => (
+          <div key={n} style={{ display: 'flex', gap: 16, marginBottom: 20, alignItems: 'flex-start' }}>
+            <div style={{ fontFamily: head, fontSize: 28, fontWeight: 800, color: accent, lineHeight: 1, minWidth: 36 }}>{n}</div>
+            <div>
+              <div style={{ fontFamily: head, fontWeight: 700, fontSize: 15, marginBottom: 3 }}>{t}</div>
+              <div style={{ fontSize: 12, color: muted }}>{d}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Testimonials — Termius review card style */}
+      <div style={{ padding: '24px 20px', borderTop: `1px solid ${border}` }}>
+        <div style={{ fontFamily: head, fontSize: 20, fontWeight: 700, marginBottom: 6 }}>Dipercaya Ratusan Klien</div>
+        <div style={{ fontSize: 13, color: muted, marginBottom: 20 }}>Dari UKM hingga perusahaan ekspor besar di Indonesia.</div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+          {[
+            ['"Penanganan impor tepat waktu, biaya jelas & terukur."','Edy S.','PT. Dira Baraka Mulia'],
+            ['"Game-changer for our business. Reliable & efficient."','Mr. Jhonson','Anhui Imp & Export Co.'],
+          ].map(([q, name, co]) => (
+            <div key={name} style={{ background: surface, border: `1px solid ${border}`, borderRadius: 12, padding: 14 }}>
+              <div style={{ fontSize: 12, color: '#e0e0e0', marginBottom: 12, lineHeight: 1.6 }}>{q}</div>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <Placeholder w={28} h={28} label="" style={{ borderRadius: '50%', border: '1px dashed rgba(255,255,255,0.2)', flexShrink: 0 }} />
+                <div>
+                  <div style={{ fontWeight: 600, fontSize: 12 }}>{name}</div>
+                  <div style={{ fontSize: 10, color: muted }}>{co}</div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* FAQ */}
+      <div style={{ padding: '24px 20px', borderTop: `1px solid ${border}` }}>
+        <div style={{ fontFamily: head, fontSize: 20, fontWeight: 700, marginBottom: 20 }}>FAQ</div>
+        {['Dokumen apa saja yang dibutuhkan untuk ekspor?','Berapa estimasi biaya impor dari China?','Apakah bisa bantu untuk yang belum punya izin impor?','Berapa lama proses customs clearance?'].map((q, i) => (
+          <div key={i} style={{ borderBottom: `1px solid ${border}`, padding: '12px 0', display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
+            <span>{q}</span>
+            <span style={{ color: muted, flexShrink: 0, marginLeft: 8 }}>+</span>
+          </div>
+        ))}
+      </div>
+
+      {/* CTA — Termius final CTA style */}
+      <div style={{ padding: '40px 24px', textAlign: 'center', borderTop: `1px solid ${border}` }}>
+        <div style={{ fontFamily: head, fontSize: 26, fontWeight: 800, marginBottom: 8, letterSpacing: -0.5 }}>
+          Siap Ekspor atau Impor?
+        </div>
+        <div style={{ fontSize: 14, color: muted, marginBottom: 24, lineHeight: 1.6 }}>
+          Konsultasi gratis, respon cepat, harga transparan.
+        </div>
+        <div style={{ background: accent, color: '#000', padding: '12px 28px', borderRadius: 8, fontWeight: 700, fontSize: 15, display: 'inline-block' }}>
+          Chat WhatsApp Sekarang
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div style={{ padding: '24px 20px', borderTop: `1px solid ${border}` }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 20 }}>
+          <div>
+            <div style={{ fontFamily: head, fontWeight: 800, fontSize: 18, marginBottom: 4 }}>M2B</div>
+            <div style={{ fontSize: 11, color: muted, lineHeight: 1.7 }}>PT. Mora Multi Berkah<br/>Medan, Sumatera Utara</div>
+          </div>
+          <div style={{ fontSize: 12, color: muted, display: 'flex', flexDirection: 'column', gap: 6, alignItems: 'flex-end' }}>
+            <span>Layanan</span><span>About</span><span>Blog</span><span>Portal M2B ↗</span>
+          </div>
+        </div>
+        <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.2)', borderTop: `1px solid ${border}`, paddingTop: 14 }}>
+          © 2026 PT. Mora Multi Berkah · sales@m2b.co.id · +62 812-6302-7818
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── VARIANT B: Light — Termius layout, cream/white bg ─────────────────────
+// Same structure, but light bg for contrast
+function VariantB() {
+  const bg = '#f7f5f0';
+  const surface = '#ffffff';
+  const surfaceDark = '#0f0f14';
+  const accent = '#1a56db';
+  const accentText = '#1a56db';
+  const muted = '#6b7280';
+  const border = '#e5e2dc';
+  const dark = '#0f0f14';
+
+  const BentoCard = ({ children, dark: isDark, style }) => (
+    <div style={{
+      background: isDark ? surfaceDark : surface,
+      border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : border}`,
+      borderRadius: 12, padding: 16,
+      color: isDark ? '#fff' : dark,
+      ...style
+    }}>
+      {children}
+    </div>
+  );
+
+  return (
+    <div style={{ width: 440, background: bg, fontFamily: sans, fontSize: 14, color: dark }}>
+
+      {/* Nav */}
+      <div style={{ padding: '14px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: `1px solid ${border}`, background: surface }}>
+        <div style={{ fontFamily: head, fontWeight: 800, fontSize: 20 }}>M2B</div>
+        <div style={{ display: 'flex', gap: 20, fontSize: 13, color: muted }}>
+          {['Layanan','Proses','About','Blog'].map(n => <span key={n}>{n}</span>)}
+        </div>
+        <div style={{ background: dark, color: '#fff', padding: '6px 14px', borderRadius: 6, fontSize: 12, fontWeight: 600 }}>
+          Konsultasi Gratis
+        </div>
+      </div>
+
+      {/* Hero */}
+      <div style={{ padding: '56px 24px 48px', textAlign: 'center', background: surface }}>
+        <div style={{ display: 'inline-block', padding: '4px 12px', borderRadius: 20, background: '#eff6ff', fontSize: 11, color: accentText, marginBottom: 20, fontWeight: 600 }}>
+          Freight Forwarder · Customs Broker · Medan
+        </div>
+        <div style={{ fontFamily: head, fontSize: 36, fontWeight: 800, lineHeight: 1.1, marginBottom: 16, letterSpacing: -1 }}>
+          Partner Logistik<br/>
+          <span style={{ color: accentText }}>Ekspor-Impor</span><br/>
+          Terpercaya.
+        </div>
+        <div style={{ fontSize: 15, color: muted, maxWidth: 300, margin: '0 auto 28px', lineHeight: 1.65 }}>
+          Kami handle semua — dari dokumen, bea cukai, hingga pengiriman door-to-door.
+        </div>
+        <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginBottom: 40 }}>
+          <div style={{ background: dark, color: '#fff', padding: '10px 20px', borderRadius: 8, fontWeight: 600, fontSize: 14 }}>
+            Konsultasi GRATIS
+          </div>
+          <div style={{ border: `1.5px solid ${border}`, padding: '10px 20px', borderRadius: 8, fontSize: 14, color: muted }}>
+            Cek Layanan →
+          </div>
+        </div>
+        {/* Stats */}
+        <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
+          {[['5+','Tahun'],['100+','Klien'],['20+','Negara'],['A–Z','End-to-End']].map(([n,l]) => (
+            <div key={l} style={{ border: `1.5px solid ${border}`, borderRadius: 8, padding: '8px 14px', textAlign: 'center', background: bg }}>
+              <div style={{ fontFamily: head, fontWeight: 700, fontSize: 18, color: dark }}>{n}</div>
+              <div style={{ fontSize: 11, color: muted }}>{l}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Trusted by */}
+      <div style={{ padding: '16px 20px', borderTop: `1px solid ${border}`, borderBottom: `1px solid ${border}`, background: bg }}>
+        <div style={{ fontSize: 11, color: muted, textAlign: 'center', marginBottom: 12, textTransform: 'uppercase', letterSpacing: 1 }}>Terdaftar & diakui oleh</div>
+        <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
+          {['Dirjen Bea Cukai','ALFI','KADIN','LNSW','NIB'].map(l => (
+            <div key={l} style={{ padding: '4px 10px', border: `1px solid ${border}`, borderRadius: 6, fontSize: 11, color: muted, background: surface }}>{l}</div>
+          ))}
+        </div>
+      </div>
+
+      {/* Bento */}
+      <div style={{ padding: '32px 20px' }}>
+        <div style={{ fontFamily: head, fontSize: 22, fontWeight: 700, textAlign: 'center', marginBottom: 6 }}>Semua Kebutuhan Logistikmu</div>
+        <div style={{ fontSize: 13, color: muted, textAlign: 'center', marginBottom: 24, lineHeight: 1.6 }}>
+          Satu tim, semua layanan. Kamu fokus bisnis, kami urus sisanya.
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+          <BentoCard dark style={{ gridColumn: '1/-1' }}>
+            <div style={{ fontSize: 11, color: '#7dd3fc', fontWeight: 600, marginBottom: 8 }}>LAYANAN UTAMA</div>
+            <div style={{ fontFamily: head, fontSize: 17, fontWeight: 700, marginBottom: 6 }}>Export & Import Handling</div>
+            <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', marginBottom: 14, lineHeight: 1.6 }}>PEB & PIB, estimasi bea & pajak, dokumen resmi. Legal, cepat, transparan.</div>
+            <PlaceholderLight w="100%" h={80} label="diagram alur dokumen" style={{ border: '1px dashed rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.25)' }} />
+          </BentoCard>
+
+          {[
+            ['🛃','Customs Clearance','Pelabuhan utama Indonesia. Legal & cepat.'],
+            ['🚚','Door-to-Door','Gudang → pintu pelanggan global.'],
+            ['📝','Undername','Solusi bagi yang belum punya izin resmi.'],
+            ['💡','Konsultasi','Panduan end-to-end dari tim berpengalaman.'],
+          ].map(([icon, t, d]) => (
+            <BentoCard key={t}>
+              <div style={{ fontSize: 20, marginBottom: 8 }}>{icon}</div>
+              <div style={{ fontFamily: head, fontSize: 13, fontWeight: 700, marginBottom: 4 }}>{t}</div>
+              <div style={{ fontSize: 11, color: muted, lineHeight: 1.5 }}>{d}</div>
+            </BentoCard>
+          ))}
+        </div>
+      </div>
+
+      {/* Feature — portal */}
+      <div style={{ padding: '24px 20px', background: surface, borderTop: `1px solid ${border}`, borderBottom: `1px solid ${border}` }}>
+        <div style={{ display: 'inline-block', padding: '3px 10px', borderRadius: 20, background: '#eff6ff', fontSize: 11, color: accentText, marginBottom: 12, fontWeight: 600 }}>Portal M2B</div>
+        <div style={{ fontFamily: head, fontSize: 19, fontWeight: 700, marginBottom: 6 }}>Tracking & Dokumen Real-Time</div>
+        <div style={{ fontSize: 13, color: muted, marginBottom: 16, lineHeight: 1.6 }}>Pantau status shipment, akses dokumen, dan invoice kapan saja dari dashboard online.</div>
+        <PlaceholderLight w="100%" h={130} label="mockup dashboard portal M2B" />
+      </div>
+
+      {/* Process */}
+      <div style={{ padding: '32px 20px' }}>
+        <div style={{ fontFamily: head, fontSize: 22, fontWeight: 700, textAlign: 'center', marginBottom: 24 }}>Cara Kerjanya</div>
+        {[
+          ['01','Konsultasi Gratis','Chat WA, ceritakan kebutuhan logistikmu'],
+          ['02','Penawaran Transparan','Quote detail, tanpa hidden fee'],
+          ['03','Proses Dokumen','Tim M2B urus semua dokumen & bea cukai'],
+          ['04','Barang Terkirim','Tracking real-time hingga tujuan'],
+        ].map(([n, t, d]) => (
+          <div key={n} style={{ display: 'flex', gap: 16, marginBottom: 20, alignItems: 'flex-start' }}>
+            <div style={{ fontFamily: head, fontSize: 28, fontWeight: 800, color: accentText, lineHeight: 1, minWidth: 36 }}>{n}</div>
+            <div>
+              <div style={{ fontFamily: head, fontWeight: 700, fontSize: 15, marginBottom: 3 }}>{t}</div>
+              <div style={{ fontSize: 12, color: muted }}>{d}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Testimonials */}
+      <div style={{ padding: '24px 20px', background: surface, borderTop: `1px solid ${border}`, borderBottom: `1px solid ${border}` }}>
+        <div style={{ fontFamily: head, fontSize: 20, fontWeight: 700, marginBottom: 20 }}>Dipercaya Ratusan Klien</div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+          {[
+            ['"Biaya jelas & terukur, tepat waktu."','Edy S.','PT. Dira Baraka Mulia'],
+            ['"Reliable & efficient! Game-changer."','Mr. Jhonson','Anhui Imp & Export'],
+          ].map(([q, name, co]) => (
+            <div key={name} style={{ border: `1px solid ${border}`, borderRadius: 12, padding: 14 }}>
+              <div style={{ fontSize: 12, color: '#374151', marginBottom: 12, lineHeight: 1.6 }}>{q}</div>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <PlaceholderLight w={28} h={28} label="" style={{ borderRadius: '50%', flexShrink: 0 }} />
+                <div>
+                  <div style={{ fontWeight: 600, fontSize: 12 }}>{name}</div>
+                  <div style={{ fontSize: 10, color: muted }}>{co}</div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* FAQ */}
+      <div style={{ padding: '24px 20px' }}>
+        <div style={{ fontFamily: head, fontSize: 20, fontWeight: 700, marginBottom: 20 }}>FAQ</div>
+        {['Dokumen apa saja yang dibutuhkan untuk ekspor?','Berapa estimasi biaya impor dari China?','Bisa bantu untuk yang belum punya izin impor?','Berapa lama proses customs clearance?'].map((q, i) => (
+          <div key={i} style={{ borderBottom: `1px solid ${border}`, padding: '12px 0', display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
+            <span>{q}</span>
+            <span style={{ color: muted, flexShrink: 0, marginLeft: 8 }}>+</span>
+          </div>
+        ))}
+      </div>
+
+      {/* CTA */}
+      <div style={{ padding: '40px 24px', textAlign: 'center', background: dark }}>
+        <div style={{ fontFamily: head, fontSize: 26, fontWeight: 800, color: '#fff', marginBottom: 8, letterSpacing: -0.5 }}>Siap Ekspor atau Impor?</div>
+        <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', marginBottom: 24 }}>Konsultasi gratis. Respon dalam 1×24 jam.</div>
+        <div style={{ background: '#fff', color: dark, padding: '12px 28px', borderRadius: 8, fontWeight: 700, fontSize: 15, display: 'inline-block' }}>
+          Chat WhatsApp Sekarang
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div style={{ padding: '24px 20px', background: dark, borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
+          <div>
+            <div style={{ fontFamily: head, fontWeight: 800, fontSize: 18, color: '#fff', marginBottom: 4 }}>M2B</div>
+            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', lineHeight: 1.7 }}>PT. Mora Multi Berkah<br/>Medan, Sumatera Utara</div>
+          </div>
+          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', display: 'flex', flexDirection: 'column', gap: 5, alignItems: 'flex-end' }}>
+            <span>Layanan</span><span>About</span><span>Blog</span><span>Portal M2B ↗</span>
+          </div>
+        </div>
+        <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.18)', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 14 }}>
+          © 2026 PT. Mora Multi Berkah · sales@m2b.co.id
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── VARIANT C: Dark + Orange accent — lebih warm/trust ────────────────────
+function VariantC() {
+  const bg = '#0d0d0d';
+  const surface = '#161616';
+  const accent = '#f97316'; // orange — trust, warmth, Indonesia
+  const muted = 'rgba(255,255,255,0.4)';
+  const border = 'rgba(255,255,255,0.07)';
+
+  const Tag = ({ children }) => (
+    <span style={{ display: 'inline-block', padding: '3px 10px', borderRadius: 4, background: 'rgba(249,115,22,0.12)', fontSize: 11, color: accent, fontWeight: 600, marginRight: 4 }}>{children}</span>
+  );
+
+  return (
+    <div style={{ width: 440, background: bg, fontFamily: sans, fontSize: 14, color: '#fff' }}>
+
+      {/* Utility bar */}
+      <div style={{ padding: '6px 20px', background: surface, borderBottom: `1px solid ${border}`, display: 'flex', justifyContent: 'space-between', fontSize: 11, color: muted }}>
+        <span>📍 Medan, Sumatera Utara</span>
+        <span style={{ color: accent }}>💬 Konsultasi Gratis →</span>
+      </div>
+
+      {/* Nav */}
+      <div style={{ padding: '14px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: `1px solid ${border}` }}>
+        <div style={{ fontFamily: head, fontWeight: 800, fontSize: 20 }}>M2B</div>
+        <div style={{ display: 'flex', gap: 20, fontSize: 13, color: muted }}>
+          {['Layanan','Proses','About'].map(n => <span key={n}>{n}</span>)}
+        </div>
+        <div style={{ background: accent, color: '#fff', padding: '6px 14px', borderRadius: 6, fontSize: 12, fontWeight: 700 }}>
+          Mulai Sekarang
+        </div>
+      </div>
+
+      {/* Hero */}
+      <div style={{ padding: '56px 24px 48px', textAlign: 'center' }}>
+        <div style={{ display: 'flex', gap: 6, justifyContent: 'center', marginBottom: 20 }}>
+          <Tag>Ekspor</Tag><Tag>Impor</Tag><Tag>Customs</Tag><Tag>Logistik</Tag>
+        </div>
+        <div style={{ fontFamily: head, fontSize: 34, fontWeight: 800, lineHeight: 1.1, marginBottom: 16, letterSpacing: -1 }}>
+          Mitra Logistik Indonesia<br/>yang Kamu Butuhkan.
+        </div>
+        <div style={{ fontSize: 15, color: muted, maxWidth: 300, margin: '0 auto 30px', lineHeight: 1.65 }}>
+          End-to-end freight forwarding & customs brokerage. Berpengalaman, terdaftar resmi.
+        </div>
+        <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginBottom: 40 }}>
+          <div style={{ background: accent, color: '#fff', padding: '10px 20px', borderRadius: 8, fontWeight: 700, fontSize: 14 }}>
+            Konsultasi via WhatsApp
+          </div>
+          <div style={{ border: `1px solid ${border}`, padding: '10px 20px', borderRadius: 8, fontSize: 14, color: muted }}>
+            Lihat Layanan
+          </div>
+        </div>
+        {/* Stats */}
+        <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
+          {[['5+','Tahun'],['100+','Klien'],['20+','Negara']].map(([n,l]) => (
+            <div key={l} style={{ border: `1px solid ${border}`, borderRadius: 8, padding: '8px 14px', textAlign: 'center' }}>
+              <div style={{ fontFamily: head, fontWeight: 700, fontSize: 20, color: accent }}>{n}</div>
+              <div style={{ fontSize: 11, color: muted }}>{l}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Trust logos */}
+      <div style={{ padding: '14px 20px', borderTop: `1px solid ${border}`, borderBottom: `1px solid ${border}` }}>
+        <div style={{ fontSize: 11, color: muted, textAlign: 'center', marginBottom: 12 }}>Terdaftar & diakui oleh</div>
+        <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
+          {['Bea Cukai','ALFI','KADIN','LNSW','NIB'].map(l => (
+            <div key={l} style={{ padding: '4px 10px', border: `1px solid ${border}`, borderRadius: 6, fontSize: 11, color: muted }}>{l}</div>
+          ))}
+        </div>
+      </div>
+
+      {/* Bento */}
+      <div style={{ padding: '32px 20px' }}>
+        <div style={{ fontFamily: head, fontSize: 22, fontWeight: 700, textAlign: 'center', marginBottom: 6 }}>Layanan M2B</div>
+        <div style={{ fontSize: 13, color: muted, textAlign: 'center', marginBottom: 24, lineHeight: 1.6 }}>Dari dokumen hingga pengiriman, semua satu tim.</div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+          {/* Wide card */}
+          <div style={{ gridColumn: '1/-1', background: surface, border: `1px solid ${border}`, borderRadius: 12, padding: 16 }}>
+            <div style={{ fontSize: 11, color: accent, fontWeight: 600, marginBottom: 8 }}>CORE SERVICE</div>
+            <div style={{ fontFamily: head, fontSize: 17, fontWeight: 700, marginBottom: 6 }}>Export & Import Handling</div>
+            <div style={{ fontSize: 12, color: muted, marginBottom: 14, lineHeight: 1.6 }}>Pengurusan PEB & PIB, estimasi bea dan pajak, dokumen resmi. Cepat & transparan.</div>
+            <div style={{ display: 'flex', gap: 8 }}>
+              {['PEB','PIB','L/C','B/L','SKA'].map(d => (
+                <div key={d} style={{ padding: '3px 8px', border: `1px solid ${border}`, borderRadius: 4, fontSize: 10, color: muted }}>{d}</div>
+              ))}
+            </div>
+          </div>
+
+          {[['🛃','Customs Clearance','Pelabuhan utama. Legal & cepat.'],
+            ['🚚','Door-to-Door','Gudang → tujuan global.'],
+            ['📝','Undername','Tanpa izin resmi? Kami bantu.'],
+            ['💡','Konsultasi','Tim ahli siap membimbing.'],
+          ].map(([icon, t, d]) => (
+            <div key={t} style={{ background: surface, border: `1px solid ${border}`, borderRadius: 12, padding: 14 }}>
+              <div style={{ fontSize: 20, marginBottom: 8 }}>{icon}</div>
+              <div style={{ fontFamily: head, fontSize: 13, fontWeight: 700, marginBottom: 4 }}>{t}</div>
+              <div style={{ fontSize: 11, color: muted, lineHeight: 1.5 }}>{d}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Portal mockup */}
+      <div style={{ padding: '24px 20px', borderTop: `1px solid ${border}` }}>
+        <Tag>Portal M2B</Tag>
+        <div style={{ fontFamily: head, fontSize: 18, fontWeight: 700, margin: '10px 0 6px' }}>Tracking Real-Time</div>
+        <div style={{ fontSize: 13, color: muted, marginBottom: 16, lineHeight: 1.6 }}>Pantau status shipment dan dokumen dari mana saja, kapan saja.</div>
+        <Placeholder w="100%" h={130} label="mockup dashboard portal M2B — tracking & dokumen" />
+      </div>
+
+      {/* Process */}
+      <div style={{ padding: '32px 20px', borderTop: `1px solid ${border}` }}>
+        <div style={{ fontFamily: head, fontSize: 22, fontWeight: 700, textAlign: 'center', marginBottom: 24 }}>4 Langkah Mudah</div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+          {[
+            ['01','Konsultasi','Chat WA gratis, ceritakan kebutuhanmu'],
+            ['02','Quote','Penawaran transparan, tanpa hidden fee'],
+            ['03','Proses','Dokumen & bea cukai di-handle M2B'],
+            ['04','Terkirim','Tracking real-time ke tujuan akhir'],
+          ].map(([n, t, d]) => (
+            <div key={n} style={{ background: surface, border: `1px solid ${border}`, borderRadius: 12, padding: 14 }}>
+              <div style={{ fontFamily: head, fontSize: 24, fontWeight: 800, color: accent, marginBottom: 6 }}>{n}</div>
+              <div style={{ fontFamily: head, fontWeight: 700, fontSize: 14, marginBottom: 4 }}>{t}</div>
+              <div style={{ fontSize: 11, color: muted, lineHeight: 1.5 }}>{d}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Testimonials */}
+      <div style={{ padding: '24px 20px', borderTop: `1px solid ${border}` }}>
+        <div style={{ fontFamily: head, fontSize: 20, fontWeight: 700, marginBottom: 20 }}>Klien Berbicara</div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+          {[
+            ['"Biaya jelas & terukur, tepat waktu."','Edy S.','PT. Dira Baraka Mulia'],
+            ['"Reliable! Game-changer buat bisnis kami."','Mr. Jhonson','Anhui Imp & Export'],
+          ].map(([q, name, co]) => (
+            <div key={name} style={{ background: surface, border: `1px solid ${border}`, borderRadius: 12, padding: 14 }}>
+              <div style={{ fontSize: 12, color: '#d1d5db', marginBottom: 12, lineHeight: 1.6 }}>{q}</div>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <Placeholder w={28} h={28} label="" style={{ borderRadius: '50%', flexShrink: 0 }} />
+                <div>
+                  <div style={{ fontWeight: 600, fontSize: 12 }}>{name}</div>
+                  <div style={{ fontSize: 10, color: muted }}>{co}</div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* FAQ */}
+      <div style={{ padding: '24px 20px', borderTop: `1px solid ${border}` }}>
+        <div style={{ fontFamily: head, fontSize: 20, fontWeight: 700, marginBottom: 20 }}>FAQ</div>
+        {['Dokumen apa saja yang dibutuhkan untuk ekspor?','Berapa estimasi biaya impor dari China?','Apakah bisa bantu untuk yang belum punya izin impor?','Berapa lama proses customs clearance?'].map((q, i) => (
+          <div key={i} style={{ borderBottom: `1px solid ${border}`, padding: '12px 0', display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
+            <span>{q}</span>
+            <span style={{ color: muted, flexShrink: 0, marginLeft: 8 }}>+</span>
+          </div>
+        ))}
+      </div>
+
+      {/* CTA */}
+      <div style={{ padding: '40px 24px', textAlign: 'center' }}>
+        <div style={{ fontFamily: head, fontSize: 26, fontWeight: 800, marginBottom: 8, letterSpacing: -0.5 }}>Siap Memulai?</div>
+        <div style={{ fontSize: 14, color: muted, marginBottom: 24 }}>Konsultasi gratis. Quote transparan. Tanpa ribet.</div>
+        <div style={{ background: accent, color: '#fff', padding: '12px 28px', borderRadius: 8, fontWeight: 700, fontSize: 15, display: 'inline-block' }}>
+          Chat WhatsApp Sekarang
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div style={{ padding: '24px 20px', borderTop: `1px solid ${border}` }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
+          <div>
+            <div style={{ fontFamily: head, fontWeight: 800, fontSize: 18, marginBottom: 4 }}>M2B</div>
+            <div style={{ fontSize: 11, color: muted, lineHeight: 1.7 }}>PT. Mora Multi Berkah<br/>Medan, Sumatera Utara</div>
+          </div>
+          <div style={{ fontSize: 12, color: muted, display: 'flex', flexDirection: 'column', gap: 5, alignItems: 'flex-end' }}>
+            <span>Layanan</span><span>About</span><span>Blog</span><span>Portal M2B ↗</span>
+          </div>
+        </div>
+        <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.15)', borderTop: `1px solid ${border}`, paddingTop: 14 }}>
+          © 2026 PT. Mora Multi Berkah · sales@m2b.co.id · +62 812-6302-7818
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Main App ───────────────────────────────────────────────────────────────
+function App() {
+  return (
+    <DesignCanvas title="M2B — Landing Page v2 (Termius-style)">
+      <DCSection id="wires" title="3 Arah Desain · Referensi Termius.com">
+        <DCArtboard id="va" label="A — Dark + Hijau (Trust & Go)" width={440} height={2100}>
+          <VariantA />
+        </DCArtboard>
+        <DCArtboard id="vb" label="B — Light/Cream + Biru (Profesional)" width={440} height={2200}>
+          <VariantB />
+        </DCArtboard>
+        <DCArtboard id="vc" label="C — Dark + Oranye (Warm & Indonesia)" width={440} height={2150}>
+          <VariantC />
+        </DCArtboard>
+      </DCSection>
+    </DesignCanvas>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+</script>
+<div id="root"></div>
+</body>
+</html>

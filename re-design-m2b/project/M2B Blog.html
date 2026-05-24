@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog M2B — Logistik, Ekspor-Impor & Bea Cukai Indonesia</title>
+<meta name="description" content="Panduan dan insight ekspor-impor untuk UMKM Indonesia. Update regulasi bea cukai, tips logistik, dan strategi shipment dari tim PT. Mora Multi Berkah.">
+<link rel="icon" href="assets/logo-m2b-clean.png" type="image/png">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #0B1120;
+    --navy-mid: #162035;
+    --navy-light: #1E2D4A;
+    --cream: #F8F5EE;
+    --cream-dark: #EDE8DF;
+    --warm-white: #FFFDF9;
+    --gold: #f5b91c;
+    --gold-dim: #d99e0e;
+    --text-main: #1A1F2E;
+    --text-mid: #4A5270;
+    --text-soft: #8891AA;
+    --border: #EDE8DF;
+    /* category colors */
+    --cat-ekspor:    #16a34a;
+    --cat-ekspor-bg: #dcfce7;
+    --cat-impor:     #2563eb;
+    --cat-impor-bg:  #dbeafe;
+    --cat-umkm:      #ea580c;
+    --cat-umkm-bg:   #ffedd5;
+    --cat-bea:       #9333ea;
+    --cat-bea-bg:    #f3e8ff;
+    --cat-tips:      #0891b2;
+    --cat-tips-bg:   #cffafe;
+  }
+  html { scroll-behavior: smooth; }
+  body { background: var(--cream); font-family: 'Plus Jakarta Sans', sans-serif; color: var(--text-main); }
+
+  /* Reading progress */
+  .reading-progress { position: fixed; top: 0; left: 0; height: 3px; background: var(--gold); z-index: 200; transition: width .15s; }
+
+  /* Ticker */
+  @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .ticker-track { display: flex; animation: ticker 38s linear infinite; white-space: nowrap; }
+  .ticker-track:hover { animation-play-state: paused; }
+
+  /* AdSense placeholder styles */
+  .ad-placeholder {
+    border: 2px dashed #d4cfc4;
+    background: repeating-linear-gradient(
+      45deg, #fafaf6, #fafaf6 10px, #f3efea 10px, #f3efea 20px
+    );
+    display: flex; align-items: center; justify-content: center;
+    color: #999; font-family: 'DM Sans'; font-size: 12px;
+    letter-spacing: 1px; text-transform: uppercase;
+    border-radius: 12px;
+    position: relative;
+  }
+  .ad-placeholder::before {
+    content: 'AdSense';
+    position: absolute; top: 8px; left: 12px;
+    font-size: 10px; color: #aaa; font-weight: 700; letter-spacing: 2px;
+  }
+  .ad-placeholder::after {
+    content: attr(data-slot);
+    position: absolute; bottom: 8px; right: 12px;
+    font-size: 9px; color: #aaa; font-weight: 600;
+  }
+
+  /* Smooth scroll for sticky elements */
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: var(--cream); }
+  ::-webkit-scrollbar-thumb { background: #c0bdb7; border-radius: 4px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="blog-app.jsx"></script>
+</body>
+</html>

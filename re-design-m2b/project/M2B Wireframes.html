@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M2B Landing Page — Wireframes</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Caveat+Brush&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f0ede8; font-family: 'Caveat', cursive; }
+</style>
+</head>
+<body>
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel">
+
+// ─── Shared Wireframe Primitives ───────────────────────────────────────────
+const W = ({ children, style, ...p }) => (
+  <div style={{ fontFamily: "'Caveat', cursive", background: '#faf9f6', color: '#1a1a1a', ...style }} {...p}>
+    {children}
+  </div>
+);
+const Box = ({ w, h, label, style, dark, accent, light, dashed }) => (
+  <div style={{
+    width: w, height: h, minHeight: h,
+    background: dark ? '#1a1a2e' : accent ? '#c0392b' : light ? '#e8e4de' : '#ddd8cf',
+    border: dashed ? '2px dashed #aaa' : '2px solid #1a1a1a',
+    borderRadius: 2,
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    fontSize: 13, color: dark||accent ? '#fff' : '#666',
+    fontFamily: "'Caveat', cursive",
+    textAlign: 'center', padding: 4,
+    flexShrink: 0,
+    ...style
+  }}>{label}</div>
+);
+const Label = ({ children, style }) => (
+  <div style={{ fontSize: 11, color: '#999', fontFamily: "'Caveat', cursive", ...style }}>{children}</div>
+);
+const Btn = ({ children, primary, style }) => (
+  <div style={{
+    display: 'inline-block',
+    padding: '6px 14px',
+    background: primary ? '#c0392b' : 'transparent',
+    border: '2px solid ' + (primary ? '#c0392b' : '#1a1a1a'),
+    borderRadius: 2,
+    fontSize: 13,
+    color: primary ? '#fff' : '#1a1a1a',
+    fontFamily: "'Caveat', cursive",
+    cursor: 'default',
+    ...style
+  }}>{children}</div>
+);
+const Annotation = ({ children, style }) => (
+  <div style={{
+    position: 'absolute',
+    fontFamily: "'Caveat', cursive",
+    fontSize: 11, color: '#e67e22',
+    background: '#fff9f0',
+    border: '1px solid #e67e22',
+    borderRadius: 4,
+    padding: '2px 6px',
+    ...style
+  }}>← {children}</div>
+);
+const HR = ({ style }) => <div style={{ height: 1, background: '#ccc', width: '100%', margin: '0', ...style }} />;
+const Row = ({ children, style }) => <div style={{ display: 'flex', gap: 8, ...style }}>{children}</div>;
+const Col = ({ children, style }) => <div style={{ display: 'flex', flexDirection: 'column', gap: 8, ...style }}>{children}</div>;
+
+// ─── VARIANT A: Bold DHL-style ─────────────────────────────────────────────
+function VariantA() {
+  return (
+    <W style={{ width: 440, fontSize: 14 }}>
+      {/* Nav */}
+      <div style={{ background: '#1a1a2e', padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ color: '#fff', fontSize: 18, fontWeight: 700 }}>M2B</div>
+        <Row style={{ gap: 14 }}>
+          {['Home','Layanan','About','Blog','Kontak'].map(n => (
+            <div key={n} style={{ color: '#ccc', fontSize: 12 }}>{n}</div>
+          ))}
+        </Row>
+        <Btn primary style={{ fontSize: 11, padding: '3px 10px' }}>Portal M2B</Btn>
+      </div>
+
+      {/* Hero — full bleed with diagonal split */}
+      <div style={{ position: 'relative', background: '#1a1a2e', padding: '40px 24px 60px', overflow: 'hidden' }}>
+        {/* diagonal overlay */}
+        <div style={{ position: 'absolute', right: 0, top: 0, width: '45%', height: '100%', background: '#c0392b', clipPath: 'polygon(30% 0, 100% 0, 100% 100%, 0 100%)' }} />
+        <div style={{ position: 'absolute', right: 0, top: 0, width: '45%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}>
+          <Box w={140} h={110} label="📦 cargo photo" style={{ border: '2px dashed rgba(255,255,255,0.5)', background: 'rgba(255,255,255,0.1)', color: '#fff', fontSize: 11 }} />
+        </div>
+        <div style={{ position: 'relative', zIndex: 2, maxWidth: '55%' }}>
+          <div style={{ color: '#e74c3c', fontSize: 12, letterSpacing: 2, marginBottom: 8, textTransform: 'uppercase' }}>Freight Forwarder · Medan</div>
+          <div style={{ color: '#fff', fontSize: 26, fontWeight: 700, lineHeight: 1.2, marginBottom: 10 }}>Trusted Partner<br/>Ekspor-Impor<br/>Indonesia</div>
+          <div style={{ color: '#ccc', fontSize: 13, marginBottom: 20 }}>Fast. Secure. Transparent.<br/>End-to-end logistics, urus semua dokumen.</div>
+          <Row style={{ gap: 8 }}>
+            <Btn primary>💬 Konsultasi Gratis</Btn>
+            <Btn style={{ color: '#fff', borderColor: '#fff', fontSize: 12 }}>Cek Layanan →</Btn>
+          </Row>
+        </div>
+      </div>
+
+      {/* Stats bar */}
+      <div style={{ background: '#c0392b', padding: '10px 16px', display: 'flex', justifyContent: 'space-around' }}>
+        {[['5+','Tahun'],['100+','Klien'],['20+','Negara'],['End-to-End','Layanan']].map(([n,l]) => (
+          <div key={l} style={{ textAlign: 'center', color: '#fff' }}>
+            <div style={{ fontSize: 20, fontWeight: 700 }}>{n}</div>
+            <div style={{ fontSize: 11 }}>{l}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Services */}
+      <div style={{ padding: '24px 16px' }}>
+        <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 4 }}>What Do We Offer?</div>
+        <HR style={{ marginBottom: 14 }} />
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+          {[
+            ['📤 Export Handling','PEB, dokumen, pengiriman internasional'],
+            ['📥 Import Handling','PIB, bea masuk, estimasi pajak'],
+            ['🛃 Customs Clearance','Legal & cepat di pelabuhan utama'],
+            ['🚚 Door-to-Door','Gudang ke pintu pelanggan global'],
+            ['📋 Undername','Solusi bagi yg belum punya izin resmi'],
+            ['💡 Konsultasi','Panduan dari tim berpengalaman'],
+          ].map(([t, d]) => (
+            <div key={t} style={{ border: '2px solid #1a1a1a', borderRadius: 2, padding: '10px 12px' }}>
+              <div style={{ fontSize: 14, fontWeight: 700 }}>{t}</div>
+              <div style={{ fontSize: 12, color: '#666', marginTop: 4 }}>{d}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Why Choose */}
+      <div style={{ background: '#1a1a2e', padding: '20px 16px', color: '#fff' }}>
+        <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 12 }}>Kenapa M2B?</div>
+        <Col style={{ gap: 8 }}>
+          {['✓  Terdaftar resmi & berpengalaman','✓  Harga transparan, tanpa biaya tersembunyi','✓  Jaringan kuat di pelabuhan utama','✓  Komunikasi cepat & profesional','✓  Penanganan barang aman & secure'].map(t => (
+            <div key={t} style={{ fontSize: 13, borderBottom: '1px solid rgba(255,255,255,0.15)', paddingBottom: 6 }}>{t}</div>
+          ))}
+        </Col>
+      </div>
+
+      {/* Testimonials */}
+      <div style={{ padding: '20px 16px' }}>
+        <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 12 }}>Testimonial Klien</div>
+        <Row style={{ gap: 8 }}>
+          {[
+            ['"Penanganan impor tepat waktu, biaya jelas & terukur."','Edy S. — Dir. PT. Dira Baraka'],
+            ['"Game-changer for our business! Reliable & efficient."','Mr. Jhonson — Anhui Imp & Export'],
+          ].map(([q, a]) => (
+            <div key={a} style={{ flex: 1, border: '2px solid #1a1a1a', borderRadius: 2, padding: 12 }}>
+              <div style={{ fontSize: 12, marginBottom: 8, color: '#333' }}>{q}</div>
+              <div style={{ fontSize: 11, fontWeight: 700 }}>— {a}</div>
+            </div>
+          ))}
+        </Row>
+      </div>
+
+      {/* CTA Banner */}
+      <div style={{ background: '#c0392b', padding: '20px 16px', textAlign: 'center' }}>
+        <div style={{ color: '#fff', fontSize: 20, fontWeight: 700, marginBottom: 8 }}>Siap Ekspor atau Impor?</div>
+        <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: 13, marginBottom: 14 }}>Tinggalkan logistik ke kami. Konsultasi GRATIS!</div>
+        <Btn primary style={{ background: '#fff', color: '#c0392b', borderColor: '#fff', fontSize: 14 }}>💬 Chat WhatsApp Sekarang</Btn>
+      </div>
+
+      {/* Partners */}
+      <div style={{ padding: '16px', background: '#f5f3ef' }}>
+        <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 10, textAlign: 'center' }}>Partner & Legalitas</div>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'center' }}>
+          {['Pelindo','Bea Cukai','LNSW','ALFI','KADIN','INSW'].map(p => (
+            <Box key={p} w={60} h={28} label={p} style={{ fontSize: 10, border: '1.5px solid #bbb', background: '#fff' }} />
+          ))}
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div style={{ background: '#1a1a2e', padding: '14px 16px', color: '#ccc', fontSize: 12 }}>
+        <Row style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+          <div><strong style={{ color: '#fff' }}>PT. Mora Multi Berkah</strong><br/>Medan, Sumatera Utara</div>
+          <Col style={{ gap: 4, alignItems: 'flex-end' }}>
+            <div>📧 sales@m2b.co.id</div>
+            <div>📱 +62 812-6302-7818</div>
+          </Col>
+        </Row>
+      </div>
+    </W>
+  );
+}
+
+// ─── VARIANT B: Clean Card Layout ─────────────────────────────────────────
+function VariantB() {
+  return (
+    <W style={{ width: 440 }}>
+      {/* Nav — minimal */}
+      <div style={{ padding: '12px 20px', borderBottom: '3px solid #1a1a1a', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div>
+          <div style={{ fontSize: 20, fontWeight: 700 }}>M²B</div>
+          <div style={{ fontSize: 10, color: '#888', marginTop: -2 }}>PT. Mora Multi Berkah</div>
+        </div>
+        <Row style={{ gap: 16 }}>
+          {['Layanan','About','Blog'].map(n => (
+            <div key={n} style={{ fontSize: 12, borderBottom: '1px dotted #999' }}>{n}</div>
+          ))}
+        </Row>
+        <Btn primary style={{ fontSize: 12 }}>Konsultasi →</Btn>
+      </div>
+
+      {/* Language toggle */}
+      <div style={{ padding: '6px 20px', background: '#f0ede8', borderBottom: '1px solid #ddd', display: 'flex', justifyContent: 'flex-end', gap: 12 }}>
+        <div style={{ fontSize: 11, fontWeight: 700 }}>🇮🇩 ID</div>
+        <div style={{ fontSize: 11, color: '#aaa' }}>🇬🇧 EN</div>
+      </div>
+
+      {/* Hero — big centered type + image */}
+      <div style={{ padding: '48px 24px 40px', textAlign: 'center', position: 'relative' }}>
+        <div style={{ fontSize: 11, color: '#888', letterSpacing: 3, textTransform: 'uppercase', marginBottom: 12 }}>Freight Forwarder · Customs Broker · Medan</div>
+        <div style={{ fontSize: 34, fontWeight: 700, lineHeight: 1.15, marginBottom: 16 }}>
+          Logistik Ekspor-Impor<br/>
+          <span style={{ background: '#1a1a2e', color: '#fff', padding: '0 6px' }}>Tanpa Ribet.</span>
+        </div>
+        <div style={{ fontSize: 14, color: '#555', maxWidth: 300, margin: '0 auto 24px' }}>
+          Urus semua dokumen & bea cukai. Kamu fokus bisnismu.
+        </div>
+        <Row style={{ justifyContent: 'center', gap: 12, marginBottom: 32 }}>
+          <Btn primary style={{ fontSize: 14, padding: '8px 18px' }}>💬 Konsultasi GRATIS</Btn>
+          <Btn style={{ fontSize: 14, padding: '8px 18px' }}>Lihat Layanan</Btn>
+        </Row>
+        <Box w="100%" h={160} label="📦 Hero image — kapal / kontainer / pelabuhan Belawan" dashed style={{ borderRadius: 4 }} />
+      </div>
+
+      {/* Stats row */}
+      <div style={{ padding: '0 20px 24px', display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 8 }}>
+        {[['5+','Tahun'],['100+','Klien'],['20+','Negara'],['✓','End-to-End']].map(([n,l]) => (
+          <div key={l} style={{ textAlign: 'center', border: '2px solid #1a1a1a', padding: '10px 4px', borderRadius: 2 }}>
+            <div style={{ fontSize: 22, fontWeight: 700 }}>{n}</div>
+            <div style={{ fontSize: 11, color: '#666' }}>{l}</div>
+          </div>
+        ))}
+      </div>
+
+      <HR />
+
+      {/* Services — horizontal cards */}
+      <div style={{ padding: '24px 20px' }}>
+        <Row style={{ justifyContent: 'space-between', marginBottom: 14 }}>
+          <div style={{ fontSize: 20, fontWeight: 700 }}>Layanan Kami</div>
+          <div style={{ fontSize: 13, color: '#888', borderBottom: '1px dotted' }}>Lihat semua →</div>
+        </Row>
+        <Col style={{ gap: 0 }}>
+          {[
+            ['📤','Export Handling','PEB, packing, pengiriman ke 20+ negara',''],
+            ['📥','Import Handling','PIB, kalkulasi bea & pajak impor',''],
+            ['🛃','Customs Clearance','Legal & cepat di pelabuhan utama Indonesia',''],
+            ['🚚','Door-to-Door','Dari gudang ke pintu pelanggan global',''],
+          ].map(([icon, title, desc], i) => (
+            <div key={title} style={{
+              display: 'flex', alignItems: 'center', gap: 12,
+              padding: '12px 0',
+              borderBottom: '1px solid #e0ddd8',
+            }}>
+              <div style={{ fontSize: 22, width: 32, textAlign: 'center' }}>{icon}</div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 14, fontWeight: 700 }}>{title}</div>
+                <div style={{ fontSize: 12, color: '#666' }}>{desc}</div>
+              </div>
+              <div style={{ fontSize: 12, color: '#aaa' }}>→</div>
+            </div>
+          ))}
+        </Col>
+      </div>
+
+      {/* About strip */}
+      <div style={{ background: '#f0ede8', padding: '20px', borderTop: '2px solid #1a1a1a', borderBottom: '2px solid #1a1a1a' }}>
+        <Row style={{ gap: 14, alignItems: 'center' }}>
+          <Box w={90} h={90} label="Foto direktur" dashed style={{ flexShrink: 0 }} />
+          <div>
+            <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 4 }}>PT. Mora Multi Berkah</div>
+            <div style={{ fontSize: 12, color: '#555', lineHeight: 1.5 }}>Official Customs Broker berbasis di Medan. Spesialis ekspor-impor end-to-end untuk UKM & perusahaan besar.</div>
+            <div style={{ fontSize: 12, marginTop: 6, fontWeight: 600 }}>Eka Mayang Sari — Direktur</div>
+          </div>
+        </Row>
+      </div>
+
+      {/* Testimonials */}
+      <div style={{ padding: '20px' }}>
+        <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 14 }}>Kata Klien Kami</div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+          {[
+            ['"Biaya jelas & terukur, tepat waktu."','Edy S. — PT. Dira Baraka'],
+            ['"Game-changer! Efficient & reliable."','Mr. Jhonson — Anhui Co.'],
+            ['"Tim sangat suportif."','Sarah — Online Shop Mgr'],
+            ['"Transparan, tanpa biaya tambahan."','Klien — Medan'],
+          ].map(([q, a]) => (
+            <div key={a} style={{ border: '1.5px solid #1a1a1a', padding: 10, borderRadius: 2 }}>
+              <div style={{ fontSize: 12, color: '#333', marginBottom: 6 }}>{q}</div>
+              <div style={{ fontSize: 11, color: '#888' }}>— {a}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* FAQ hint */}
+      <div style={{ padding: '0 20px 20px' }}>
+        <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 10 }}>FAQ</div>
+        {['Dokumen apa saja yang dibutuhkan?','Berapa biaya ekspor/impor?','Bisa bantu impor dari China?'].map(q => (
+          <div key={q} style={{ padding: '8px 0', borderBottom: '1px solid #e0ddd8', display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
+            <span>{q}</span><span style={{ color: '#aaa' }}>+</span>
+          </div>
+        ))}
+      </div>
+
+      {/* CTA */}
+      <div style={{ margin: '0 20px 20px', border: '3px solid #1a1a1a', padding: '20px', textAlign: 'center' }}>
+        <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 6 }}>Siap Mulai?</div>
+        <div style={{ fontSize: 13, color: '#666', marginBottom: 14 }}>Konsultasi gratis, quote transparan.</div>
+        <Btn primary style={{ fontSize: 14, padding: '8px 20px' }}>💬 WhatsApp Sekarang</Btn>
+      </div>
+
+      {/* Footer */}
+      <div style={{ background: '#1a1a2e', padding: '16px 20px', color: '#ccc', fontSize: 12 }}>
+        <div style={{ color: '#fff', fontWeight: 700, marginBottom: 8 }}>M2B — PT. Mora Multi Berkah</div>
+        <Row style={{ justifyContent: 'space-between' }}>
+          <Col style={{ gap: 3 }}>
+            <div>📍 Medan, Sumatera Utara</div>
+            <div>📧 sales@m2b.co.id</div>
+          </Col>
+          <Col style={{ gap: 3, alignItems: 'flex-end' }}>
+            <div>Home · Layanan · Blog</div>
+            <div>📱 +62 812-6302-7818</div>
+          </Col>
+        </Row>
+      </div>
+    </W>
+  );
+}
+
+// ─── VARIANT C: Mega Hero + Sticky Process ─────────────────────────────────
+function VariantC() {
+  return (
+    <W style={{ width: 440 }}>
+      {/* Top utility bar */}
+      <div style={{ background: '#c0392b', padding: '4px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ fontSize: 11, color: '#fff' }}>📱 +62 812-6302-7818 · sales@m2b.co.id</div>
+        <Row style={{ gap: 8 }}>
+          <div style={{ fontSize: 11, color: '#fff' }}>🇮🇩 ID</div>
+          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.6)' }}>EN</div>
+        </Row>
+      </div>
+
+      {/* Nav */}
+      <div style={{ padding: '10px 16px', borderBottom: '2px solid #1a1a1a', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#fff' }}>
+        <div>
+          <div style={{ fontSize: 22, fontWeight: 700 }}>M2B</div>
+          <div style={{ fontSize: 9, color: '#888', letterSpacing: 1 }}>MORA MULTI BERKAH</div>
+        </div>
+        <Row style={{ gap: 14 }}>
+          {['Layanan','Proses','About','Blog'].map(n => (
+            <div key={n} style={{ fontSize: 12 }}>{n}</div>
+          ))}
+        </Row>
+        <Btn primary style={{ fontSize: 11 }}>Portal M2B ↗</Btn>
+      </div>
+
+      {/* Ticker */}
+      <div style={{ background: '#f0ede8', padding: '6px 16px', borderBottom: '1px solid #ddd' }}>
+        <div style={{ fontSize: 11, color: '#555' }}>📦 Ribet urus dokumen ekspor-impor? M2B handle semuanya — <span style={{ color: '#c0392b', fontWeight: 700 }}>Konsultasi GRATIS →</span></div>
+      </div>
+
+      {/* HERO — full coverage, big type */}
+      <div style={{ background: '#1a1a2e', padding: '36px 20px 0', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', top: 0, right: 0, width: 120, height: '100%', background: 'rgba(192,57,43,0.15)' }} />
+        <div style={{ fontSize: 11, color: '#e74c3c', letterSpacing: 3, marginBottom: 10, textTransform: 'uppercase' }}>Trusted Freight Forwarder · Indonesia</div>
+        <div style={{ fontSize: 30, fontWeight: 700, color: '#fff', lineHeight: 1.15, marginBottom: 16 }}>
+          Ekspor & Impor<br/>
+          Lebih Mudah,<br/>
+          <span style={{ color: '#e74c3c' }}>Lebih Aman.</span>
+        </div>
+        <div style={{ color: '#aaa', fontSize: 13, marginBottom: 24, lineHeight: 1.6 }}>
+          Dari dokumen, bea cukai, hingga pengiriman door-to-door —<br/>M2B adalah mitra logistikmu.
+        </div>
+        <Row style={{ gap: 10, marginBottom: 24 }}>
+          <Btn primary style={{ fontSize: 13, padding: '8px 16px' }}>💬 Konsultasi Gratis</Btn>
+          <Btn style={{ fontSize: 13, padding: '8px 16px', color: '#fff', borderColor: '#fff' }}>📥 E-Book Rp49K</Btn>
+        </Row>
+        {/* hero image area */}
+        <Box w="100%" h={130} label="📸 foto kapal / kontainer pelabuhan Belawan" dashed style={{ border: '2px dashed rgba(255,255,255,0.3)', background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.5)' }} />
+      </div>
+
+      {/* Stats — offset card */}
+      <div style={{ background: '#c0392b', padding: '12px 16px', display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 4 }}>
+        {[['5+','Tahun'],['100+','Klien'],['20+','Negara'],['24/7','Support']].map(([n,l]) => (
+          <div key={l} style={{ textAlign: 'center', color: '#fff' }}>
+            <div style={{ fontSize: 22, fontWeight: 700 }}>{n}</div>
+            <div style={{ fontSize: 10 }}>{l}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Process steps */}
+      <div style={{ padding: '24px 16px', background: '#f5f3ef', borderTop: '2px solid #1a1a1a', borderBottom: '2px solid #1a1a1a' }}>
+        <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 16, textAlign: 'center' }}>Bagaimana Cara Kerjanya?</div>
+        <Row style={{ justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          {[
+            ['①','Konsultasi','Chat WA gratis,\nceritakan kebutuhan'],
+            ['②','Penawaran','Harga transparan,\ntanpa hidden fee'],
+            ['③','Proses','Dokumen & bea cukai\ndi-handle M2B'],
+            ['④','Terkirim','Barang tiba aman\ndi tujuan'],
+          ].map(([n, t, d]) => (
+            <div key={t} style={{ textAlign: 'center', flex: 1, position: 'relative' }}>
+              <div style={{ fontSize: 28, fontWeight: 700, color: '#c0392b' }}>{n}</div>
+              <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 4 }}>{t}</div>
+              <div style={{ fontSize: 11, color: '#666', whiteSpace: 'pre-line' }}>{d}</div>
+            </div>
+          ))}
+        </Row>
+      </div>
+
+      {/* Services grid */}
+      <div style={{ padding: '20px 16px' }}>
+        <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 14 }}>Layanan M2B</div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+          {[
+            ['📤 Export Handling','PEB, packing, international shipping'],
+            ['📥 Import Handling','PIB, bea masuk, pajak impor'],
+            ['🛃 Customs Clearance','Legal, cepat, di port utama'],
+            ['🚚 Door-to-Door','Gudang → pintu pelanggan'],
+            ['📝 Undername','Belum punya izin? Kami bantu'],
+            ['💡 Konsultasi','Tim berpengalaman siap membantu'],
+          ].map(([t, d]) => (
+            <div key={t} style={{ border: '2px solid #1a1a1a', padding: '12px', borderRadius: 2, cursor: 'default' }}>
+              <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 4 }}>{t}</div>
+              <div style={{ fontSize: 11, color: '#666' }}>{d}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Testimonials — slider */}
+      <div style={{ background: '#1a1a2e', padding: '20px 16px' }}>
+        <div style={{ color: '#fff', fontSize: 20, fontWeight: 700, marginBottom: 14 }}>Klien Berbicara</div>
+        <div style={{ border: '2px solid rgba(255,255,255,0.2)', padding: 14, borderRadius: 2 }}>
+          <div style={{ fontSize: 13, color: '#e0ddd8', marginBottom: 10, lineHeight: 1.6 }}>"Penanganan impor dengan biaya yang jelas dan terukur, tepat waktu. Layak menjadi rekan bisnis Anda."</div>
+          <Row style={{ alignItems: 'center', gap: 10 }}>
+            <Box w={36} h={36} label="" style={{ borderRadius: '50%', border: '2px dashed rgba(255,255,255,0.3)', background: 'rgba(255,255,255,0.1)', flexShrink: 0 }} />
+            <div>
+              <div style={{ color: '#fff', fontSize: 13, fontWeight: 700 }}>Edy Serdawanto</div>
+              <div style={{ color: '#aaa', fontSize: 11 }}>Direktur — PT. Dira Baraka Mulia</div>
+            </div>
+          </Row>
+        </div>
+        <Row style={{ justifyContent: 'center', gap: 6, marginTop: 12 }}>
+          {[1,2,3].map(i => <div key={i} style={{ width: 8, height: 8, borderRadius: '50%', background: i===1 ? '#c0392b' : 'rgba(255,255,255,0.3)' }} />)}
+        </Row>
+      </div>
+
+      {/* CTA */}
+      <div style={{ padding: '24px 16px', textAlign: 'center', borderTop: '3px solid #c0392b' }}>
+        <div style={{ fontSize: 22, fontWeight: 700, marginBottom: 6 }}>Mulai Sekarang</div>
+        <div style={{ fontSize: 13, color: '#666', marginBottom: 16 }}>Konsultasi GRATIS. Respon dalam 1×24 jam.</div>
+        <Btn primary style={{ fontSize: 15, padding: '10px 28px' }}>💬 Chat WhatsApp →</Btn>
+      </div>
+
+      {/* Footer */}
+      <div style={{ background: '#1a1a2e', padding: '16px', color: '#ccc', fontSize: 12 }}>
+        <Row style={{ justifyContent: 'space-between', marginBottom: 10 }}>
+          <div>
+            <div style={{ color: '#fff', fontWeight: 700, fontSize: 14 }}>M2B</div>
+            <div style={{ fontSize: 10 }}>PT. Mora Multi Berkah<br/>Medan, Sumatera Utara</div>
+          </div>
+          <Col style={{ gap: 2, alignItems: 'flex-end', fontSize: 11 }}>
+            <div>Home · Layanan · Blog · Kontak</div>
+            <div>Portal M2B ↗</div>
+          </Col>
+        </Row>
+        <div style={{ fontSize: 10, borderTop: '1px solid rgba(255,255,255,0.15)', paddingTop: 8, textAlign: 'center', color: '#666' }}>
+          © 2026 PT. Mora Multi Berkah · NPWP · NIB · ALFI · KADIN · NIK
+        </div>
+      </div>
+    </W>
+  );
+}
+
+// ─── Main App ──────────────────────────────────────────────────────────────
+function App() {
+  return (
+    <DesignCanvas title="M2B — Landing Page Wireframes">
+      <DCSection id="wires" title="3 Arah Desain Landing Page M2B.co.id">
+        <DCArtboard id="va" label="A — Bold DHL-style" width={440} height={1820}>
+          <VariantA />
+        </DCArtboard>
+        <DCArtboard id="vb" label="B — Clean Card Layout" width={440} height={1900}>
+          <VariantB />
+        </DCArtboard>
+        <DCArtboard id="vc" label="C — Mega Hero + Process Steps" width={440} height={1980}>
+          <VariantC />
+        </DCArtboard>
+      </DCSection>
+    </DesignCanvas>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+</script>
+<div id="root"></div>
+</body>
+</html>

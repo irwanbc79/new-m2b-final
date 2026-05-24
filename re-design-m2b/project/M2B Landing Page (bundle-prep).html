@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M2B — Freight Forwarder & Customs Broker Indonesia</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+<!-- ext-resource-dependency meta tags for JS-referenced images -->
+<meta name="ext-resource-dependency" content="https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?auto=format&fit=crop&w=1600&q=80" data-resource-id="heroPort" />
+<meta name="ext-resource-dependency" content="https://images.unsplash.com/photo-1605281317010-fe5ffe798166?auto=format&fit=crop&w=1600&q=80" data-resource-id="heroShip" />
+<meta name="ext-resource-dependency" content="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1600&q=80" data-resource-id="heroCargo" />
+<meta name="ext-resource-dependency" content="https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=800&q=80" data-resource-id="news1" />
+<meta name="ext-resource-dependency" content="https://images.unsplash.com/photo-1553413077-190dd305871c?auto=format&fit=crop&w=800&q=80" data-resource-id="news2" />
+<meta name="ext-resource-dependency" content="https://images.unsplash.com/photo-1598135753163-6167c1a1ad65?auto=format&fit=crop&w=800&q=80" data-resource-id="news3" />
+<meta name="ext-resource-dependency" content="https://images.unsplash.com/photo-1579547621113-e4bb2a19bdd6?auto=format&fit=crop&w=800&q=80" data-resource-id="news4" />
+<meta name="ext-resource-dependency" content="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=900&q=80" data-resource-id="portal" />
+
+<template id="__bundler_thumbnail" data-bg-color="#0f0f14">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <!-- Dark nav bar -->
+    <rect width="1200" height="800" fill="#0f0f14"/>
+    <rect width="1200" height="52" fill="#161616"/>
+    <rect x="40" y="16" width="48" height="20" rx="3" fill="#1a56db"/>
+    <text x="44" y="31" font-family="sans-serif" font-weight="800" font-size="14" fill="#fff">M2B</text>
+    <!-- Hero area -->
+    <rect y="52" width="1200" height="380" fill="#1a2a4a" opacity="0.8"/>
+    <rect x="40" y="120" width="420" height="16" rx="4" fill="rgba(255,255,255,0.15)"/>
+    <rect x="40" y="150" width="320" height="44" rx="6" fill="#1a56db" opacity="0.7"/>
+    <rect x="40" y="206" width="280" height="44" rx="6" fill="#1a56db" opacity="0.4"/>
+    <rect x="40" y="262" width="380" height="14" rx="3" fill="rgba(255,255,255,0.1)"/>
+    <rect x="40" y="284" width="320" height="14" rx="3" fill="rgba(255,255,255,0.07)"/>
+    <!-- Stats row -->
+    <rect y="432" width="1200" height="64" fill="#1a56db"/>
+    <!-- Services grid -->
+    <rect x="40" y="530" width="260" height="120" rx="8" fill="#fff" opacity="0.06"/>
+    <rect x="320" y="530" width="260" height="120" rx="8" fill="#fff" opacity="0.06"/>
+    <rect x="600" y="530" width="260" height="120" rx="8" fill="#fff" opacity="0.06"/>
+    <rect x="880" y="530" width="260" height="120" rx="8" fill="#fff" opacity="0.06"/>
+    <!-- News cards -->
+    <rect x="40" y="680" width="560" height="80" rx="6" fill="#1a56db" opacity="0.2"/>
+    <rect x="620" y="680" width="260" height="80" rx="6" fill="rgba(255,255,255,0.05)"/>
+    <rect x="900" y="680" width="260" height="80" rx="6" fill="rgba(255,255,255,0.05)"/>
+  </svg>
+</template>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: #f7f5f0; font-family: 'DM Sans', sans-serif; color: #0f0f14; font-size: 15px; line-height: 1.6; }
+
+  /* Ticker animation */
+  @keyframes ticker {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  .ticker-track { display: flex; animation: ticker 28s linear infinite; white-space: nowrap; }
+  .ticker-track:hover { animation-play-state: paused; }
+
+  /* Fade-in sections */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Map route animation */
+  @keyframes dashDraw {
+    from { stroke-dashoffset: 400; }
+    to   { stroke-dashoffset: 0; }
+  }
+  .route-line {
+    stroke-dasharray: 6 4;
+    stroke-dashoffset: 400;
+    animation: dashDraw 2.5s ease forwards;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #f0ede8; }
+  ::-webkit-scrollbar-thumb { background: #c0bdb7; border-radius: 3px; }
+</style>
+</head>
+<body>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel">
+
+const { useState, useEffect, useRef } = React;
+
+// ─── Design Tokens ────────────────────────────────────────────────────────
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "accentColor": "#1a56db",
+  "heroImage": "port",
+  "showCurrencyWidget": true,
+  "showCoverageMap": true,
+  "newsColumns": "3",
+  "roundness": "8"
+}/*EDITMODE-END*/;
+
+const IMGS = {
+  hero_port:    (window.__resources && window.__resources.heroPort)  || "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?auto=format&fit=crop&w=1600&q=80",
+  hero_ship:    (window.__resources && window.__resources.heroShip)  || "https://images.unsplash.com/photo-1605281317010-fe5ffe798166?auto=format&fit=crop&w=1600&q=80",
+  hero_cargo:   (window.__resources && window.__resources.heroCargo) || "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1600&q=80",
+  news1:        (window.__resources && window.__resources.news1)     || "https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=800&q=80",
+  news2:        (window.__resources && window.__resources.news2)     || "https://images.unsplash.com/photo-1553413077-190dd305871c?auto=format&fit=crop&w=800&q=80",
+  news3:        (window.__resources && window.__resources.news3)     || "https://images.unsplash.com/photo-1598135753163-6167c1a1ad65?auto=format&fit=crop&w=800&q=80",
+  news4:        (window.__resources && window.__resources.news4)     || "https://images.unsplash.com/photo-1579547621113-e4bb2a19bdd6?auto=format&fit=crop&w=800&q=80",
+  portal:       (window.__resources && window.__resources.portal)    || "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=900&q=80",
+};
+
+// ─── Shared UI atoms ──────────────────────────────────────────────────────
+const Tag = ({ children, color = '#1a56db', bg }) => (
+  <span style={{
+    display: 'inline-block', padding: '3px 10px', borderRadius: 20,
+    background: bg || (color + '14'), color, fontSize: 11, fontWeight: 600,
+    letterSpacing: 0.3, textTransform: 'uppercase',
+  }}>{children}</span>
+);
+
+const Btn = ({ children, variant = 'primary', accent, r = 8, style, onClick }) => {
+  const [hov, setHov] = useState(false);
+  const isPrimary = variant === 'primary';
+  return (
+    <button onClick={onClick}
+      onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
+      style={{
+        display: 'inline-flex', alignItems: 'center', gap: 8,
+        padding: '11px 24px', borderRadius: r, border: 'none', cursor: 'pointer',
+        fontFamily: 'DM Sans', fontWeight: 600, fontSize: 14, transition: 'all .18s',
+        background: isPrimary ? (hov ? shadeColor(accent, -15) : accent) : (hov ? '#f0ede8' : 'transparent'),
+        color: isPrimary ? '#fff' : '#0f0f14',
+        border: isPrimary ? 'none' : '1.5px solid #d0cdc8',
+        boxShadow: isPrimary && hov ? `0 4px 16px ${accent}44` : 'none',
+        ...style
+      }}>{children}</button>
+  );
+};
+
+function shadeColor(hex, pct) {
+  const num = parseInt(hex.replace('#',''), 16);
+  const r = Math.min(255, Math.max(0, (num >> 16) + pct));
+  const g = Math.min(255, Math.max(0, ((num >> 8) & 0xff) + pct));
+  const b = Math.min(255, Math.max(0, (num & 0xff) + pct));
+  return '#' + ((1 << 24)|(r << 16)|(g << 8)|b).toString(16).slice(1);
+}
+
+// ─── News Ticker ──────────────────────────────────────────────────────────
+const tickerItems = [
+  '🚢 Pelabuhan Belawan aktif 24/7 — layanan ekspedisi reguler Asia Tenggara',
+  '📋 Update PERMENDAG: aturan baru impor barang kiriman berlaku Mei 2026',
+  '⚓ Jadwal kapal Medan–Shanghai diperbarui — estimasi ETA 14–16 hari',
+  '📦 Kuota ekspor CPO Sumatera Utara Q2 2026 dibuka — informasi lengkap di Blog',
+  '🌐 M2B kini melayani rute door-to-door ke 25+ negara tujuan',
+  '💱 USD/IDR: 16.480 · CNY/IDR: 2.270 — update hari ini',
+];
+
+function NewsTicker({ accent }) {
+  const items = [...tickerItems, ...tickerItems];
+  return (
+    <div style={{ background: '#0f0f14', overflow: 'hidden', padding: '8px 0', borderBottom: `2px solid ${accent}` }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+        <div style={{
+          flexShrink: 0, background: accent, color: '#fff', padding: '2px 14px',
+          fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', zIndex: 1,
+          marginLeft: 0,
+        }}>TERKINI</div>
+        <div style={{ flex: 1, overflow: 'hidden' }}>
+          <div className="ticker-track" style={{ gap: 60 }}>
+            {items.map((t, i) => (
+              <span key={i} style={{ color: '#d1d0cf', fontSize: 12, fontFamily: 'DM Sans', whiteSpace: 'nowrap' }}>{t}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Nav ──────────────────────────────────────────────────────────────────
+function Nav({ accent, r }) {
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  useEffect(() => {
+    const fn = () => setScrolled(window.scrollY > 40);
+    window.addEventListener('scroll', fn);
+    return () => window.removeEventListener('scroll', fn);
+  }, []);
+
+  const links = ['Layanan','Proses','Berita','Blog','About'];
+
+  return (
+    <nav style={{
+      position: 'sticky', top: 0, zIndex: 100,
+      background: scrolled ? 'rgba(247,245,240,0.95)' : '#f7f5f0',
+      backdropFilter: scrolled ? 'blur(12px)' : 'none',
+      borderBottom: '1px solid #e5e2dc',
+      boxShadow: scrolled ? '0 2px 16px rgba(0,0,0,0.06)' : 'none',
+      transition: 'all .25s',
+      padding: '0 40px',
+    }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', height: 60, gap: 40 }}>
+        {/* Logo */}
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, flexShrink: 0 }}>
+          <span style={{ fontFamily: 'Syne', fontWeight: 800, fontSize: 24, color: '#0f0f14', letterSpacing: -1 }}>M2B</span>
+          <span style={{ fontSize: 10, color: '#999', fontWeight: 500 }}>PT. MORA MULTI BERKAH</span>
+        </div>
+
+        {/* Links */}
+        <div style={{ display: 'flex', gap: 28, flex: 1 }}>
+          {links.map(l => (
+            <a key={l} href={`#${l.toLowerCase()}`} style={{
+              fontSize: 13, color: '#555', textDecoration: 'none', fontWeight: 500,
+              paddingBottom: 2, borderBottom: l === 'Berita' ? `2px solid ${accent}` : '2px solid transparent',
+              color: l === 'Berita' ? accent : '#555',
+              transition: 'color .15s',
+            }}>{l}</a>
+          ))}
+        </div>
+
+        {/* Language */}
+        <div style={{ display: 'flex', gap: 10, fontSize: 12, color: '#888' }}>
+          <span style={{ fontWeight: 700, color: '#0f0f14' }}>🇮🇩 ID</span>
+          <span>🇬🇧 EN</span>
+        </div>
+
+        <Btn accent={accent} r={r}>💬 Konsultasi Gratis</Btn>
+      </div>
+    </nav>
+  );
+}
+
+// ─── Hero ─────────────────────────────────────────────────────────────────
+function Hero({ accent, heroImg, r }) {
+  const heroSrc = heroImg === 'ship' ? IMGS.hero_ship : heroImg === 'cargo' ? IMGS.hero_cargo : IMGS.hero_port;
+
+  return (
+    <section style={{ position: 'relative', minHeight: 600, display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
+      {/* BG Image */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        backgroundImage: `url(${heroSrc})`,
+        backgroundSize: 'cover', backgroundPosition: 'center',
+      }} />
+      {/* Overlay gradient */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: 'linear-gradient(105deg, rgba(15,15,20,0.88) 45%, rgba(15,15,20,0.3) 100%)',
+      }} />
+
+      <div style={{ position: 'relative', maxWidth: 1200, margin: '0 auto', padding: '80px 40px', width: '100%' }}>
+        <div style={{ maxWidth: 600 }}>
+          <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap' }}>
+            <Tag color="#fff" bg="rgba(255,255,255,0.15)">Freight Forwarder</Tag>
+            <Tag color="#fff" bg="rgba(255,255,255,0.15)">Customs Broker</Tag>
+            <Tag color={accent} bg={accent + '22'}>Medan · Indonesia</Tag>
+          </div>
+
+          <h1 style={{
+            fontFamily: 'Syne', fontWeight: 800, fontSize: 52, lineHeight: 1.08,
+            color: '#fff', letterSpacing: -1.5, marginBottom: 20,
+          }}>
+            Ekspor & Impor<br/>
+            <span style={{ color: accent }}>Lebih Mudah,</span><br/>
+            Lebih Aman.
+          </h1>
+
+          <p style={{ fontSize: 17, color: 'rgba(255,255,255,0.72)', marginBottom: 32, lineHeight: 1.7, maxWidth: 480 }}>
+            End-to-end freight forwarding & customs brokerage. Dari dokumen, bea cukai, hingga door-to-door delivery — M2B handle semuanya.
+          </p>
+
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+            <Btn accent={accent} r={r} style={{ padding: '13px 28px', fontSize: 15 }}>
+              💬 Konsultasi GRATIS
+            </Btn>
+            <Btn variant="outline" accent={accent} r={r} style={{ padding: '13px 24px', fontSize: 15, color: '#fff', borderColor: 'rgba(255,255,255,0.4)', background: 'rgba(255,255,255,0.08)' }}>
+              Lihat Layanan →
+            </Btn>
+          </div>
+
+          {/* Mini stats */}
+          <div style={{ display: 'flex', gap: 32, marginTop: 48, borderTop: '1px solid rgba(255,255,255,0.15)', paddingTop: 28 }}>
+            {[['5+','Tahun berpengalaman'],['100+','Klien aktif'],['20+','Negara tujuan'],['A–Z','Layanan end-to-end']].map(([n,l]) => (
+              <div key={l}>
+                <div style={{ fontFamily: 'Syne', fontWeight: 800, fontSize: 26, color: accent }}>{n}</div>
+                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)' }}>{l}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── Trust Bar ────────────────────────────────────────────────────────────
+function TrustBar({ accent }) {
+  const logos = ['Dirjen Bea Cukai RI','ALFI','KADIN','LNSW','NIB','Pelindo'];
+  return (
+    <div style={{ background: '#fff', borderBottom: '1px solid #e5e2dc', padding: '14px 40px' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', gap: 24, flexWrap: 'wrap' }}>
+        <span style={{ fontSize: 11, color: '#aaa', textTransform: 'uppercase', letterSpacing: 1, flexShrink: 0, fontWeight: 600 }}>
+          Terdaftar & diakui oleh
+        </span>
+        <div style={{ flex: 1, display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center' }}>
+          {logos.map(l => (
+            <div key={l} style={{
+              padding: '5px 14px', border: '1px solid #e5e2dc', borderRadius: 6,
+              fontSize: 12, color: '#666', fontWeight: 500, background: '#fafaf8',
+            }}>{l}</div>
+          ))}
+        </div>
+        <div style={{ display: 'flex', gap: 16, fontSize: 12, flexShrink: 0 }}>
+          <span style={{ color: '#888' }}>📧 sales@m2b.co.id</span>
+          <span style={{ color: '#888' }}>📱 +62 812-6302-7818</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Services ─────────────────────────────────────────────────────────────
+function Services({ accent, r }) {
+  const services = [
+    { icon: '📤', title: 'Export Handling', desc: 'Pengurusan PEB, packing list, COO/SKA, dan pengiriman ke 20+ negara. Dokumen legal & tepat waktu.', badge: 'Paling Populer' },
+    { icon: '📥', title: 'Import Handling', desc: 'Pengurusan PIB, estimasi bea masuk & pajak impor (PDRI), hingga penyerahan barang ke gudang.', badge: null },
+    { icon: '🛃', title: 'Customs Clearance', desc: 'Proses bea cukai di pelabuhan utama Indonesia — Belawan, Tanjung Priok, Soekarno-Hatta.', badge: null },
+    { icon: '🚚', title: 'Door-to-Door', desc: 'Layanan pengiriman dari gudang pengirim langsung ke pintu penerima, lintas negara.', badge: null },
+    { icon: '📝', title: 'Undername Import', desc: 'Solusi bagi importir yang belum memiliki API (Angka Pengenal Impor). Aman & legal.', badge: null },
+    { icon: '💡', title: 'Konsultasi Logistik', desc: 'Panduan step-by-step ekspor/impor, perhitungan biaya, dan strategi pengiriman dari tim ahli.', badge: null },
+  ];
+
+  return (
+    <section id="layanan" style={{ padding: '80px 40px', background: '#f7f5f0' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', marginBottom: 48 }}>
+          <Tag color={accent}>Layanan</Tag>
+          <h2 style={{ fontFamily: 'Syne', fontWeight: 800, fontSize: 36, letterSpacing: -0.8, marginTop: 12, marginBottom: 12 }}>
+            Semua Kebutuhan Logistik, Satu Atap
+          </h2>
+          <p style={{ color: '#666', fontSize: 16, maxWidth: 500, margin: '0 auto' }}>
+            Kamu fokus bisnis, kami urus sisanya — dari dokumen hingga pengiriman.
+          </p>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+          {services.map((s, i) => (
+            <ServiceCard key={i} s={s} accent={accent} r={r} featured={i === 0} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ServiceCard({ s, accent, r, featured }) {
+  const [hov, setHov] = useState(false);
+  return (
+    <div
+      onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
+      style={{
+        background: featured ? '#0f0f14' : '#fff',
+        border: `1px solid ${featured ? '#0f0f14' : hov ? accent : '#e5e2dc'}`,
+        borderRadius: r * 1.5, padding: '28px 24px',
+        transition: 'all .2s',
+        boxShadow: hov ? `0 8px 32px rgba(0,0,0,0.1)` : '0 1px 4px rgba(0,0,0,0.04)',
+        transform: hov ? 'translateY(-2px)' : 'none',
+        position: 'relative', cursor: 'default',
+      }}>
+      {s.badge && (
+        <div style={{
+          position: 'absolute', top: 20, right: 20,
+          background: accent, color: '#fff', fontSize: 10,
+          padding: '2px 8px', borderRadius: 10, fontWeight: 700,
+        }}>{s.badge}</div>
+      )}
+      <div style={{ fontSize: 28, marginBottom: 14 }}>{s.icon}</div>
+      <div style={{ fontFamily: 'Syne', fontWeight: 700, fontSize: 16, marginBottom: 8, color: featured ? '#fff' : '#0f0f14' }}>
+        {s.title}
+      </div>
+      <div style={{ fontSize: 13, color: featured ? 'rgba(255,255,255,0.55)' : '#777', lineHeight: 1.7 }}>
+        {s.desc}
+      </div>
+      <div style={{ marginTop: 18, fontSize: 13, color: featured ? accent : accent, fontWeight: 600 }}>
+        Pelajari lebih lanjut →
+      </div>
+    </div>
+  );
+}
+
+// ─── Coverage Map ─────────────────────────────────────────────────────────
+function CoverageMap({ accent }) {
+  // Simple SVG map of SE Asia + key trade routes from Medan
+  const routes = [
+    { d: 'M 152 148 Q 200 120 260 110', label: 'China' },
+    { d: 'M 152 148 Q 180 140 230 145', label: 'Malaysia/Singapura' },
+    { d: 'M 152 148 Q 160 160 200 175', label: 'Jawa / Jakarta' },
+    { d: 'M 152 148 Q 130 130 100 115', label: 'India' },
+    { d: 'M 152 148 Q 90 100 60 70',   label: 'Eropa / Timur Tengah' },
+  ];
+
+  return (
+    <section id="coverage" style={{ padding: '72px 40px', background: '#fff', borderTop: '1px solid #e5e2dc', borderBottom: '1px solid #e5e2dc' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 60, alignItems: 'center' }}>
+        <div>
+          <Tag color={accent}>Jangkauan</Tag>
+          <h2 style={{ fontFamily: 'Syne', fontWeight: 800, fontSize: 34, letterSpacing: -0.8, marginTop: 12, marginBottom: 16 }}>
+            Dari Medan ke Seluruh Dunia
+          </h2>
+          <p style={{ color: '#666', lineHeight: 1.8, marginBottom: 28 }}>
+            Beroperasi dari Pelabuhan Belawan, M2B melayani rute ekspor-impor ke 20+ negara di Asia, Eropa, Timur Tengah, dan Amerika.
+          </p>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            {[['🇨🇳 China','Rute utama impor'],['🇸🇬 Singapura','Hub transhipment'],['🇲🇾 Malaysia','Darat & laut'],['🇯🇵 Jepang','FCL & LCL'],['🇳🇱 Eropa','Via hub global'],['🌍 +15 Negara','Lainnya']].map(([c, d]) => (
+              <div key={c} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', padding: '10px 0', borderBottom: '1px solid #f0ede8' }}>
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: 600 }}>{c}</div>
+                  <div style={{ fontSize: 11, color: '#999' }}>{d}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* SVG Map */}
+        <div style={{ background: '#f7f5f0', borderRadius: 16, padding: 24, border: '1px solid #e5e2dc' }}>
+          <svg viewBox="0 0 320 220" style={{ width: '100%', height: 'auto' }}>
+            {/* Grid lines */}
+            {[0,40,80,120,160,200].map(y => <line key={y} x1="0" y1={y} x2="320" y2={y} stroke="#e5e2dc" strokeWidth="0.5"/>)}
+            {[0,60,120,180,240,300].map(x => <line key={x} x1={x} y1="0" x2={x} y2="220" stroke="#e5e2dc" strokeWidth="0.5"/>)}
+
+            {/* Land masses — simplified */}
+            {/* Sumatera */}
+            <ellipse cx="152" cy="162" rx="22" ry="34" fill="#d0cec9" />
+            {/* Jawa */}
+            <ellipse cx="200" cy="178" rx="28" ry="10" fill="#d0cec9" />
+            {/* Borneo */}
+            <ellipse cx="192" cy="148" rx="20" ry="22" fill="#d0cec9" />
+            {/* Malaysia/Peninsula */}
+            <ellipse cx="172" cy="138" rx="8" ry="16" fill="#d0cec9" />
+            {/* Singapore dot */}
+            <circle cx="176" cy="152" r="3" fill="#aaa" />
+            {/* China landmass */}
+            <ellipse cx="235" cy="95" rx="50" ry="35" fill="#d0cec9" />
+            {/* India */}
+            <ellipse cx="105" cy="115" rx="20" ry="28" fill="#d0cec9" />
+            {/* Japan */}
+            <ellipse cx="272" cy="85" rx="8" ry="18" fill="#d0cec9" transform="rotate(-15 272 85)" />
+            {/* Middle East */}
+            <ellipse cx="70" cy="90" rx="18" ry="14" fill="#d0cec9" />
+
+            {/* Route lines from Medan (152, 148) */}
+            {routes.map((route, i) => (
+              <path
+                key={i}
+                d={route.d}
+                fill="none"
+                stroke={`hsl(${210 + i*20}, 80%, 55%)`}
+                strokeWidth="1.5"
+                opacity="0.7"
+                strokeDasharray="5 4"
+                className="route-line"
+                style={{ animationDelay: `${i * 0.4}s` }}
+              />
+            ))}
+
+            {/* Medan marker */}
+            <circle cx="152" cy="148" r="7" fill={TWEAK_DEFAULTS.accentColor} opacity="0.2" />
+            <circle cx="152" cy="148" r="4" fill={TWEAK_DEFAULTS.accentColor} />
+            <text x="158" y="144" fontSize="8" fill={TWEAK_DEFAULTS.accentColor} fontFamily="DM Sans" fontWeight="700">Medan</text>
+
+            {/* Destination dots */}
+            {[[260,108,'China'],[230,147,'SG/MY'],[200,175,'Jakarta'],[105,115,''],[60,68,'Eropa']].map(([x, y, label]) => (
+              <g key={label}>
+                <circle cx={x} cy={y} r="3" fill="#94a3b8" />
+                {label && <text x={x+5} y={y+4} fontSize="7" fill="#666" fontFamily="DM Sans">{label}</text>}
+              </g>
+            ))}
+
+            <text x="10" y="215" fontSize="8" fill="#bbb" fontFamily="DM Sans">Peta skematik — tidak representasi geografis akurat</text>
+          </svg>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── Process ──────────────────────────────────────────────────────────────
+function Process({ accent, r }) {
+  const steps = [
+    { n:'01', icon:'💬', title:'Konsultasi Gratis', desc:'Hubungi kami via WhatsApp atau form. Ceritakan kebutuhan ekspor/impor kamu.' },
+    { n:'02', icon:'📄', title:'Penawaran Transparan', desc:'Kami kirim quote detail — biaya, estimasi waktu, dokumen. Tanpa hidden fee.' },
+    { n:'03', icon:'⚙️', title:'Proses Dokumen', desc:'Tim M2B mengurus semua dokumen dan bea cukai. Kamu update via portal real-time.' },
+    { n:'04', icon:'✅', title:'Barang Terkirim', desc:'Barang tiba aman di tujuan. Tracking tersedia hingga pengiriman selesai.' },
+  ];
+
+  return (
+    <section id="proses" style={{ padding: '80px 40px', background: '#f7f5f0' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', marginBottom: 52 }}>
+          <Tag color={accent}>Cara Kerja</Tag>
+          <h2 style={{ fontFamily: 'Syne', fontWeight: 800, fontSize: 34, letterSpacing: -0.8, marginTop: 12, marginBottom: 12 }}>4 Langkah Mudah</h2>
+          <p style={{ color: '#666', maxWidth: 440, margin: '0 auto' }}>Prosesnya sederhana — kami yang kerja keras, kamu yang tenang.</p>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 0, position: 'relative' }}>
+          {/* connector line */}
+          <div style={{ position: 'absolute', top: 44, left: '12.5%', right: '12.5%', height: 2, background: `linear-gradient(90deg, ${accent}, #c7d7f9)`, zIndex: 0 }} />
+          {steps.map((s, i) => (
+            <div key={i} style={{ textAlign: 'center', padding: '0 20px', position: 'relative', zIndex: 1 }}>
+              <div style={{
+                width: 56, height: 56, borderRadius: '50%',
+                background: '#fff', border: `3px solid ${accent}`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                margin: '0 auto 16px', fontSize: 22,
+                boxShadow: `0 0 0 6px #f7f5f0`,
+              }}>{s.icon}</div>
+              <div style={{ fontFamily: 'Syne', fontWeight: 800, fontSize: 34, color: accent + '22', position: 'absolute', top: -8, left: '50%', transform: 'translateX(-50%)', fontSize: 52, lineHeight: 1 }}>{s.n}</div>
+              <div style={{ fontFamily: 'Syne', fontWeight: 700, fontSize: 15, marginBottom: 8 }}>{s.title}</div>
+              <div style={{ fontSize: 13, color: '#777', lineHeight: 1.7 }}>{s.desc}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── News Section ─────────────────────────────────────────────────────────
+const newsData = [
+  {
+    id: 1, cat: 'Port Update', date: '24 Apr 2026',
+    title: 'Pelabuhan Belawan Tambah Kapasitas Bongkar Muat — Target 4 Juta TEU Tahun Ini',
+    excerpt: 'Pelindo 1 mengumumkan penambahan kapasitas crane dan lapangan penumpukan peti kemas di Terminal Peti Kemas Belawan untuk mengejar target throughput 2026.',
+    img: IMGS.news1, featured: true,
+  },
+  {
+    id: 2, cat: 'Regulasi', date: '22 Apr 2026',
+    title: 'Bea Cukai Terbitkan SE Baru soal Impor Barang Kiriman — Berlaku 1 Mei',
+    excerpt: 'Surat Edaran baru mengubah batas nilai bebas bea untuk impor barang kiriman dari USD 3 menjadi USD 3 dengan pengawasan lebih ketat.',
+    img: IMGS.news2, featured: false,
+  },
+  {
+    id: 3, cat: 'Shipment News', date: '20 Apr 2026',
+    title: 'Jadwal Kapal Rute Medan–Shanghai Diperbarui: ETA Kini 14–16 Hari',
+    excerpt: 'Maskapai pelayaran CMA CGM dan MSC memperbarui jadwal dan estimasi waktu tempuh rute Belawan–Shanghai untuk Q2 2026.',
+    img: IMGS.news3, featured: false,
+  },
+  {
+    id: 4, cat: 'Market', date: '18 Apr 2026',
+    title: 'Volume Ekspor CPO Sumatera Utara Naik 12% di Q1 2026 — M2B Layani 30+ Shipment',
+    excerpt: 'Kenaikan harga CPO global mendorong lonjakan volume ekspor dari Sumut. M2B mencatat peningkatan signifikan permintaan layanan ekspor komoditas.',
+    img: IMGS.news4, featured: false,
+  },
+];
+
+const catColors = {
+  'Port Update':    '#0ea5e9',
+  'Regulasi':       '#7c3aed',
+  'Shipment News':  '#16a34a',
+  'Market':         '#d97706',
+};
+
+function NewsSection({ accent, r }) {
+  const [activeTab, setActiveTab] = useState('Semua');
+  const tabs = ['Semua', 'Port Update', 'Regulasi', 'Shipment News', 'Market'];
+  const filtered = activeTab === 'Semua' ? newsData : newsData.filter(n => n.cat === activeTab);
+  const featured = filtered.find(n => n.featured) || filtered[0];
+  const rest = filtered.filter(n => n !== featured);
+
+  return (
+    <section id="berita" style={{ padding: '80px 40px', background: '#fff', borderTop: '1px solid #e5e2dc' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 32, flexWrap: 'wrap', gap: 16 }}>
+          <div>
+            <Tag color={accent}>Berita Terkini</Tag>
+            <h2 style={{ fontFamily: 'Syne', fontWeight: 800, fontSize: 34, letterSpacing: -0.8, marginTop: 12, marginBottom: 6 }}>
+              Update Logistik & Shipment
+            </h2>
+            <p style={{ color: '#666', fontSize: 15 }}>Info terkini seputar pelabuhan, regulasi, dan kegiatan pengiriman.</p>
+          </div>
+          <a href="#" style={{ fontSize: 13, color: accent, fontWeight: 600, textDecoration: 'none' }}>Lihat semua berita →</a>
+        </div>
+
+        {/* Category Tabs */}
+        <div style={{ display: 'flex', gap: 8, marginBottom: 28, flexWrap: 'wrap' }}>
+          {tabs.map(t => (
+            <button key={t} onClick={() => setActiveTab(t)} style={{
+              padding: '6px 16px', borderRadius: 20, border: 'none', cursor: 'pointer',
+              background: activeTab === t ? accent : '#f0ede8',
+              color: activeTab === t ? '#fff' : '#666',
+              fontSize: 13, fontWeight: 500, fontFamily: 'DM Sans',
+              transition: 'all .15s',
+            }}>{t}</button>
+          ))}
+        </div>
+
+        {/* News Grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: 20 }}>
+          {/* Featured */}
+          {featured && (
+            <div style={{
+              borderRadius: r * 1.5, overflow: 'hidden', border: '1px solid #e5e2dc',
+              display: 'flex', flexDirection: 'column', cursor: 'pointer',
+              transition: 'box-shadow .2s',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+            }}>
+              <div style={{
+                height: 260, backgroundImage: `url(${featured.img})`,
+                backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative',
+              }}>
+                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.7))' }} />
+                <div style={{ position: 'absolute', bottom: 16, left: 16 }}>
+                  <span style={{ background: catColors[featured.cat] || accent, color: '#fff', fontSize: 10, fontWeight: 700, padding: '3px 8px', borderRadius: 4, textTransform: 'uppercase' }}>{featured.cat}</span>
+                </div>
+              </div>
+              <div style={{ padding: '20px 24px 24px', flex: 1 }}>
+                <div style={{ fontSize: 11, color: '#aaa', marginBottom: 8 }}>{featured.date}</div>
+                <h3 style={{ fontFamily: 'Syne', fontWeight: 700, fontSize: 18, lineHeight: 1.35, marginBottom: 10, color: '#0f0f14' }}>{featured.title}</h3>
+                <p style={{ fontSize: 13, color: '#777', lineHeight: 1.7 }}>{featured.excerpt}</p>
+                <div style={{ marginTop: 16, fontSize: 13, color: accent, fontWeight: 600 }}>Baca selengkapnya →</div>
+              </div>
+            </div>
+          )}
+
+          {/* Right column — smaller cards */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            {rest.slice(0, 3).map(n => (
+              <NewsCard key={n.id} n={n} accent={accent} r={r} />
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function NewsCard({ n, accent, r }) {
+  const [hov, setHov] = useState(false);
+  return (
+    <div
+      onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
+      style={{
+        display: 'flex', gap: 14, borderRadius: r,
+        border: `1px solid ${hov ? accent + '44' : '#e5e2dc'}`,
+        overflow: 'hidden', cursor: 'pointer',
+        transition: 'all .18s',
+        background: hov ? '#fafaf8' : '#fff',
+        boxShadow: hov ? '0 4px 16px rgba(0,0,0,0.07)' : 'none',
+      }}>
+      <div style={{
+        width: 100, flexShrink: 0,
+        backgroundImage: `url(${n.img})`,
+        backgroundSize: 'cover', backgroundPosition: 'center',
+      }} />
+      <div style={{ padding: '14px 14px 14px 0', flex: 1 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+          <span style={{ background: catColors[n.cat] || accent, color: '#fff', fontSize: 9, fontWeight: 700, padding: '2px 6px', borderRadius: 3, textTransform: 'uppercase' }}>{n.cat}</span>
+          <span style={{ fontSize: 11, color: '#bbb' }}>{n.date}</span>
+        </div>
+        <div style={{ fontFamily: 'Syne', fontWeight: 700, fontSize: 13, lineHeight: 1.4, color: '#0f0f14', marginBottom: 6 }}>{n.title}</div>
+        <div style={{ fontSize: 12, color: accent, fontWeight: 600 }}>Baca →</div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Currency Widget ──────────────────────────────────────────────────────
+function CurrencyWidget({ accent }) {
+  const rates = [
+    { pair: 'USD/IDR', rate: '16.480', change: '+0.3%', up: true },
+    { pair: 'CNY/IDR', rate: '2.270', change: '-0.1%', up: false },
+    { pair: 'SGD/IDR', rate: '12.340', change: '+0.2%', up: true },
+    { pair: 'JPY/IDR', rate: '110', change: '+0.5%', up: true },
+  ];
+  return (
+    <div style={{ background: '#0f0f14', padding: '20px 40px' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', gap: 40, flexWrap: 'wrap' }}>
+        <div style={{ fontSize: 11, color: '#666', textTransform: 'uppercase', letterSpacing: 1, flexShrink: 0, fontWeight: 600 }}>
+          Kurs Referensi · BI Rate
+        </div>
+        <div style={{ display: 'flex', gap: 32, flex: 1, flexWrap: 'wrap' }}>
+          {rates.map(r => (
+            <div key={r.pair} style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+              <span style={{ fontSize: 12, color: '#888', fontWeight: 600 }}>{r.pair}</span>
+              <span style={{ fontSize: 14, color: '#fff', fontWeight: 700, fontFamily: 'Syne' }}>{r.rate}</span>
+              <span style={{ fontSize: 11, color: r.up ? '#22c55e' : '#ef4444' }}>{r.up ? '▲' : '▼'} {r.change}</span>
+            </div>
+          ))}
+        </div>
+        <div style={{ fontSize: 11, color: '#444', flexShrink: 0 }}>Update 24 Apr 2026 · 09.00 WIB</div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Portal Feature ───────────────────────────────────────────────────────
+function PortalFeature({ accent, r }) {
+  return (
+    <section style={{ padding: '80px 40px', background: '#f7f5f0', borderTop: '1px solid #e5e2dc' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: 60, alignItems: 'center' }}>
+        <div>
+          <Tag color={accent}>Portal M2B</Tag>
+          <h2 style={{ fontFamily: 'Syne', fontWeight: 800, fontSize: 34, letterSpacing: -0.8, marginTop: 12, marginBottom: 16 }}>
+            Tracking & Dokumen Real-Time
+          </h2>
+          <p style={{ color: '#666', lineHeight: 1.8, marginBottom: 28 }}>
+            Pantau status shipment, unduh dokumen, dan cek invoice langsung dari dashboard online M2B — kapan saja, di mana saja.
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 32 }}>
+            {[
+              ['📍 Live Tracking','Status pengiriman real-time dari port ke tujuan'],
+              ['📋 Dokumen Digital','PIB, PEB, B/L tersedia langsung di dashboard'],
+              ['💰 Invoice Transparan','Rincian biaya lengkap, tanpa kejutan'],
+            ].map(([t, d]) => (
+              <div key={t} style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                <div style={{ width: 8, height: 8, borderRadius: '50%', background: accent, marginTop: 7, flexShrink: 0 }} />
+                <div>
+                  <div style={{ fontWeight: 600, fontSize: 14 }}>{t}</div>
+                  <div style={{ fontSize: 13, color: '#777' }}>{d}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <Btn accent={accent} r={r}>Coba Portal M2B ↗</Btn>
+        </div>
+        <div style={{ borderRadius: 16, overflow: 'hidden', border: '1px solid #e5e2dc', boxShadow: '0 8px 40px rgba(0,0,0,0.1)' }}>
+          <img src={IMGS.portal} alt="Portal M2B" style={{ width: '100%', height: 'auto', display: 'block' }} />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── Testimonials ─────────────────────────────────────────────────────────
+function Testimonials({ accent, r }) {
+  const items = [
+    { q: '"Penanganan impor dengan biaya yang jelas dan terukur, tepat waktu. Sangat layak menjadi rekan bisnis Anda."', name: 'Edy Serdawanto', co: 'Direktur — PT. Dira Baraka Mulia', star: 5 },
+    { q: '"Game-changer for our business! The team at M2B is reliable, efficient, and always responsive."', name: 'Mr. Jhonson', co: 'GM — Anhui Imp & Export Co., Ltd', star: 5 },
+    { q: '"Tim M2B sangat suportif dan transparan. Tidak ada biaya tersembunyi — ini yang kami cari."', name: 'Sarah Aulia', co: 'Online Business Owner — Medan', star: 5 },
+  ];
+  return (
+    <section style={{ padding: '80px 40px', background: '#fff', borderTop: '1px solid #e5e2dc' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', marginBottom: 48 }}>
+          <Tag color={accent}>Testimoni</Tag>
+          <h2 style={{ fontFamily: 'Syne', fontWeight: 800, fontSize: 34, letterSpacing: -0.8, marginTop: 12, marginBottom: 12 }}>
+            Dipercaya Ratusan Klien
+          </h2>
+          <p style={{ color: '#666' }}>Dari UKM hingga perusahaan ekspor skala besar.</p>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+          {items.map((item, i) => (
+            <div key={i} style={{ background: '#f7f5f0', borderRadius: r * 1.5, padding: '28px 24px', border: '1px solid #e5e2dc' }}>
+              <div style={{ marginBottom: 12 }}>{'★'.repeat(item.star)}<span style={{ color: accent }}>{'★'.repeat(item.star)}</span></div>
+              <p style={{ fontSize: 14, color: '#444', lineHeight: 1.75, marginBottom: 20, fontStyle: 'italic' }}>{item.q}</p>
+              <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                <div style={{ width: 40, height: 40, borderRadius: '50%', background: accent + '22', border: `2px solid ${accent}33`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Syne', fontWeight: 800, color: accent, fontSize: 16 }}>
+                  {item.name[0]}
+                </div>
+                <div>
+                  <div style={{ fontWeight: 700, fontSize: 14 }}>{item.name}</div>
+                  <div style={{ fontSize: 12, color: '#999' }}>{item.co}</div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── CTA ──────────────────────────────────────────────────────────────────
+function CTA({ accent, r }) {
+  return (
+    <section style={{ padding: '80px 40px', background: '#0f0f14' }}>
+      <div style={{ maxWidth: 700, margin: '0 auto', textAlign: 'center' }}>
+        <h2 style={{ fontFamily: 'Syne', fontWeight: 800, fontSize: 40, color: '#fff', letterSpacing: -1, marginBottom: 16, lineHeight: 1.1 }}>
+          Siap Ekspor atau Impor?<br/>
+          <span style={{ color: accent }}>Mulai Hari Ini.</span>
+        </h2>
+        <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 16, marginBottom: 36, lineHeight: 1.7 }}>
+          Konsultasi gratis, quote transparan, respon cepat. Tidak ada komitmen sebelum kamu setuju.
+        </p>
+        <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
+          <Btn accent={accent} r={r} style={{ padding: '14px 32px', fontSize: 16 }}>
+            💬 Chat WhatsApp Sekarang
+          </Btn>
+          <Btn variant="outline" accent={accent} r={r} style={{ padding: '14px 28px', fontSize: 16, color: '#fff', borderColor: 'rgba(255,255,255,0.25)', background: 'rgba(255,255,255,0.06)' }}>
+            📧 Email Kami
+          </Btn>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── Footer ───────────────────────────────────────────────────────────────
+function Footer({ accent }) {
+  const cols = [
+    { title: 'Layanan', links: ['Export Handling','Import Handling','Customs Clearance','Door-to-Door','Undername','Konsultasi'] },
+    { title: 'Perusahaan', links: ['About M2B','Tim Kami','Karir','Portal M2B'] },
+    { title: 'Konten', links: ['Berita Terkini','Blog & Artikel','FAQ','Download E-Book'] },
+  ];
+  return (
+    <footer style={{ background: '#0a0a0e', padding: '56px 40px 32px', color: '#555' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr 1fr', gap: 40, marginBottom: 48 }}>
+          {/* Brand */}
+          <div>
+            <div style={{ fontFamily: 'Syne', fontWeight: 800, fontSize: 24, color: '#fff', marginBottom: 6, letterSpacing: -0.5 }}>M2B</div>
+            <div style={{ fontSize: 12, color: '#444', marginBottom: 16, lineHeight: 1.7 }}>
+              PT. Mora Multi Berkah<br/>
+              Freight Forwarder & Customs Broker<br/>
+              Medan, Sumatera Utara
+            </div>
+            <div style={{ fontSize: 13, color: '#555', lineHeight: 1.8 }}>
+              <div>📧 sales@m2b.co.id</div>
+              <div>📱 +62 812-6302-7818</div>
+              <div>🌐 m2b.co.id</div>
+            </div>
+          </div>
+          {/* Link columns */}
+          {cols.map(col => (
+            <div key={col.title}>
+              <div style={{ fontFamily: 'Syne', fontWeight: 700, fontSize: 13, color: '#888', marginBottom: 16, textTransform: 'uppercase', letterSpacing: 0.5 }}>{col.title}</div>
+              {col.links.map(l => (
+                <div key={l} style={{ fontSize: 13, marginBottom: 10 }}>
+                  <a href="#" style={{ color: '#555', textDecoration: 'none' }}>{l}</a>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+        <div style={{ borderTop: '1px solid #1a1a1a', paddingTop: 24, display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, fontSize: 12, color: '#333' }}>
+          <span>© 2026 PT. Mora Multi Berkah · NIB · NPWP · ALFI · KADIN · LNSW</span>
+          <span>Dibuat dengan ❤ di Medan, Indonesia</span>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+// ─── App ──────────────────────────────────────────────────────────────────
+function App() {
+  const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  const accent = tweaks.accentColor;
+  const r = parseInt(tweaks.roundness);
+
+  return (
+    <>
+      <NewsTicker accent={accent} />
+      <Nav accent={accent} r={r} />
+      <Hero accent={accent} heroImg={tweaks.heroImage} r={r} />
+      <TrustBar accent={accent} />
+      <Services accent={accent} r={r} />
+      {tweaks.showCoverageMap && <CoverageMap accent={accent} r={r} />}
+      <Process accent={accent} r={r} />
+      <NewsSection accent={accent} r={r} />
+      {tweaks.showCurrencyWidget && <CurrencyWidget accent={accent} />}
+      <PortalFeature accent={accent} r={r} />
+      <Testimonials accent={accent} r={r} />
+      <CTA accent={accent} r={r} />
+      <Footer accent={accent} />
+
+      <TweaksPanel>
+        <TweakSection title="Warna & Bentuk">
+          <TweakColor id="accentColor" label="Warna Aksen" />
+          <TweakSlider id="roundness" label="Sudut Tombol" min={0} max={24} step={2} />
+        </TweakSection>
+        <TweakSection title="Hero Image">
+          <TweakRadio id="heroImage" label="Foto Hero" options={[
+            { value: 'port', label: 'Pelabuhan Aerial' },
+            { value: 'ship', label: 'Kapal Kargo' },
+            { value: 'cargo', label: 'Gudang Logistik' },
+          ]} />
+        </TweakSection>
+        <TweakSection title="Widget">
+          <TweakToggle id="showCoverageMap" label="Tampilkan Peta Jangkauan" />
+          <TweakToggle id="showCurrencyWidget" label="Tampilkan Kurs Mata Uang" />
+        </TweakSection>
+      </TweaksPanel>
+    </>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+</script>
+<div id="root"></div>
+</body>
+</html>
