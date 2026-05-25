@@ -37,8 +37,13 @@ return [
 
 
     'adsense' => [
-        'publisher_id' => env('ADSENSE_PUBLISHER_ID', 'ca-pub-XXXXXXXXXXXXXXXX'),
+        'publisher_id' => env('ADSENSE_PUBLISHER_ID', 'ca-pub-5616961797801657'),
         'slot_id'      => env('ADSENSE_SLOT_ID', '0000000000'),
+    ],
+
+    'mora' => [
+        'gemini_key' => env('MORA_GEMINI_KEY'),
+        'claude_key' => env('MORA_CLAUDE_KEY'),
     ],
 
 ];

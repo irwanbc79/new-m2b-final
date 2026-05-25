@@ -12,7 +12,7 @@ CacheLookup off
     # ═══ 301 Redirect: WordPress /%postname%/ → Laravel /blog/{slug} ═══
     # Tangkap slug lama WP (root-level) dan arahkan ke /blog/
     # Kecualikan semua route Laravel yang sudah ada
-    RewriteCond %{REQUEST_URI} !^/blog/
+    RewriteCond %{REQUEST_URI} !^/blog
     RewriteCond %{REQUEST_URI} !^/tentang-kami
     RewriteCond %{REQUEST_URI} !^/tim
     RewriteCond %{REQUEST_URI} !^/karir
@@ -21,6 +21,7 @@ CacheLookup off
     RewriteCond %{REQUEST_URI} !^/disclaimer
     RewriteCond %{REQUEST_URI} !^/ketentuan-layanan
     RewriteCond %{REQUEST_URI} !^/sitemap
+    RewriteCond %{REQUEST_URI} !^/mora/
     RewriteCond %{REQUEST_URI} !^/images/
     RewriteCond %{REQUEST_URI} !^/css/
     RewriteCond %{REQUEST_URI} !^/js/
