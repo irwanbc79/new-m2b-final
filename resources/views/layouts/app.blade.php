@@ -82,14 +82,14 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
 (function(){
     function loadGA(){
         var s=document.createElement('script');
-        s.src='https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX';
+        s.src='https://www.googletagmanager.com/gtag/js?id=G-BZQ3135741';
         s.async=true;
         document.head.appendChild(s);
         window.dataLayer=window.dataLayer||[];
         function gtag(){dataLayer.push(arguments);}
         window.gtag=gtag;
         gtag('js',new Date());
-        gtag('config','G-XXXXXXXXXX');
+        gtag('config','G-BZQ3135741');
     }
     'requestIdleCallback' in window
         ? requestIdleCallback(loadGA,{timeout:2000})
