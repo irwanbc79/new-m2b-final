@@ -55,7 +55,7 @@
         <p style="font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:14px;line-height:1.6">Pantau status shipment, unduh dokumen, invoice, dan laporan logistik real-time.</p>
         <div style="display:flex;gap:8px">
           <a href="https://portal.m2b.co.id" target="_blank" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 14px;border-radius:8px;background:#1e3a5f;color:#fff;text-decoration:none;font-weight:700;font-size:13px;white-space:nowrap">🔐 Login Portal</a>
-          <a href="https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20ingin%20daftar%20akun%20Portal%20M2B" target="_blank" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 14px;border-radius:8px;background:rgba(255,255,255,0.08);color:#fff;text-decoration:none;font-weight:600;font-size:13px;border:1px solid rgba(255,255,255,0.2);white-space:nowrap">💬 Daftar Akun</a>
+          <a href="https://portal.m2b.co.id/register" target="_blank" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 14px;border-radius:8px;background:rgba(255,255,255,0.08);color:#fff;text-decoration:none;font-weight:600;font-size:13px;border:1px solid rgba(255,255,255,0.2);white-space:nowrap">✏️ Daftar Akun</a>
         </div>
       </div>
       <div class="flex gap-3 flex-wrap" x-data="{ open: false }">

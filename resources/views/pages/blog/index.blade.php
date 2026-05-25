@@ -83,7 +83,7 @@
 
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px" class="blog-grid">
       @forelse($posts as $i => $post)
-      @if($i === 0) @continue @endif
+      @continue($i === 0)
       @php
         $cat = strtolower($post->category ?? '');
         if(str_contains($cat,'bea cukai') && str_contains($cat,'ekspor')) {
