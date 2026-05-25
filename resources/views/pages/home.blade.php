@@ -94,18 +94,28 @@
         </div>
       </div>
       <div style="display:flex;gap:32px;margin-top:48px;border-top:1px solid rgba(255,255,255,0.18);padding-top:28px;flex-wrap:wrap" class="home-stats">
-        <div x-data="{ count: 0, done: false }" x-intersect.once="if(!done){ done=true; let i=setInterval(()=>{ count+=1; if(count>=5){count=5;clearInterval(i);} },60); }">
-          <div style="font-family:Syne;font-weight:800;font-size:28px;color:#4a9eda;line-height:1"><span x-text="count + '+'">5+</span></div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.55);margin-top:6px">Tahun berpengalaman</div>
+        @foreach([
+          ['target'=>5,   'label'=>'Tahun berpengalaman', 'suffix'=>'+'],
+          ['target'=>100, 'label'=>'Klien aktif',          'suffix'=>'+'],
+          ['target'=>20,  'label'=>'Negara tujuan',        'suffix'=>'+'],
+        ] as $stat)
+        <div x-data="{ count: 0 }"
+             x-intersect.once="
+               let start = null, target = {{ $stat['target'] }};
+               const step = (ts) => {
+                 if (!start) start = ts;
+                 const progress = Math.min((ts - start) / 1800, 1);
+                 count = Math.floor(progress * target);
+                 if (progress < 1) requestAnimationFrame(step);
+               };
+               requestAnimationFrame(step);
+             ">
+          <div style="font-family:Syne;font-weight:800;font-size:28px;color:#4a9eda;line-height:1">
+            <span x-text="count + '{{ $stat['suffix'] }}'">{{ $stat['target'] }}{{ $stat['suffix'] }}</span>
+          </div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.55);margin-top:6px">{{ $stat['label'] }}</div>
         </div>
-        <div x-data="{ count: 0, done: false }" x-intersect.once="if(!done){ done=true; let i=setInterval(()=>{ count+=3; if(count>=100){count=100;clearInterval(i);} },30); }">
-          <div style="font-family:Syne;font-weight:800;font-size:28px;color:#4a9eda;line-height:1"><span x-text="count + '+'">100+</span></div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.55);margin-top:6px">Klien aktif</div>
-        </div>
-        <div x-data="{ count: 0, done: false }" x-intersect.once="if(!done){ done=true; let i=setInterval(()=>{ count+=1; if(count>=20){count=20;clearInterval(i);} },50); }">
-          <div style="font-family:Syne;font-weight:800;font-size:28px;color:#4a9eda;line-height:1"><span x-text="count + '+'">20+</span></div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.55);margin-top:6px">Negara tujuan</div>
-        </div>
+        @endforeach
         <div>
           <div style="font-family:Syne;font-weight:800;font-size:28px;color:#4a9eda;line-height:1">A–Z</div>
           <div style="font-size:12px;color:rgba(255,255,255,0.55);margin-top:6px">Layanan end-to-end</div>
