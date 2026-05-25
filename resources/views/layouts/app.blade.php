@@ -72,8 +72,10 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
 @media(max-width:768px){.container{padding:0 20px}.hide-mobile{display:none!important}.show-mobile{display:flex!important}}@media(min-width:769px){.show-mobile{display:none!important}}
 </style>
 @yield('head')
-{{-- ═══ GOOGLE ADSENSE ═══ --}}
+{{-- ═══ GOOGLE ADSENSE — hanya di halaman blog ═══ --}}
+@if(request()->is('blog*'))
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5616961797801657" crossorigin="anonymous"></script>
+@endif
 </head>
 <body>
 
@@ -124,15 +126,31 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
       </div>
     </a>
     <div style="display:flex;gap:20px;flex:1;justify-content:center" class="hide-mobile">
-      <a href="{{ route('home') }}#layanan" style="font-size:13px;text-decoration:none;font-weight:500;color:#555;transition:color .15s" onmouseover="this.style.color='#1e3a5f'" onmouseout="this.style.color='#555'">Layanan</a>
-      <a href="{{ route('home') }}#proses" style="font-size:13px;text-decoration:none;font-weight:500;color:#555;transition:color .15s" onmouseover="this.style.color='#1e3a5f'" onmouseout="this.style.color='#555'">Proses</a>
+      <a href="{{ route('home') }}#layanan" style="font-size:13px;text-decoration:none;font-weight:500;color:#555;transition:color .15s" onmouseover="this.style.color='#1e3a5f'" onmouseout="this.style.color='#555'">
+        <span x-text="lang==='en' ? 'Services' : 'Layanan'">Layanan</span>
+      </a>
+      <a href="{{ route('home') }}#proses" style="font-size:13px;text-decoration:none;font-weight:500;color:#555;transition:color .15s" onmouseover="this.style.color='#1e3a5f'" onmouseout="this.style.color='#555'">
+        <span x-text="lang==='en' ? 'Process' : 'Proses'">Proses</span>
+      </a>
       <a href="{{ route('blog.index') }}" style="font-size:13px;text-decoration:none;font-weight:500;color:#555;transition:color .15s" onmouseover="this.style.color='#1e3a5f'" onmouseout="this.style.color='#555'">Blog</a>
-      <a href="{{ route('about') }}" style="font-size:13px;text-decoration:none;font-weight:500;color:#555;transition:color .15s" onmouseover="this.style.color='#1e3a5f'" onmouseout="this.style.color='#555'">About</a>
-      <a href="{{ route('karir.index') }}" style="font-size:13px;text-decoration:none;font-weight:500;color:#555;transition:color .15s" onmouseover="this.style.color='#1e3a5f'" onmouseout="this.style.color='#555'">Karir</a>
+      <a href="{{ route('about') }}" style="font-size:13px;text-decoration:none;font-weight:500;color:#555;transition:color .15s" onmouseover="this.style.color='#1e3a5f'" onmouseout="this.style.color='#555'">
+        <span x-text="lang==='en' ? 'About Us' : 'Tentang'">Tentang</span>
+      </a>
+      <a href="{{ route('karir.index') }}" style="font-size:13px;text-decoration:none;font-weight:500;color:#555;transition:color .15s" onmouseover="this.style.color='#1e3a5f'" onmouseout="this.style.color='#555'">
+        <span x-text="lang==='en' ? 'Careers' : 'Karir'">Karir</span>
+      </a>
     </div>
+    {{-- Language switcher — akses root lang tanpa x-data baru --}}
+    <button @click="lang = lang === 'id' ? 'en' : 'id'; localStorage.setItem('m2b_lang', lang)"
+      style="display:inline-flex;align-items:center;gap:5px;padding:6px 11px;border-radius:6px;border:1px solid #e5e2dc;background:#fff;cursor:pointer;font-size:12px;font-weight:600;color:#555;flex-shrink:0;transition:border-color .15s"
+      onmouseover="this.style.borderColor='#1e3a5f';this.style.color='#1e3a5f'"
+      onmouseout="this.style.borderColor='#e5e2dc';this.style.color='#555'"
+      class="hide-mobile">
+      <span x-text="lang === 'id' ? '🇮🇩 ID' : '🇬🇧 EN'">🇮🇩 ID</span>
+    </button>
     <a href="https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20ingin%20konsultasi%20gratis" target="_blank"
       style="display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:8px;background:#1e3a5f;color:#fff;text-decoration:none;font-weight:600;font-size:13px;white-space:nowrap;flex-shrink:0" class="hide-mobile">
-      💬 Konsultasi Gratis
+      <span x-text="lang==='en' ? '💬 Free Consultation' : '💬 Konsultasi Gratis'">💬 Konsultasi Gratis</span>
     </a>
     {{-- Hamburger button — mobile only --}}
     <button @click="mobileOpen = !mobileOpen" class="show-mobile"

@@ -1,9 +1,10 @@
-<section class="py-10 bg-white border-b border-gray-100">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+<section style="padding:48px 40px;background:#fff;border-bottom:1px solid #f0ede8">
+    <div style="max-width:960px;margin:0 auto">
 
-        <p class="text-center text-xs font-semibold tracking-widest text-gray-400 uppercase mb-8">
-            Telah Terintegrasi &amp; Dipercaya Oleh
-        </p>
+        <div style="text-align:center;margin-bottom:36px">
+            <p style="font-size:11px;font-weight:700;letter-spacing:2.5px;color:#bbb;text-transform:uppercase;margin-bottom:10px">Ekosistem &amp; Mitra Strategis</p>
+            <p style="font-size:14px;color:#999;line-height:1.6">Terintegrasi dengan regulasi, asosiasi, dan ekosistem logistik Indonesia</p>
+        </div>
 
         @php
         $partners = [
@@ -28,14 +29,16 @@
         ];
         @endphp
 
-        <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:28px 24px;align-items:center">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
             @foreach($partners as [$img, $alt])
-            <div style="display:flex;justify-content:center;align-items:center;width:120px">
-                <img src="{{ asset($img) }}"
-                     alt="{{ $alt }}"
-                     style="max-height:44px;width:auto;max-width:120px;filter:grayscale(1);opacity:0.55;transition:all 0.3s"
+            <div style="height:80px;background:#fafaf8;border:1px solid #efefed;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:14px 18px;transition:border-color .2s,background .2s;cursor:default"
+                 onmouseover="this.style.borderColor='#c8c5bf';this.style.background='#fff'"
+                 onmouseout="this.style.borderColor='#efefed';this.style.background='#fafaf8'">
+                <img src="{{ asset($img) }}" alt="{{ $alt }}"
+                     style="max-width:100%;max-height:44px;width:auto;height:auto;object-fit:contain;filter:grayscale(1);opacity:0.5;transition:all 0.3s"
                      onmouseover="this.style.filter='grayscale(0)';this.style.opacity='1'"
-                     onmouseout="this.style.filter='grayscale(1)';this.style.opacity='0.55'"
+                     onmouseout="this.style.filter='grayscale(1)';this.style.opacity='0.5'"
+                     onerror="this.parentElement.style.visibility='hidden'"
                      loading="lazy">
             </div>
             @endforeach
