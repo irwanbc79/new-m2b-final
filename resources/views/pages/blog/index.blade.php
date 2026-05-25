@@ -145,7 +145,7 @@
         <a href="https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20mau%20subscribe%20update%20logistik" target="_blank"
           style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:10px;background:#25D366;color:#fff;text-decoration:none;font-weight:700;font-size:14px">💬 Subscribe via WhatsApp</a>
         <a href="https://ebook.m2b.co.id" target="_blank"
-          style="display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:10px;background:rgba(255,255,255,0.1);color:#fff;text-decoration:none;font-weight:600;font-size:14px;border:1px solid rgba(255,255,255,0.2)">📘 Download E-Book Gratis</a>
+          style="display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:10px;background:rgba(255,255,255,0.1);color:#fff;text-decoration:none;font-weight:600;font-size:14px;border:1px solid rgba(255,255,255,0.2)">📘 Download E-Book</a>
       </div>
     </div>
   </div>
