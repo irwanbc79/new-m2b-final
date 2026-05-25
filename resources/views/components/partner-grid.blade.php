@@ -26,7 +26,7 @@
             ['images/partners/indopla_1.png',              'Indoplas'],
             ['images/partners/mentarisamuderaabadi.jpeg',  'PT. Mentari Samudera Abadi'],
             ['images/partners/graha_segara.jpg',           'PT. Graha Segara'],
-            ['images/partners/pertamin.png',               'Pertamin'],
+            ['images/partners/pertamina.png',              'Pertamina'],
         ];
         @endphp
 

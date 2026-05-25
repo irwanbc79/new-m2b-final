@@ -43,10 +43,20 @@
       <p style="font-size:17px;color:rgba(255,255,255,0.78);margin-bottom:36px;line-height:1.7;max-width:480px">
         End-to-end freight forwarding &amp; customs brokerage. Dari dokumen, bea cukai, hingga door-to-door delivery — M2B handle semuanya.
       </p>
-      <div style="background:rgba(255,255,255,0.08);backdrop-filter:blur(16px);border-radius:12px;padding:6px;border:1px solid rgba(255,255,255,0.18);display:flex;gap:6px;align-items:center;margin-bottom:20px;max-width:520px;box-shadow:0 12px 36px rgba(0,0,0,0.25)">
-        <div style="padding:0 12px;font-size:18px;color:rgba(255,255,255,0.6)">🔍</div>
-        <input type="text" placeholder="Masukkan nomor B/L atau AWB untuk lacak…" style="flex:1;background:transparent;border:none;outline:none;color:#fff;font-size:14px;font-family:'DM Sans';padding:12px 0">
-        <a href="https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20mau%20lacak%20shipment%20nomor:" target="_blank" style="padding:10px 20px;border-radius:8px;background:#1e3a5f;color:#fff;border:none;font-weight:700;font-size:13px;text-decoration:none;white-space:nowrap">Lacak →</a>
+      <div style="background:rgba(255,255,255,0.08);backdrop-filter:blur(16px);border-radius:14px;padding:18px 22px;border:1px solid rgba(255,255,255,0.18);max-width:520px;margin-bottom:20px;box-shadow:0 12px 36px rgba(0,0,0,0.25)">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <div style="width:36px;height:36px;border-radius:8px;background:#1e3a5f;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">🔐</div>
+          <div>
+            <div style="font-family:Syne;font-weight:700;font-size:13px;color:#fff">Portal M2B</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.45)">ERP & Client Portal — portal.m2b.co.id</div>
+          </div>
+          <span style="margin-left:auto;padding:2px 9px;border-radius:10px;background:rgba(74,158,218,0.2);color:#4a9eda;font-size:10px;font-weight:700;border:1px solid rgba(74,158,218,0.3)">LIVE</span>
+        </div>
+        <p style="font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:14px;line-height:1.6">Pantau status shipment, unduh dokumen, invoice, dan laporan logistik real-time.</p>
+        <div style="display:flex;gap:8px">
+          <a href="https://portal.m2b.co.id" target="_blank" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 14px;border-radius:8px;background:#1e3a5f;color:#fff;text-decoration:none;font-weight:700;font-size:13px;white-space:nowrap">🔐 Login Portal</a>
+          <a href="https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20ingin%20daftar%20akun%20Portal%20M2B" target="_blank" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 14px;border-radius:8px;background:rgba(255,255,255,0.08);color:#fff;text-decoration:none;font-weight:600;font-size:13px;border:1px solid rgba(255,255,255,0.2);white-space:nowrap">💬 Daftar Akun</a>
+        </div>
       </div>
       <div class="flex gap-3 flex-wrap" x-data="{ open: false }">
         <a href="https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20mau%20konsultasi%20gratis" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:13px 28px;border-radius:8px;background:#1e3a5f;color:#fff;text-decoration:none;font-weight:600;font-size:15px;transition:all .18s">💬 Konsultasi GRATIS</a>
@@ -233,11 +243,29 @@
       <p style="color:rgba(255,255,255,0.55);max-width:540px;margin:0 auto;font-size:15px">Lebih dari sekadar jasa ekspedisi — M2B adalah mitra strategis untuk kelancaran bisnismu.</p>
     </div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px" class="home-features-grid">
-      @foreach([['✓','Terdaftar dan Berpengalaman','Resmi terdaftar di Dirjen Bea Cukai, NIB, dan asosiasi industri logistik Indonesia.'],['💎','Harga Transparan, Tanpa Hidden Cost','Quote rinci dan jujur. Tidak ada surprise di akhir transaksi.'],['⚓','Jaringan Kuat di Pelabuhan Utama','Akses langsung ke Belawan, Tanjung Priok, dan Tanjung Perak.'],['⚡','Komunikasi Cepat & Profesional','Respon rapi via WhatsApp, email, atau Portal M2B kapan saja.'],['🎯','Dukungan Personal Sesuai Kebutuhan','Setiap shipment ditangani konsultan dedikasi, bukan template generik.'],['🛡','Penanganan Barang Aman & Terjamin','Proteksi penuh dari gudang hingga tujuan akhir. Asuransi tersedia.']] as [$icon,$t,$d])
-      <div style="padding:24px 22px;border-radius:14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08)">
-        <div style="width:44px;height:44px;border-radius:12px;background:rgba(30,58,95,0.4);color:#4a9eda;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;margin-bottom:16px">{{ $icon }}</div>
+      @foreach([
+        ['✓','Terdaftar dan Berpengalaman','Resmi terdaftar di Dirjen Bea Cukai, NIB, dan asosiasi industri logistik Indonesia.','500+','Shipment berhasil diselesaikan','https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20ingin%20cek%20legalitas%20dan%20pengalaman%20M2B'],
+        ['💎','Harga Transparan, Tanpa Hidden Cost','Quote rinci dan jujur. Tidak ada surprise di akhir transaksi.','0','Hidden cost dalam setiap quote','https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20minta%20quote%20transparan'],
+        ['⚓','Jaringan Kuat di Pelabuhan Utama','Akses langsung ke Belawan, Tanjung Priok, dan Tanjung Perak.','3','Pelabuhan utama Indonesia','https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20butuh%20info%20customs%20di%20pelabuhan'],
+        ['⚡','Komunikasi Cepat & Profesional','Respon rapi via WhatsApp, email, atau Portal M2B kapan saja.','< 5 menit','Rata-rata waktu respons','https://wa.me/6281263027818?text=Halo%20M2B'],
+        ['🎯','Dukungan Personal Sesuai Kebutuhan','Setiap shipment ditangani konsultan dedikasi, bukan template generik.','1 PIC','Untuk setiap klien & shipment','https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20butuh%20konsultan%20dedikasi'],
+        ['🛡','Penanganan Barang Aman & Terjamin','Proteksi penuh dari gudang hingga tujuan akhir. Asuransi tersedia.','100%','Shipment terlindungi asuransi','https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20ingin%20info%20asuransi%20kargo'],
+      ] as [$icon,$t,$d,$stat,$statLabel,$wa])
+      <div x-data="{ hov: false }" @mouseenter="hov=true" @mouseleave="hov=false"
+        style="padding:26px 22px;border-radius:14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);transition:all .25s;cursor:default;display:flex;flex-direction:column"
+        :style="hov ? 'background:rgba(30,58,95,0.22);border-color:rgba(74,158,218,0.35);transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,0.3)' : ''">
+        <div style="width:46px;height:46px;border-radius:12px;background:rgba(30,58,95,0.45);color:#4a9eda;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;margin-bottom:16px;transition:background .25s"
+          :style="hov ? 'background:rgba(30,58,95,0.7)' : ''">{{ $icon }}</div>
         <div style="font-family:Syne;font-weight:700;font-size:16px;color:#fff;margin-bottom:8px">{{ $t }}</div>
-        <div style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.7">{{ $d }}</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.7;flex:1">{{ $d }}</div>
+        <div x-show="hov" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
+          style="margin-top:18px;padding-top:16px;border-top:1px solid rgba(74,158,218,0.25)">
+          <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:12px">
+            <span style="font-family:Syne;font-weight:800;font-size:26px;color:#4a9eda;line-height:1">{{ $stat }}</span>
+            <span style="font-size:12px;color:rgba(255,255,255,0.4);line-height:1.3">{{ $statLabel }}</span>
+          </div>
+          <a href="{{ $wa }}" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 14px;border-radius:8px;background:#25D366;color:#fff;text-decoration:none;font-weight:700;font-size:12px">💬 Tanya Sekarang</a>
+        </div>
       </div>
       @endforeach
     </div>
@@ -303,13 +331,22 @@
 
     {{-- Step 1: Pilih Layanan --}}
     <div x-show="step === 1">
-      <div style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:16px;font-weight:600;text-transform:uppercase;letter-spacing:1px">Langkah 1 dari 3 — Pilih Layanan</div>
-      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;max-width:480px;margin:0 auto 28px">
-        @foreach(['export' => '📤 Export Handling', 'import' => '📥 Import Handling', 'customs' => '🛃 Customs Clearance', 'door' => '🚚 Door-to-Door'] as $val => $label)
+      <div style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:20px;font-weight:600;text-transform:uppercase;letter-spacing:1px">Langkah 1 dari 3 — Pilih Layanan</div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;max-width:520px;margin:0 auto 28px">
+        @foreach([
+          'export'  => ['📤','Export Handling',   'PEB, COO/SKA, ke 20+ negara'],
+          'import'  => ['📥','Import Handling',   'PIB, kalkulasi bea & pajak'],
+          'customs' => ['🛃','Customs Clearance', 'Belawan, Priok, Perak'],
+          'door'    => ['🚚','Door-to-Door',       'Gudang pengirim → pintu penerima'],
+        ] as $val => [$icon, $name, $sub])
         <button @click="service = '{{ $val }}'; step = 2"
-          :style="service === '{{ $val }}' ? 'background:#1e3a5f;border-color:#1e3a5f;color:#fff' : ''"
-          style="padding:16px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.04);color:#fff;cursor:pointer;font-family:'DM Sans';font-size:14px;font-weight:600;text-align:center;transition:all .15s">
-          {{ $label }}
+          :style="service === '{{ $val }}' ? 'background:rgba(30,58,95,0.7);border-color:#4a9eda;box-shadow:0 0 0 3px rgba(74,158,218,0.2)' : ''"
+          style="padding:22px 16px;border-radius:14px;border:1.5px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.05);color:#fff;cursor:pointer;text-align:center;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:8px"
+          onmouseover="if(this.getAttribute('data-v')!=='1'){this.style.background='rgba(30,58,95,0.4)';this.style.borderColor='rgba(74,158,218,0.4)'}"
+          onmouseout="if(this.getAttribute('data-v')!=='1'){this.style.background='rgba(255,255,255,0.05)';this.style.borderColor='rgba(255,255,255,0.12)'}">
+          <span style="font-size:34px;line-height:1;display:block">{{ $icon }}</span>
+          <span style="font-family:Syne;font-weight:700;font-size:14px;display:block">{{ $name }}</span>
+          <span style="font-size:11px;color:rgba(255,255,255,0.45);display:block;line-height:1.4">{{ $sub }}</span>
         </button>
         @endforeach
       </div>
