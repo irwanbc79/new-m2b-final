@@ -24,7 +24,7 @@
             ['images/partners/kadin.jpeg',                 'KADIN'],
             ['images/partners/celebi.jpg',                 'Celebi Cargo'],
             ['images/partners/pertamina.png',              'Pertamina'],
-            ['images/partners/indopla_1.png',              'Indoplas'],
+            ['images/partners/indoplas_1.png',             'Indoplas'],
             ['images/partners/mentarisamuderaabadi.jpeg',  'PT. Mentari Samudera Abadi'],
             ['images/partners/graha_segara.jpg',           'PT. Graha Segara'],
         ];
@@ -39,7 +39,7 @@
                      style="max-width:100%;max-height:44px;width:auto;height:auto;object-fit:contain;filter:grayscale(1);opacity:0.5;transition:all 0.3s"
                      onmouseover="this.style.filter='grayscale(0)';this.style.opacity='1'"
                      onmouseout="this.style.filter='grayscale(1)';this.style.opacity='0.5'"
-                     onerror="this.parentElement.style.visibility='hidden'"
+                     onerror="this.parentElement.style.display='none'"
                      loading="lazy">
             </div>
             @endforeach
