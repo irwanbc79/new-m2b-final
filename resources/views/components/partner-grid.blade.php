@@ -5,24 +5,32 @@
             Telah Terintegrasi &amp; Dipercaya Oleh
         </p>
 
-        <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:28px 20px;align-items:center;justify-items:center">
-            @foreach([
-                {{-- Baris 1: Pemerintah & Regulator --}}
-                ['images/partners/ditjen_bea_cukai.jpg', 'Dirjen Bea & Cukai RI'],
-                ['images/partners/ceisa.png',            'CEISA'],
-                ['images/partners/karantina.png',        'Badan Karantina Indonesia'],
-                ['images/partners/kemendag.png',         'Kementerian Perdagangan RI'],
-                ['images/partners/lnsw.jpeg',            'LNSW'],
-                ['images/partners/oss.png',              'OSS RI'],
-                {{-- Baris 2: Pelabuhan, Asosiasi & Klien --}}
-                ['images/partners/pelindo.png',          'PT Pelabuhan Indonesia'],
-                ['images/partners/bnct.png',             'BNCT'],
-                ['images/partners/alfi.png',             'ALFI'],
-                ['images/partners/kadin.jpeg',           'KADIN'],
-                ['images/partners/mentarisamuderaabadi.jpeg', 'PT. Mentari Samudera Abadi'],
-                ['images/partners/graha_segara.jpg',     'PT. Graha Segara'],
-            ] as [$img, $alt])
-            <div class="group flex justify-center items-center w-full">
+        @php
+        $partners = [
+            {{-- Baris 1: Pemerintah & Regulator --}}
+            ['images/partners/ditjen_bea_cukai.jpg', 'Dirjen Bea & Cukai RI'],
+            ['images/partners/ceisa.png',            'CEISA 4.0'],
+            ['images/partners/karantina.png',        'Badan Karantina Indonesia'],
+            ['images/partners/kemendag.png',         'Kementerian Perdagangan RI'],
+            ['images/partners/lnsw.jpeg',            'LNSW'],
+            ['images/partners/oss.png',              'OSS RI'],
+            ['images/partners/bpom.png',             'BPOM RI'],
+            ['images/partners/e_ska.png',            'e-SKA Kemendag'],
+            {{-- Baris 2: Pelabuhan, Asosiasi & Mitra --}}
+            ['images/partners/pelindo.png',          'PT Pelabuhan Indonesia'],
+            ['images/partners/bnct.png',             'BNCT'],
+            ['images/partners/alfi.png',             'ALFI'],
+            ['images/partners/kadin.jpeg',           'KADIN'],
+            ['images/partners/celebi.png',           'Celebi Cargo'],
+            ['images/partners/indoplas_1.png',       'Indoplas'],
+            ['images/partners/mentarisamuderaabadi.jpeg', 'PT. Mentari Samudera Abadi'],
+            ['images/partners/graha_segara.jpg',     'PT. Graha Segara'],
+        ];
+        @endphp
+
+        <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:28px 24px;align-items:center">
+            @foreach($partners as [$img, $alt])
+            <div style="display:flex;justify-content:center;align-items:center;width:120px">
                 <img src="{{ asset($img) }}"
                      alt="{{ $alt }}"
                      style="max-height:44px;width:auto;max-width:120px;filter:grayscale(1);opacity:0.55;transition:all 0.3s"

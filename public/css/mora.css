@@ -1,5 +1,5 @@
 /* ─── MORA Chat Widget ─────────────────────────────────────────────── */
-#mora-widget { position: fixed; bottom: 100px; left: 20px; z-index: 9990; font-family: 'DM Sans', sans-serif; }
+#mora-widget { position: fixed; bottom: 20px; left: 20px; z-index: 9990; font-family: 'DM Sans', sans-serif; }
 
 /* Trigger button */
 #mora-trigger {
@@ -42,7 +42,7 @@
 
 @media (min-width: 480px) {
   #mora-panel {
-    bottom: 168px; left: 20px; right: auto;
+    bottom: 152px; left: 20px; right: auto;
     border-radius: 16px;
     max-height: 520px;
     transform: translateY(20px) scale(0.95);
