@@ -23,10 +23,10 @@
             ['images/partners/alfi.png',                   'ALFI'],
             ['images/partners/kadin.jpeg',                 'KADIN'],
             ['images/partners/celebi.jpg',                 'Celebi Cargo'],
+            ['images/partners/pertamina.png',              'Pertamina'],
             ['images/partners/indopla_1.png',              'Indoplas'],
             ['images/partners/mentarisamuderaabadi.jpeg',  'PT. Mentari Samudera Abadi'],
             ['images/partners/graha_segara.jpg',           'PT. Graha Segara'],
-            ['images/partners/pertamina.png',              'Pertamina'],
         ];
         @endphp
 
