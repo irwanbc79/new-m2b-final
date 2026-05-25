@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('og_image', $post->featured_image_url)
+
 @section('head')
 <style>
 .prose-m2b{line-height:1.9;font-size:16px;color:#333}

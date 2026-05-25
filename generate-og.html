@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Generate OG Image M2B</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { width: 1200px; height: 630px; overflow: hidden; }
+        .og-container { width: 1200px; height: 630px; }
+    </style>
+</head>
+<body>
+    <div class="og-container">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+            <defs>
+                <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#0f172a" />
+                    <stop offset="100%" stop-color="#1e3a8a" />
+                </linearGradient>
+                <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#3b82f6" />
+                    <stop offset="100%" stop-color="#60a5fa" />
+                </linearGradient>
+            </defs>
+            <rect width="1200" height="630" fill="url(#bg-gradient)" />
+            <path d="M 0 630 Q 300 400 600 630 T 1200 630 L 1200 630 L 0 630 Z" fill="#1e40af" opacity="0.3" />
+            <path d="M 0 500 Q 400 300 800 630 L 0 630 Z" fill="#2563eb" opacity="0.2" />
+            <circle cx="950" cy="150" r="180" fill="none" stroke="url(#accent)" stroke-width="2" opacity="0.15" />
+            <circle cx="950" cy="150" r="120" fill="none" stroke="url(#accent)" stroke-width="4" opacity="0.25" />
+            <circle cx="950" cy="150" r="60"  fill="none" stroke="url(#accent)" stroke-width="6" opacity="0.3" />
+            <!-- Badge -->
+            <rect x="100" y="195" width="310" height="36" rx="18" fill="#2563eb" opacity="0.25" />
+            <text x="120" y="219" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="700" fill="#93c5fd" letter-spacing="2.5">DIGITAL LOGISTICS GATEWAY</text>
+            <!-- Company name -->
+            <text x="100" y="305" font-family="system-ui, -apple-system, sans-serif" font-size="62" font-weight="800" fill="#ffffff">PT. Mora Multi Berkah</text>
+            <!-- Brand -->
+            <text x="100" y="355" font-family="system-ui, -apple-system, sans-serif" font-size="28" font-weight="700" fill="#60a5fa" letter-spacing="4">M2B</text>
+            <!-- Tagline -->
+            <text x="100" y="410" font-family="system-ui, -apple-system, sans-serif" font-size="30" font-weight="400" fill="#bfdbfe">Ekspor &amp; Impor Lebih Mudah, Lebih Aman.</text>
+            <text x="100" y="450" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="300" fill="#94a3b8">End-to-end freight forwarding &amp; customs brokerage.</text>
+            <!-- Divider -->
+            <rect x="100" y="500" width="1000" height="1.5" fill="url(#accent)" opacity="0.35" />
+            <!-- Footer -->
+            <text x="100" y="548" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="600" fill="#60a5fa">www.m2b.co.id</text>
+            <text x="370" y="548" font-family="system-ui, -apple-system, sans-serif" font-size="22" fill="#475569">  ·  Freight Forwarder &amp; Customs Broker Indonesia</text>
+        </svg>
+    </div>
+</body>
+</html>

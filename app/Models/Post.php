@@ -63,6 +63,13 @@ class Post extends Model
         return $query->where("status","published")->orderByDesc("published_at");
     }
 
+    public function getFeaturedImageUrlAttribute(): string
+    {
+        return $this->featured_image
+            ? asset('storage/' . $this->featured_image)
+            : asset('images/og-m2b.jpg');
+    }
+
     public function getReadingTimeAttribute(): int
     {
         return max(1, (int) ceil(str_word_count(strip_tags($this->content)) / 200));

@@ -7,7 +7,8 @@
 <meta name="description" content="@yield('description', 'M2B - PT. Mora Multi Berkah. Freight Forwarder & Customs Broker terpercaya dari Medan. Layanan ekspor-impor, bea cukai, door-to-door ke 20+ negara.')">
 <meta property="og:title" content="@yield('title', 'M2B — Freight Forwarder & Customs Broker Indonesia')">
 <meta property="og:description" content="@yield('description', 'PT. Mora Multi Berkah - Mitra logistik ekspor-impor terpercaya.')">
-<meta property="og:image" content="{{ asset('images/og-m2b.jpg') }}">
+<meta property="og:image" content="@yield('og_image', asset('images/og-m2b.jpg'))">
+<meta name="twitter:image" content="@yield('og_image', asset('images/og-m2b.jpg'))">
 <meta property="og:url" content="{{ url()->current() }}">
 <meta name="robots" content="index, follow">
 <meta property="og:type" content="website">
