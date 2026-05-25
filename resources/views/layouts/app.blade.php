@@ -76,6 +76,27 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
 @if(request()->is('blog*'))
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5616961797801657" crossorigin="anonymous"></script>
 @endif
+{{-- ═══ GOOGLE ANALYTICS 4 — deferred loading, tidak blokir FCP ═══ --}}
+@production
+<script>
+(function(){
+    function loadGA(){
+        var s=document.createElement('script');
+        s.src='https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX';
+        s.async=true;
+        document.head.appendChild(s);
+        window.dataLayer=window.dataLayer||[];
+        function gtag(){dataLayer.push(arguments);}
+        window.gtag=gtag;
+        gtag('js',new Date());
+        gtag('config','G-XXXXXXXXXX');
+    }
+    'requestIdleCallback' in window
+        ? requestIdleCallback(loadGA,{timeout:2000})
+        : window.addEventListener('load',loadGA);
+})();
+</script>
+@endproduction
 </head>
 <body>
 

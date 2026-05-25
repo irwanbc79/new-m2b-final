@@ -23,3 +23,32 @@ Route::middleware('throttle:30,1')->group(function () {
     Route::post("/mora/chat", [MoraChatController::class, "chat"])->name("mora.chat");
     Route::post("/mora/lead", [MoraChatController::class, "lead"])->name("mora.lead");
 });
+
+// Fallback: tangkap URL WordPress lama dan redirect 301 ke Laravel
+Route::fallback(function () {
+    $path = request()->path();
+
+    // Handle /?p=ID — WP static page IDs
+    if (request()->has('p')) {
+        $wpIdMap = [
+            624 => '/privacy-policy',
+            631 => '/disclaimer',
+            638 => '/ketentuan-layanan',
+        ];
+        $p = (int) request()->get('p');
+        if (isset($wpIdMap[$p])) {
+            return redirect()->to($wpIdMap[$p], 301);
+        }
+    }
+
+    // Handle /%postname%/ dan /%category%/%postname%/ WP permalink formats
+    $slug = basename($path);
+    $post = cache()->remember("wp_redirect_{$slug}", 3600, fn () =>
+        \App\Models\Post::where('slug', $slug)->orWhere('slug', $path)->first()
+    );
+    if ($post) {
+        return redirect()->to("/blog/{$post->slug}", 301);
+    }
+
+    abort(404);
+});

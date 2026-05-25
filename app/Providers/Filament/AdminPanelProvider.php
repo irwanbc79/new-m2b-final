@@ -25,7 +25,7 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->default()
             ->id('admin')
-            ->path('admin')
+            ->path('portal-m2b-hq')
             ->login()
             ->colors([
                 'primary' => Color::Amber,
