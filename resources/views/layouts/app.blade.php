@@ -180,9 +180,9 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
 {{-- Footer --}}
 <footer style="background:#fff;border-top:4px solid #1e3a5f;padding:64px 40px 32px;color:#555">
   <div style="max-width:1200px;margin:0 auto">
-    <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:48px;margin-bottom:48px" class="footer-grid">
+    <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:48px;margin-bottom:48px;align-items:start" class="footer-grid">
       <div>
-        <img src="{{ asset('images/m2b_logo1.svg') }}" alt="M2B" style="height:264px;width:auto;display:block;margin-bottom:12px">
+        <img src="{{ asset('images/m2b_logo1.svg') }}" alt="M2B" style="height:80px;width:auto;display:block;margin-bottom:12px">
         <div style="font-family:Syne;font-weight:700;font-size:14px;color:#1e3a5f;margin-bottom:6px">PT. Mora Multi Berkah</div>
         <div style="font-size:12px;color:#888;margin-bottom:16px;line-height:1.75">Freight Forwarder & Customs Broker.<br>Mitra logistik tepercaya dari Medan untuk Indonesia & dunia.</div>
       </div>
