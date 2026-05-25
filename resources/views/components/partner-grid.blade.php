@@ -7,24 +7,24 @@
 
         @php
         $partners = [
-            {{-- Baris 1: Pemerintah & Regulator --}}
-            ['images/partners/ditjen_bea_cukai.jpg', 'Dirjen Bea & Cukai RI'],
-            ['images/partners/ceisa.png',            'CEISA 4.0'],
-            ['images/partners/karantina.png',        'Badan Karantina Indonesia'],
-            ['images/partners/kemendag.png',         'Kementerian Perdagangan RI'],
-            ['images/partners/lnsw.jpeg',            'LNSW'],
-            ['images/partners/oss.png',              'OSS RI'],
-            ['images/partners/bpom.jpg',             'BPOM RI'],
-            ['images/partners/e_ska.svg',            'e-SKA Kemendag'],
-            {{-- Baris 2: Pelabuhan, Asosiasi & Mitra --}}
-            ['images/partners/pelindo.png',          'PT Pelabuhan Indonesia'],
-            ['images/partners/bnct.png',             'BNCT'],
-            ['images/partners/alfi.png',             'ALFI'],
-            ['images/partners/kadin.jpeg',           'KADIN'],
-            ['images/partners/celebi.jpg',           'Celebi Cargo'],
-            ['images/partners/indopla_1.png',        'Indoplas'],
-            ['images/partners/mentarisamuderaabadi.jpeg', 'PT. Mentari Samudera Abadi'],
-            ['images/partners/graha_segara.jpg',     'PT. Graha Segara'],
+            // Baris 1: Pemerintah & Regulator
+            ['images/partners/ditjen_bea_cukai.jpg',      'Dirjen Bea & Cukai RI'],
+            ['images/partners/ceisa.png',                  'CEISA 4.0'],
+            ['images/partners/karantina.png',              'Badan Karantina Indonesia'],
+            ['images/partners/kemendag.png',               'Kementerian Perdagangan RI'],
+            ['images/partners/lnsw.jpeg',                  'LNSW'],
+            ['images/partners/oss.png',                    'OSS RI'],
+            ['images/partners/bpom.jpg',                   'BPOM RI'],
+            ['images/partners/e_ska.svg',                  'e-SKA Kemendag'],
+            // Baris 2: Pelabuhan, Asosiasi & Mitra
+            ['images/partners/pelindo.png',                'PT Pelabuhan Indonesia'],
+            ['images/partners/bnct.png',                   'BNCT'],
+            ['images/partners/alfi.png',                   'ALFI'],
+            ['images/partners/kadin.jpeg',                 'KADIN'],
+            ['images/partners/celebi.jpg',                 'Celebi Cargo'],
+            ['images/partners/indopla_1.png',              'Indoplas'],
+            ['images/partners/mentarisamuderaabadi.jpeg',  'PT. Mentari Samudera Abadi'],
+            ['images/partners/graha_segara.jpg',           'PT. Graha Segara'],
         ];
         @endphp
 
