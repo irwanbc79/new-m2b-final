@@ -9,7 +9,7 @@
         @php
         $partners = [
             // Baris 1: Pemerintah & Regulator
-            ['images/partners/ditjen_bea_cukai.jpg',      'Dirjen Bea & Cukai RI'],
+            ['images/partners/logo_bc.jpeg',               'Dirjen Bea & Cukai RI'],
             ['images/partners/ceisa.png',                  'CEISA 4.0'],
             ['images/partners/karantina.png',              'Badan Karantina Indonesia'],
             ['images/partners/kemendag.png',               'Kementerian Perdagangan RI'],
@@ -26,10 +26,11 @@
             ['images/partners/indopla_1.png',              'Indoplas'],
             ['images/partners/mentarisamuderaabadi.jpeg',  'PT. Mentari Samudera Abadi'],
             ['images/partners/graha_segara.jpg',           'PT. Graha Segara'],
+            ['images/partners/pertamin.png',               'Pertamin'],
         ];
         @endphp
 
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px">
             @foreach($partners as [$img, $alt])
             <div style="height:80px;background:#fafaf8;border:1px solid #efefed;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:14px 18px;transition:border-color .2s,background .2s;cursor:default"
                  onmouseover="this.style.borderColor='#c8c5bf';this.style.background='#fff'"
