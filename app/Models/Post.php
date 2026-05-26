@@ -44,17 +44,16 @@ class Post extends Model
                 Cache::forget("blog_index_{$i}");
             }
 
-            // Forget categories list
-            Cache::forget('blog_categories');
+            Cache::forget('blog_hot_ids');
         });
 
         static::deleted(function (Post $post) {
             Cache::forget("blog_post_{$post->slug}");
             Cache::forget("blog_related_{$post->id}");
+            Cache::forget('blog_hot_ids');
             for ($i = 1; $i <= 20; $i++) {
                 Cache::forget("blog_index_{$i}");
             }
-            Cache::forget('blog_categories');
         });
     }
 

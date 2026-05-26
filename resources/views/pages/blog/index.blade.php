@@ -75,11 +75,14 @@
     @if($posts->count() > 0)
     @php
       $featured = $posts->first();
-      $fc = strtolower($featured->category ?? '');
-      if(str_contains($fc,'ekspor'))          { $fbg='linear-gradient(135deg,#1e3a5f 0%,#1a6b3a 100%)'; $fem='🚢'; }
-      elseif(str_contains($fc,'impor'))        { $fbg='linear-gradient(135deg,#1e3a5f 0%,#4a2a7f 100%)'; $fem='📥'; }
-      elseif(str_contains($fc,'bea cukai'))    { $fbg='linear-gradient(135deg,#5f2a1e 0%,#1e3a5f 100%)'; $fem='🛃'; }
-      else                                     { $fbg='linear-gradient(135deg,#1e3a5f 0%,#2a5298 100%)'; $fem='📦'; }
+      $fc = $featured->category ?? '';
+      match($fc) {
+        'Ekspor'       => [$fbg, $fem] = ['linear-gradient(135deg,#1e3a5f 0%,#1a6b3a 100%)', '🚢'],
+        'Impor'        => [$fbg, $fem] = ['linear-gradient(135deg,#1e3a5f 0%,#4a2a7f 100%)', '📥'],
+        'UMKM'         => [$fbg, $fem] = ['linear-gradient(135deg,#1e3a5f 0%,#7f5a1e 100%)', '🏪'],
+        'Bea Cukai'    => [$fbg, $fem] = ['linear-gradient(135deg,#5f2a1e 0%,#1e3a5f 100%)', '🛃'],
+        default        => [$fbg, $fem] = ['linear-gradient(135deg,#1e3a5f 0%,#2a5298 100%)', '📦'],
+      };
       $fDaysOld = $featured->published_at ? now()->diffInDays($featured->published_at) : 999;
       $fIsNew = $fDaysOld <= 7;
       $fIsUpdated = $featured->updated_at && $featured->updated_at->diffInDays(now()) < 14
@@ -126,15 +129,13 @@
       @forelse($posts as $i => $post)
       @continue($i === 0)
       @php
-        $cat = strtolower($post->category ?? '');
-        if(str_contains($cat,'bea cukai') && str_contains($cat,'ekspor'))      { $bg='linear-gradient(135deg,#1e3a5f 0%,#7a3a1e 100%)'; $em='📋'; }
-        elseif(str_contains($cat,'bea cukai') && str_contains($cat,'impor'))   { $bg='linear-gradient(135deg,#3a1e5f 0%,#1e3a5f 100%)'; $em='🛃'; }
-        elseif(str_contains($cat,'bea cukai'))                                  { $bg='linear-gradient(135deg,#5f2a1e 0%,#1e3a5f 100%)'; $em='🛃'; }
-        elseif(str_contains($cat,'ekspor') && str_contains($cat,'impor'))      { $bg='linear-gradient(135deg,#1e3a5f 0%,#2a7a5f 100%)'; $em='🌐'; }
-        elseif(str_contains($cat,'ekspor'))                                     { $bg='linear-gradient(135deg,#1e3a5f 0%,#1a6b3a 100%)'; $em='🚢'; }
-        elseif(str_contains($cat,'impor'))                                      { $bg='linear-gradient(135deg,#1e3a5f 0%,#4a2a7f 100%)'; $em='📥'; }
-        elseif(str_contains($cat,'umkm'))                                       { $bg='linear-gradient(135deg,#1e3a5f 0%,#7f5a1e 100%)'; $em='🏪'; }
-        else                                                                    { $bg='linear-gradient(135deg,#1e3a5f 0%,#2a5298 100%)'; $em='📦'; }
+        match($post->category ?? '') {
+          'Ekspor'    => [$bg, $em] = ['linear-gradient(135deg,#1e3a5f 0%,#1a6b3a 100%)', '🚢'],
+          'Impor'     => [$bg, $em] = ['linear-gradient(135deg,#1e3a5f 0%,#4a2a7f 100%)', '📥'],
+          'UMKM'      => [$bg, $em] = ['linear-gradient(135deg,#1e3a5f 0%,#7f5a1e 100%)', '🏪'],
+          'Bea Cukai' => [$bg, $em] = ['linear-gradient(135deg,#5f2a1e 0%,#1e3a5f 100%)', '🛃'],
+          default     => [$bg, $em] = ['linear-gradient(135deg,#1e3a5f 0%,#2a5298 100%)', '📦'],
+        };
         $daysOld = $post->published_at ? now()->diffInDays($post->published_at) : 999;
         $isNew     = $daysOld <= 7;
         $isUpdated = $post->updated_at && $post->updated_at->diffInDays(now()) < 14

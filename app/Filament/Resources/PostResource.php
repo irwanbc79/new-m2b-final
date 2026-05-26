@@ -39,7 +39,10 @@ class PostResource extends Resource
                 Forms\Components\FileUpload::make("featured_image")
                     ->label("Gambar Utama")->image()->directory("posts")
                     ->imageResizeMode("cover")->imageCropAspectRatio("16:9"),
-                Forms\Components\TextInput::make("category")->label("Kategori"),
+                Forms\Components\Select::make("category")
+                    ->label("Kategori")
+                    ->options(['Ekspor' => 'Ekspor','Impor' => 'Impor','UMKM' => 'UMKM','Bea Cukai' => 'Bea Cukai','Uncategories' => 'Uncategories'])
+                    ->placeholder('Pilih kategori'),
                 Forms\Components\TextInput::make("tags")->label("Tags (pisah koma)"),
                 Forms\Components\Select::make("lang")
                     ->label("Bahasa")->options(["id" => "Indonesia","en" => "English"])

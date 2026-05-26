@@ -14,10 +14,7 @@ class BlogController extends Controller
             return Post::published()->paginate(9);
         });
 
-        $categories = Cache::remember('blog_categories', 3600, function () {
-            return Post::published()->whereNotNull("category")
-                ->distinct()->pluck("category");
-        });
+        $categories = collect(['Ekspor', 'Impor', 'UMKM', 'Bea Cukai', 'Uncategories']);
 
         $hotIds = Cache::remember('blog_hot_ids', 3600, function () {
             return Post::published()->pluck('id')
