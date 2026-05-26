@@ -2,7 +2,12 @@
 
 @section('og_image', $post->featured_image_url)
 
+@section('og_type', 'article')
 @section('head')
+<meta property="article:published_time" content="{{ $post->published_at?->toISOString() }}">
+<meta property="article:modified_time" content="{{ $post->updated_at?->toISOString() }}">
+@if($post->category)<meta property="article:section" content="{{ $post->category }}">@endif
+<meta property="article:author" content="PT. Mora Multi Berkah (M2B)">
 <style>
 .prose-m2b{line-height:1.9;font-size:16px;color:#333}
 .prose-m2b h1,.prose-m2b h2,.prose-m2b h3,.prose-m2b h4{font-family:Syne,sans-serif;font-weight:800;color:#0f0f14;margin-top:2em;margin-bottom:.6em;line-height:1.3;letter-spacing:-0.4px}
@@ -52,18 +57,6 @@
   .blog-hero h1{font-size:28px!important}
 }
 </style>
-{{-- Reading progress bar --}}
-<div id="reading-progress" style="position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,#1e3a5f,#4a9eda);width:0%;z-index:9999;transition:width .08s linear"></div>
-<script>
-window.addEventListener('scroll',function(){
-  var el=document.getElementById('article-body');
-  if(!el)return;
-  var start=el.offsetTop;
-  var end=start+el.offsetHeight-window.innerHeight;
-  var pct=Math.min(100,Math.max(0,((window.scrollY-start)/(end-start))*100));
-  document.getElementById('reading-progress').style.width=pct+'%';
-});
-</script>
 {{-- Article JSON-LD --}}
 <script type="application/ld+json">
 {
@@ -71,6 +64,7 @@ window.addEventListener('scroll',function(){
   "@@type": "Article",
   "headline": "{{ addslashes($post->title) }}",
   "description": "{{ addslashes($post->meta_description) }}",
+  "image": "{{ $post->featured_image_url }}",
   "datePublished": "{{ $post->published_at?->toISOString() }}",
   "dateModified": "{{ $post->updated_at?->toISOString() }}",
   "author": {"@@type":"Organization","name":"PT. Mora Multi Berkah (M2B)","url":"https://m2b.co.id"},
@@ -85,6 +79,16 @@ window.addEventListener('scroll',function(){
 @section('description', $post->meta_description)
 
 @section('content')
+{{-- Reading progress bar --}}
+<div id="reading-progress" style="position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,#1e3a5f,#4a9eda);width:0%;z-index:9999;transition:width .08s linear"></div>
+<script>
+window.addEventListener('scroll',function(){
+  var el=document.getElementById('article-body');
+  if(!el)return;
+  var s=el.offsetTop,e=s+el.offsetHeight-window.innerHeight;
+  document.getElementById('reading-progress').style.width=Math.min(100,Math.max(0,((window.scrollY-s)/(e-s))*100))+'%';
+});
+</script>
 <div style="background:#0f0f14;padding:64px 40px 56px" class="blog-hero">
   <div style="max-width:800px;margin:0 auto">
     <a href="{{ route('blog.index') }}" style="display:inline-flex;align-items:center;gap:8px;color:#4a9eda;text-decoration:none;font-size:14px;margin-bottom:24px">← Kembali ke Blog</a>
@@ -101,7 +105,7 @@ window.addEventListener('scroll',function(){
 <section style="padding:60px 40px;background:#f7f5f0">
   <div style="max-width:800px;margin:0 auto">
     @if($post->featured_image)
-    <img src="{{ Storage::url($post->featured_image) }}" alt="{{ $post->title }}" style="width:100%;height:420px;object-fit:cover;border-radius:16px;margin-bottom:40px;box-shadow:0 12px 40px rgba(0,0,0,0.12)">
+    <img src="{{ Storage::url($post->featured_image) }}" alt="{{ $post->title }}" loading="lazy" style="width:100%;height:420px;object-fit:cover;border-radius:16px;margin-bottom:40px;box-shadow:0 12px 40px rgba(0,0,0,0.12)">
     @endif
 
     <div id="article-body" style="background:#fff;border-radius:16px;padding:48px;border:1px solid #e5e2dc" class="prose-m2b blog-article-box">

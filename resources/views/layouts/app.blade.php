@@ -11,7 +11,7 @@
 <meta name="twitter:image" content="@yield('og_image', asset('images/og-m2b.jpg'))">
 <meta property="og:url" content="{{ url()->current() }}">
 <meta name="robots" content="index, follow">
-<meta property="og:type" content="website">
+<meta property="og:type" content="@yield('og_type', 'website')">
 <meta property="og:locale" content="id_ID">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="@yield('title', 'M2B — Freight Forwarder & Customs Broker Indonesia')">
@@ -53,6 +53,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
 @vite(['resources/css/app.css', 'resources/js/app.js'])
 <style>
+[x-cloak]{display:none!important}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size:15px;line-height:1.6}

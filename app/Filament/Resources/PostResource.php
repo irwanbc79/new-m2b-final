@@ -46,6 +46,15 @@ class PostResource extends Resource
                     ->default("id")->required(),
             ])->columns(2),
 
+            Forms\Components\Section::make("SEO")->schema([
+                Forms\Components\TextInput::make("meta_title")
+                    ->label("Meta Title")->maxLength(70)
+                    ->helperText("Kosongkan untuk otomatis: Judul Artikel — M2B Blog"),
+                Forms\Components\Textarea::make("meta_description")
+                    ->label("Meta Description")->rows(2)->maxLength(160)
+                    ->helperText("Kosongkan untuk otomatis dari excerpt. Ideal 120-160 karakter."),
+            ])->columns(1)->collapsed(),
+
             Forms\Components\Section::make("Publikasi")->schema([
                 Forms\Components\Select::make("status")
                     ->options(["draft" => "Draft","published" => "Published"])

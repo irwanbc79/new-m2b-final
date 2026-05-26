@@ -19,7 +19,13 @@ class BlogController extends Controller
                 ->distinct()->pluck("category");
         });
 
-        return view("pages.blog.index", compact("posts","categories"));
+        $hotIds = Cache::remember('blog_hot_ids', 3600, function () {
+            return Post::published()->pluck('id')
+                ->sortByDesc(fn($id) => Cache::get("post_views_{$id}", 0))
+                ->take(3)->values()->toArray();
+        });
+
+        return view("pages.blog.index", compact("posts","categories","hotIds"));
     }
 
     public function show(string $slug)
@@ -28,9 +34,15 @@ class BlogController extends Controller
             return Post::where("slug",$slug)->where("status","published")->firstOrFail();
         });
 
+        Cache::increment("post_views_{$post->id}");
+        Cache::forget('blog_hot_ids');
+
         $related = Cache::remember("blog_related_{$post->id}", 3600, function () use ($post) {
-            return Post::published()->where("id","!=",$post->id)
-                ->where("category",$post->category)->limit(3)->get();
+            $query = Post::published()->where("id","!=",$post->id);
+            if ($post->category) {
+                $query->where("category", $post->category);
+            }
+            return $query->limit(3)->get();
         });
 
         return view("pages.blog.show", compact("post","related"));
