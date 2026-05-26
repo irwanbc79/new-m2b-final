@@ -3,15 +3,22 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 
 class BlogController extends Controller
 {
     public function index()
     {
-        $page = request()->get('page', 1);
+        $category = request()->get('category');
+        $page     = request()->get('page', 1);
+        $cacheKey = 'blog_index_' . $page . ($category ? '_' . Str::slug($category) : '');
 
-        $posts = Cache::remember("blog_index_{$page}", 3600, function () {
-            return Post::published()->paginate(9);
+        $posts = Cache::remember($cacheKey, 3600, function () use ($category) {
+            $query = Post::published();
+            if ($category) {
+                $query->where('category', $category);
+            }
+            return $query->paginate(9);
         });
 
         $categories = collect(['Ekspor', 'Impor', 'UMKM', 'Bea Cukai', 'Uncategories']);
@@ -22,7 +29,7 @@ class BlogController extends Controller
                 ->take(3)->values()->toArray();
         });
 
-        return view("pages.blog.index", compact("posts","categories","hotIds"));
+        return view("pages.blog.index", compact("posts","categories","hotIds","category"));
     }
 
     public function show(string $slug)

@@ -39,22 +39,26 @@ class Post extends Model
             // Forget related posts cache for this post
             Cache::forget("blog_related_{$post->id}");
 
-            // Forget blog index pages (covers up to 150 pages of 9 posts = 1350 posts)
-            for ($i = 1; $i <= 20; $i++) {
-                Cache::forget("blog_index_{$i}");
-            }
-
             Cache::forget('blog_hot_ids');
+            static::clearIndexCache();
         });
 
         static::deleted(function (Post $post) {
             Cache::forget("blog_post_{$post->slug}");
             Cache::forget("blog_related_{$post->id}");
             Cache::forget('blog_hot_ids');
-            for ($i = 1; $i <= 20; $i++) {
-                Cache::forget("blog_index_{$i}");
-            }
+            static::clearIndexCache();
         });
+    }
+
+    protected static function clearIndexCache(): void
+    {
+        $cats = ['', 'ekspor', 'impor', 'umkm', 'bea-cukai', 'uncategories'];
+        for ($i = 1; $i <= 20; $i++) {
+            foreach ($cats as $slug) {
+                Cache::forget('blog_index_' . $i . ($slug ? '_' . $slug : ''));
+            }
+        }
     }
 
     public function scopePublished($query)

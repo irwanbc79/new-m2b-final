@@ -24,7 +24,7 @@
 @endsection
 
 @section('content')
-<div x-data="{ active: 'Semua', search: '' }">
+<div x-data="{ search: '' }">
 
 {{-- ═══ HERO ═══ --}}
 <div style="background:#0f0f14;padding:64px 40px 48px" class="blog-hero">
@@ -42,28 +42,28 @@
         style="padding:0 16px;background:transparent;border:none;color:rgba(255,255,255,0.5);cursor:pointer;font-size:18px;line-height:1;font-family:'DM Sans'">×</button>
     </div>
 
-    {{-- Category pills --}}
-    @if($categories->count() > 0)
+    {{-- Category pills — server-side filter --}}
     <div class="cat-pills" style="display:flex;gap:8px;margin-top:20px;overflow-x:auto;padding-bottom:2px;align-items:center">
-      <button @click="active='Semua'"
-        :style="active==='Semua' ? 'background:#4a9eda;color:#fff;border-color:#4a9eda' : 'background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.6);border-color:rgba(255,255,255,0.18)'"
-        style="padding:6px 18px;border-radius:20px;border:1.5px solid;cursor:pointer;font-size:13px;font-weight:600;transition:all .15s;white-space:nowrap;font-family:'DM Sans'">Semua</button>
+      <a href="{{ route('blog.index') }}"
+        style="padding:6px 18px;border-radius:20px;border:1.5px solid;text-decoration:none;font-size:13px;font-weight:600;transition:all .15s;white-space:nowrap;font-family:'DM Sans';{{ !$category ? 'background:#4a9eda;color:#fff;border-color:#4a9eda' : 'background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.6);border-color:rgba(255,255,255,0.18)' }}">Semua</a>
       @foreach($categories as $cat)
-      <button @click="active='{{ $cat }}'"
-        :style="active==='{{ $cat }}' ? 'background:#4a9eda;color:#fff;border-color:#4a9eda' : 'background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.6);border-color:rgba(255,255,255,0.18)'"
-        style="padding:6px 18px;border-radius:20px;border:1.5px solid;cursor:pointer;font-size:13px;font-weight:600;transition:all .15s;white-space:nowrap;font-family:'DM Sans'">{{ $cat }}</button>
+      <a href="{{ route('blog.index', ['category' => $cat]) }}"
+        style="padding:6px 18px;border-radius:20px;border:1.5px solid;text-decoration:none;font-size:13px;font-weight:600;transition:all .15s;white-space:nowrap;font-family:'DM Sans';{{ $category === $cat ? 'background:#4a9eda;color:#fff;border-color:#4a9eda' : 'background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.6);border-color:rgba(255,255,255,0.18)' }}">{{ $cat }}</a>
       @endforeach
     </div>
-    @endif
 
-    {{-- Active filter status --}}
-    <div x-show="search !== '' || active !== 'Semua'" x-cloak style="margin-top:10px;display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.4)">
-      <span x-show="active !== 'Semua'" x-text="'📂 ' + active" style="padding:2px 10px;border-radius:12px;background:rgba(74,158,218,0.15);color:#4a9eda;border:1px solid rgba(74,158,218,0.3)"></span>
-      <span x-show="search !== ''" x-text="'🔍 &quot;' + search + '&quot;'" style="padding:2px 10px;border-radius:12px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15)"></span>
-      <button @click="active='Semua';search=''" style="color:#4a9eda;background:transparent;border:none;cursor:pointer;font-size:12px;font-family:'DM Sans';text-decoration:underline">Reset ×</button>
+    {{-- Active filter indicator --}}
+    <div style="margin-top:10px;display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.4);flex-wrap:wrap">
+      @if($category)
+      <span style="padding:2px 10px;border-radius:12px;background:rgba(74,158,218,0.15);color:#4a9eda;border:1px solid rgba(74,158,218,0.3)">📂 {{ $category }}</span>
+      <a href="{{ route('blog.index') }}" style="color:#4a9eda;text-decoration:underline;font-family:'DM Sans'">Reset ×</a>
+      @endif
+      <span x-show="search !== ''" x-cloak x-text="'🔍 &quot;' + search + '&quot;'" style="padding:2px 10px;border-radius:12px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15)"></span>
     </div>
 
-    <div style="margin-top:12px;font-size:12px;color:rgba(255,255,255,0.2)">{{ $posts->total() }} artikel tersedia</div>
+    <div style="margin-top:12px;font-size:12px;color:rgba(255,255,255,0.2)">
+      {{ $posts->total() }} artikel{{ $category ? ' dalam kategori ' . $category : ' tersedia' }}
+    </div>
   </div>
 </div>
 
@@ -92,7 +92,7 @@
     @endphp
     <a href="{{ route('blog.show', $featured->slug) }}"
        data-search="{{ $fSearch }}"
-       x-show="(active === 'Semua' || active === '{{ $featured->category }}') && (search === '' || $el.dataset.search.includes(search.toLowerCase()))"
+       x-show="search === '' || $el.dataset.search.includes(search.toLowerCase())"
        style="text-decoration:none;border-radius:16px;overflow:hidden;border:1px solid #e5e2dc;background:#fff;display:grid;grid-template-columns:1fr 1fr;margin-bottom:28px;transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,0.06)"
        onmouseover="this.style.boxShadow='0 12px 40px rgba(0,0,0,0.13)';this.style.transform='translateY(-2px)'"
        onmouseout="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.06)';this.style.transform='none'" class="blog-featured-card">
@@ -175,7 +175,7 @@
       {{-- Post card --}}
       <a href="{{ route('blog.show', $post->slug) }}"
          data-search="{{ $searchData }}"
-         x-show="(active === 'Semua' || active === '{{ $post->category }}') && (search === '' || $el.dataset.search.includes(search.toLowerCase()))"
+         x-show="search === '' || $el.dataset.search.includes(search.toLowerCase())"
          style="text-decoration:none;border-radius:12px;overflow:hidden;border:1px solid #e5e2dc;background:#fff;display:flex;flex-direction:column;transition:all .2s"
          onmouseover="this.style.boxShadow='0 8px 32px rgba(0,0,0,0.1)';this.style.transform='translateY(-2px)'"
          onmouseout="this.style.boxShadow='none';this.style.transform='none'">
@@ -232,13 +232,13 @@
       @endforelse
     </div>
 
-    {{-- Reset hint when filter active --}}
-    <div x-show="search !== '' || active !== 'Semua'" x-cloak style="margin-top:16px;text-align:center">
-      <p style="font-size:13px;color:#aaa">Tidak menemukan yang dicari? <button @click="active='Semua';search=''" style="color:#1e3a5f;font-weight:600;background:none;border:none;cursor:pointer;font-family:'DM Sans';text-decoration:underline">Tampilkan semua artikel</button></p>
+    {{-- Reset hint when search active --}}
+    <div x-show="search !== ''" x-cloak style="margin-top:16px;text-align:center">
+      <p style="font-size:13px;color:#aaa">Tidak menemukan yang dicari? <button @click="search=''" style="color:#1e3a5f;font-weight:600;background:none;border:none;cursor:pointer;font-family:'DM Sans';text-decoration:underline">Hapus pencarian</button></p>
     </div>
 
     @if($posts->hasPages())
-    <div style="margin-top:48px;display:flex;justify-content:center">{{ $posts->links() }}</div>
+    <div style="margin-top:48px;display:flex;justify-content:center">{{ $posts->appends(request()->only('category'))->links() }}</div>
     @endif
 
     {{-- Newsletter / CTA strip --}}
