@@ -116,10 +116,13 @@ window.addEventListener('scroll',function(){
       @endphp
       @foreach($paragraphs as $i => $para)
         {!! $para !!}@if($i < $total - 1)</p>@endif
-        @if($i === 2)<x-adsense-block />@endif
-        @if($i === 5)<x-adsense-block />@endif
+        @if($i === 3)<x-adsense-block type="in_content" />@endif
+        @if($total > 10 && $i === 8)<x-adsense-block type="in_content" />@endif
       @endforeach
     </div>
+
+    {{-- Post-read ad — zona engagement tinggi setelah selesai baca --}}
+    <x-adsense-block type="post_read" />
 
     {{-- Social Sharing --}}
     <div style="margin-top:32px;padding:20px 28px;background:#fff;border-radius:12px;border:1px solid #e5e2dc;display:flex;align-items:center;gap:12px;flex-wrap:wrap" class="share-row">

@@ -123,6 +123,9 @@
     </a>
     @endif
 
+    {{-- Ad setelah featured post — posisi paling visible sebelum grid --}}
+    <x-adsense-block type="in_feed" format="auto" />
+
     {{-- Post grid --}}
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px" class="blog-grid">
       @php $cardIndex = 0; @endphp
@@ -155,6 +158,13 @@
         <div class="infeed-cta-btns" style="display:flex;gap:10px;flex-shrink:0">
           <a href="https://ebook.m2b.co.id/toolkit.html" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:11px 22px;border-radius:10px;background:#0f0f14;color:#fff;text-decoration:none;font-weight:700;font-size:13px;white-space:nowrap">Download Gratis ↗</a>
         </div>
+      </div>
+      @endif
+
+      {{-- In-feed AdSense after card 5 --}}
+      @if($cardIndex === 5)
+      <div style="grid-column:1/-1">
+        <x-adsense-block type="in_feed" format="auto" />
       </div>
       @endif
 

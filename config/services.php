@@ -37,8 +37,11 @@ return [
 
 
     'adsense' => [
-        'publisher_id' => env('ADSENSE_PUBLISHER_ID', 'ca-pub-5616961797801657'),
-        'slot_id'      => env('ADSENSE_SLOT_ID', '0000000000'),
+        'publisher_id'   => env('ADSENSE_PUBLISHER_ID', 'ca-pub-5616961797801657'),
+        'slot_id'        => env('ADSENSE_SLOT_ID', '0000000000'),
+        'slot_in_content' => env('ADSENSE_SLOT_IN_CONTENT', env('ADSENSE_SLOT_ID', '0000000000')),
+        'slot_post_read'  => env('ADSENSE_SLOT_POST_READ',  env('ADSENSE_SLOT_ID', '0000000000')),
+        'slot_in_feed'    => env('ADSENSE_SLOT_IN_FEED',    env('ADSENSE_SLOT_ID', '0000000000')),
     ],
 
     'mora' => [
