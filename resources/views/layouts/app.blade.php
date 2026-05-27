@@ -137,8 +137,8 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
 
 {{-- Navbar --}}
 <nav x-data="{ scrolled: false, mobileOpen: false }" x-init="window.addEventListener('scroll', () => { scrolled = window.scrollY > 40 })"
-  :style="scrolled ? 'background:rgba(247,245,240,0.95);backdrop-filter:blur(12px);box-shadow:0 2px 16px rgba(0,0,0,0.06)' : 'background:#f7f5f0'"
-  style="position:sticky;top:0;z-index:100;border-bottom:1px solid #e5e2dc;transition:background .25s,box-shadow .25s">
+  :style="scrolled ? 'background:rgba(247,245,240,0.96);backdrop-filter:blur(14px);box-shadow:0 2px 16px rgba(0,0,0,0.07)' : 'background:#f7f5f0'"
+  style="position:fixed;top:0;left:0;right:0;width:100%;z-index:1000;border-bottom:1px solid #e5e2dc;transition:background .25s,box-shadow .25s">
   <div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;height:72px;gap:16px;padding:0 24px">
     <a href="{{ route('home') }}" style="display:flex;align-items:center;gap:12px;flex-shrink:0;text-decoration:none">
       <img src="{{ asset('images/logo-m2b-new2.png') }}" alt="M2B Logo" style="height:52px;width:auto">
@@ -195,6 +195,8 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
     </div>
   </div>
 </nav>
+{{-- Spacer untuk kompensasi navbar fixed height 72px --}}
+<div style="height:72px" aria-hidden="true"></div>
 
 {{-- Page Content --}}
 @yield('content')

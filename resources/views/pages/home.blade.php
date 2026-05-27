@@ -35,13 +35,14 @@
         <span style="display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,0.15);color:#fff;font-size:11px;font-weight:600;letter-spacing:0.3px;text-transform:uppercase">Customs Broker</span>
         <span style="display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(30,58,95,0.4);color:#7eb3e8;font-size:11px;font-weight:600;letter-spacing:0.3px;text-transform:uppercase">Medan · Indonesia</span>
       </div>
-      <h1 style="font-family:Syne;font-weight:800;font-size:54px;line-height:1.06;color:#fff;letter-spacing:-1.8px;margin-bottom:22px">
-        Ekspor &amp; Impor<br>
-        <span style="color:#4a9eda">Lebih Mudah,</span><br>
-        Lebih Aman.
+      <h1 style="font-family:Syne;font-weight:800;font-size:54px;line-height:1.06;color:#fff;letter-spacing:-1.8px;margin-bottom:22px" class="home-hero-h1">
+        <span x-text="lang==='en' ? 'Export & Import' : 'Ekspor & Impor'">Ekspor &amp; Impor</span><br>
+        <span style="color:#4a9eda" x-text="lang==='en' ? 'Made Easy,' : 'Lebih Mudah,'">Lebih Mudah,</span><br>
+        <span x-text="lang==='en' ? 'Made Secure.' : 'Lebih Aman.'">Lebih Aman.</span>
       </h1>
       <p style="font-size:17px;color:rgba(255,255,255,0.78);margin-bottom:36px;line-height:1.7;max-width:480px">
-        End-to-end freight forwarding &amp; customs brokerage. Dari dokumen, bea cukai, hingga door-to-door delivery — M2B handle semuanya.
+        <span x-show="lang!=='en'">End-to-end freight forwarding &amp; customs brokerage. Dari dokumen, bea cukai, hingga door-to-door delivery — M2B handle semuanya.</span>
+        <span x-show="lang==='en'" x-cloak>End-to-end freight forwarding &amp; customs brokerage. From documents, customs clearance, to door-to-door delivery — M2B handles it all.</span>
       </p>
       <div style="background:rgba(255,255,255,0.08);backdrop-filter:blur(16px);border-radius:14px;padding:18px 22px;border:1px solid rgba(255,255,255,0.18);max-width:520px;margin-bottom:20px;box-shadow:0 12px 36px rgba(0,0,0,0.25)">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
@@ -52,24 +53,29 @@
           </div>
           <span style="margin-left:auto;padding:2px 9px;border-radius:10px;background:rgba(74,158,218,0.2);color:#4a9eda;font-size:10px;font-weight:700;border:1px solid rgba(74,158,218,0.3)">LIVE</span>
         </div>
-        <p style="font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:14px;line-height:1.6">Pantau status shipment, unduh dokumen, invoice, dan laporan logistik real-time.</p>
+        <p style="font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:14px;line-height:1.6">
+          <span x-show="lang!=='en'">Pantau status shipment, unduh dokumen, invoice, dan laporan logistik real-time.</span>
+          <span x-show="lang==='en'" x-cloak>Monitor shipment status, download documents, invoices &amp; logistics reports in real-time.</span>
+        </p>
         <div style="display:flex;gap:8px">
           <a href="https://portal.m2b.co.id" target="_blank" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 14px;border-radius:8px;background:#1e3a5f;color:#fff;text-decoration:none;font-weight:700;font-size:13px;white-space:nowrap">🔐 Login Portal</a>
           <a href="https://portal.m2b.co.id/register" target="_blank" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 14px;border-radius:8px;background:rgba(255,255,255,0.08);color:#fff;text-decoration:none;font-weight:600;font-size:13px;border:1px solid rgba(255,255,255,0.2);white-space:nowrap">✏️ Daftar Akun</a>
         </div>
       </div>
       <div class="flex gap-3 flex-wrap" x-data="{ open: false }">
-        <a href="https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20mau%20konsultasi%20gratis" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:13px 28px;border-radius:8px;background:#1e3a5f;color:#fff;text-decoration:none;font-weight:600;font-size:15px;transition:all .18s">💬 Konsultasi GRATIS</a>
+        <a href="https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20mau%20konsultasi%20gratis" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:13px 28px;border-radius:8px;background:#1e3a5f;color:#fff;text-decoration:none;font-weight:600;font-size:15px;transition:all .18s"
+          x-text="lang==='en' ? '💬 Free Consultation' : '💬 Konsultasi GRATIS'">💬 Konsultasi GRATIS</a>
 
         <button @click="open = true"
                 class="inline-flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-lg border border-white/30 backdrop-blur-sm transition-all duration-300 cursor-pointer">
             <svg class="w-5 h-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
             </svg>
-            Tonton Profil M2B <span class="text-xs opacity-60">(16d)</span>
+            <span x-text="lang==='en' ? 'Watch M2B Profile' : 'Tonton Profil M2B'">Tonton Profil M2B</span> <span class="text-xs opacity-60">(16d)</span>
         </button>
 
-        <a href="#layanan" style="display:inline-flex;align-items:center;gap:8px;padding:13px 24px;border-radius:8px;color:#fff;text-decoration:none;font-weight:600;font-size:15px;border:1.5px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.05)">Lihat Layanan →</a>
+        <a href="#layanan" style="display:inline-flex;align-items:center;gap:8px;padding:13px 24px;border-radius:8px;color:#fff;text-decoration:none;font-weight:600;font-size:15px;border:1.5px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.05)"
+          x-text="lang==='en' ? 'View Services →' : 'Lihat Layanan →'">Lihat Layanan →</a>
 
         {{-- YouTube Modal --}}
         <div x-show="open"
@@ -105,9 +111,9 @@
       </div>
       <div style="display:flex;gap:32px;margin-top:48px;border-top:1px solid rgba(255,255,255,0.18);padding-top:28px;flex-wrap:wrap" class="home-stats">
         @foreach([
-          ['target'=>5,   'label'=>'Tahun berpengalaman', 'suffix'=>'+'],
-          ['target'=>100, 'label'=>'Klien aktif',          'suffix'=>'+'],
-          ['target'=>20,  'label'=>'Negara tujuan',        'suffix'=>'+'],
+          ['target'=>5,   'label_id'=>'Tahun berpengalaman', 'label_en'=>'Years of experience',    'suffix'=>'+'],
+          ['target'=>100, 'label_id'=>'Klien aktif',          'label_en'=>'Active clients',         'suffix'=>'+'],
+          ['target'=>20,  'label_id'=>'Negara tujuan',        'label_en'=>'Destination countries', 'suffix'=>'+'],
         ] as $stat)
         <div x-data="{ count: 0 }"
              x-intersect.once="
@@ -123,12 +129,12 @@
           <div style="font-family:Syne;font-weight:800;font-size:28px;color:#4a9eda;line-height:1">
             <span x-text="count + '{{ $stat['suffix'] }}'">{{ $stat['target'] }}{{ $stat['suffix'] }}</span>
           </div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.55);margin-top:6px">{{ $stat['label'] }}</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.55);margin-top:6px" x-text="lang==='en' ? '{{ $stat['label_en'] }}' : '{{ $stat['label_id'] }}'">{{ $stat['label_id'] }}</div>
         </div>
         @endforeach
         <div>
           <div style="font-family:Syne;font-weight:800;font-size:28px;color:#4a9eda;line-height:1">A–Z</div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.55);margin-top:6px">Layanan end-to-end</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.55);margin-top:6px" x-text="lang==='en' ? 'End-to-end service' : 'Layanan end-to-end'">Layanan end-to-end</div>
         </div>
       </div>
     </div>
@@ -144,9 +150,9 @@
 <section id="layanan" style="padding:80px 40px;background:#f7f5f0" x-data="{ openService: null }">
   <div style="max-width:1200px;margin:0 auto">
     <div style="text-align:center;margin-bottom:48px">
-      <span style="display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(30,58,95,0.1);color:#1e3a5f;font-size:11px;font-weight:600;letter-spacing:0.3px;text-transform:uppercase">Layanan</span>
-      <h2 style="font-family:Syne;font-weight:800;font-size:36px;letter-spacing:-0.8px;margin-top:12px;margin-bottom:12px">Semua Kebutuhan Logistik, Satu Atap</h2>
-      <p style="color:#666;font-size:16px;max-width:500px;margin:0 auto">Klik setiap layanan untuk pelajari detail lengkap.</p>
+      <span style="display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(30,58,95,0.1);color:#1e3a5f;font-size:11px;font-weight:600;letter-spacing:0.3px;text-transform:uppercase" x-text="lang==='en' ? 'Services' : 'Layanan'">Layanan</span>
+      <h2 style="font-family:Syne;font-weight:800;font-size:36px;letter-spacing:-0.8px;margin-top:12px;margin-bottom:12px" x-text="lang==='en' ? 'All Your Logistics Needs, Under One Roof' : 'Semua Kebutuhan Logistik, Satu Atap'">Semua Kebutuhan Logistik, Satu Atap</h2>
+      <p style="color:#666;font-size:16px;max-width:500px;margin:0 auto" x-text="lang==='en' ? 'Click each service to learn the full details.' : 'Klik setiap layanan untuk pelajari detail lengkap.'">Klik setiap layanan untuk pelajari detail lengkap.</p>
     </div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px" class="home-services-grid">
       @php
@@ -169,7 +175,7 @@
         <div style="font-size:28px;margin-bottom:14px">{{ $icon }}</div>
         <div style="font-family:Syne;font-weight:700;font-size:17px;margin-bottom:8px;color:{{ $i === 0 ? '#fff' : '#0f0f14' }}">{{ $title }}</div>
         <div style="font-size:13px;color:{{ $i === 0 ? 'rgba(255,255,255,0.55)' : '#777' }};line-height:1.7;margin-bottom:14px">{{ $desc }}</div>
-        <div style="font-size:12px;color:#4a9eda;font-weight:700;display:flex;align-items:center;gap:6px">Pelajari lebih lanjut <span>→</span></div>
+        <div style="font-size:12px;color:#4a9eda;font-weight:700;display:flex;align-items:center;gap:6px" x-text="lang==='en' ? 'Learn more →' : 'Pelajari lebih lanjut →'">Pelajari lebih lanjut →</div>
       </div>
       @endforeach
     </div>
@@ -195,7 +201,7 @@
       </div>
       <div style="padding:36px;overflow-y:auto;position:relative">
         <button @click="openService = null" style="position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:#fff;border:1px solid #e5e2dc;cursor:pointer;font-size:16px;color:#666">✕</button>
-        <div style="font-size:11px;color:#999;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;margin-bottom:14px">Yang Kami Lakukan</div>
+        <div style="font-size:11px;color:#999;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;margin-bottom:14px" x-text="lang==='en' ? 'What We Do' : 'Yang Kami Lakukan'">Yang Kami Lakukan</div>
         @foreach($bullets as $j => $bullet)
         <div style="display:flex;gap:12px;padding:10px 0;{{ $j < count($bullets)-1 ? 'border-bottom:1px solid #f0ede8' : '' }};align-items:flex-start">
           <div style="width:20px;height:20px;border-radius:50%;background:rgba(30,58,95,0.1);color:#1e3a5f;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;margin-top:1px">✓</div>
@@ -216,18 +222,23 @@
 <section id="proses" style="padding:80px 40px;background:#f7f5f0">
   <div style="max-width:1200px;margin:0 auto">
     <div style="text-align:center;margin-bottom:52px">
-      <span style="display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(30,58,95,0.1);color:#1e3a5f;font-size:11px;font-weight:600;letter-spacing:0.3px;text-transform:uppercase">Cara Kerja</span>
-      <h2 style="font-family:Syne;font-weight:800;font-size:34px;letter-spacing:-0.8px;margin-top:12px;margin-bottom:12px">4 Langkah Mudah</h2>
-      <p style="color:#666;max-width:440px;margin:0 auto">Prosesnya sederhana — kami yang kerja keras, kamu yang tenang.</p>
+      <span style="display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(30,58,95,0.1);color:#1e3a5f;font-size:11px;font-weight:600;letter-spacing:0.3px;text-transform:uppercase" x-text="lang==='en' ? 'How It Works' : 'Cara Kerja'">Cara Kerja</span>
+      <h2 style="font-family:Syne;font-weight:800;font-size:34px;letter-spacing:-0.8px;margin-top:12px;margin-bottom:12px" x-text="lang==='en' ? '4 Simple Steps' : '4 Langkah Mudah'">4 Langkah Mudah</h2>
+      <p style="color:#666;max-width:440px;margin:0 auto" x-text="lang==='en' ? 'Simple process — we handle the hard work, you stay worry-free.' : 'Prosesnya sederhana — kami yang kerja keras, kamu yang tenang.'">Prosesnya sederhana — kami yang kerja keras, kamu yang tenang.</p>
     </div>
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative">
       <div style="position:absolute;top:44px;left:12.5%;right:12.5%;height:2px;background:linear-gradient(90deg,#1e3a5f,#c7d7f9);z-index:0"></div>
-      @foreach([['💬','Konsultasi Gratis','Hubungi kami via WhatsApp atau form. Ceritakan kebutuhan ekspor/impor kamu.'],['📄','Penawaran Transparan','Kami kirim quote detail — biaya, estimasi waktu, dokumen. Tanpa hidden fee.'],['⚙️','Proses Dokumen','Tim M2B mengurus semua dokumen dan bea cukai. Kamu update via portal real-time.'],['✅','Barang Terkirim','Barang tiba aman di tujuan. Tracking tersedia hingga pengiriman selesai.']] as $k => [$icon,$title,$desc])
+      @foreach([
+        ['💬','Konsultasi Gratis','Free Consultation','Hubungi kami via WhatsApp atau form. Ceritakan kebutuhan ekspor/impor kamu.','Contact us via WhatsApp or form. Tell us your export/import needs.'],
+        ['📄','Penawaran Transparan','Transparent Quote','Kami kirim quote detail — biaya, estimasi waktu, dokumen. Tanpa hidden fee.','We send a detailed quote — cost, timeline, documents. No hidden fees.'],
+        ['⚙️','Proses Dokumen','Document Processing','Tim M2B mengurus semua dokumen dan bea cukai. Kamu update via portal real-time.','M2B team handles all documents & customs. Track real-time updates via portal.'],
+        ['✅','Barang Terkirim','Goods Delivered','Barang tiba aman di tujuan. Tracking tersedia hingga pengiriman selesai.','Goods arrive safely at destination. Full tracking available until delivery is complete.'],
+      ] as $k => [$icon,$title,$titleEn,$desc,$descEn])
       <div style="text-align:center;padding:0 20px;position:relative;z-index:1">
         <div style="width:56px;height:56px;border-radius:50%;background:#fff;border:3px solid #1e3a5f;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:22px;box-shadow:0 0 0 6px #f7f5f0">{{ $icon }}</div>
         <div style="font-family:Syne;font-weight:800;font-size:48px;color:rgba(30,58,95,0.1);position:absolute;top:-8px;left:50%;transform:translateX(-50%);line-height:1">0{{ $k+1 }}</div>
-        <div style="font-family:Syne;font-weight:700;font-size:15px;margin-bottom:8px">{{ $title }}</div>
-        <div style="font-size:13px;color:#777;line-height:1.7">{{ $desc }}</div>
+        <div style="font-family:Syne;font-weight:700;font-size:15px;margin-bottom:8px" x-text="lang==='en' ? '{{ $titleEn }}' : '{{ $title }}'">{{ $title }}</div>
+        <div style="font-size:13px;color:#777;line-height:1.7" x-text="lang==='en' ? '{{ $descEn }}' : '{{ $desc }}'">{{ $desc }}</div>
       </div>
       @endforeach
     </div>
@@ -238,33 +249,33 @@
 <section style="padding:80px 40px;background:#0f0f14;color:#fff">
   <div style="max-width:1200px;margin:0 auto">
     <div style="text-align:center;margin-bottom:48px">
-      <span style="display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(30,58,95,0.3);color:#4a9eda;font-size:11px;font-weight:600;letter-spacing:0.3px;text-transform:uppercase">Keunggulan</span>
-      <h2 style="font-family:Syne;font-weight:800;font-size:36px;letter-spacing:-0.8px;margin-top:12px;margin-bottom:12px;color:#fff">Mengapa Memilih Kami?</h2>
-      <p style="color:rgba(255,255,255,0.55);max-width:540px;margin:0 auto;font-size:15px">Lebih dari sekadar jasa ekspedisi — M2B adalah mitra strategis untuk kelancaran bisnismu.</p>
+      <span style="display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(30,58,95,0.3);color:#4a9eda;font-size:11px;font-weight:600;letter-spacing:0.3px;text-transform:uppercase" x-text="lang==='en' ? 'Why Us' : 'Keunggulan'">Keunggulan</span>
+      <h2 style="font-family:Syne;font-weight:800;font-size:36px;letter-spacing:-0.8px;margin-top:12px;margin-bottom:12px;color:#fff" x-text="lang==='en' ? 'Why Choose Us?' : 'Mengapa Memilih Kami?'">Mengapa Memilih Kami?</h2>
+      <p style="color:rgba(255,255,255,0.55);max-width:540px;margin:0 auto;font-size:15px" x-text="lang==='en' ? 'More than just a freight service — M2B is your strategic partner for business success.' : 'Lebih dari sekadar jasa ekspedisi — M2B adalah mitra strategis untuk kelancaran bisnismu.'">Lebih dari sekadar jasa ekspedisi — M2B adalah mitra strategis untuk kelancaran bisnismu.</p>
     </div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px" class="home-features-grid">
       @foreach([
-        ['✓','Terdaftar dan Berpengalaman','Resmi terdaftar di Dirjen Bea Cukai, NIB, dan asosiasi industri logistik Indonesia.','500+','Shipment berhasil diselesaikan','https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20ingin%20cek%20legalitas%20dan%20pengalaman%20M2B'],
-        ['💎','Harga Transparan, Tanpa Hidden Cost','Quote rinci dan jujur. Tidak ada surprise di akhir transaksi.','0','Hidden cost dalam setiap quote','https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20minta%20quote%20transparan'],
-        ['⚓','Jaringan Kuat di Pelabuhan Utama','Akses langsung ke Belawan, Tanjung Priok, dan Tanjung Perak.','3','Pelabuhan utama Indonesia','https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20butuh%20info%20customs%20di%20pelabuhan'],
-        ['⚡','Komunikasi Cepat & Profesional','Respon rapi via WhatsApp, email, atau Portal M2B kapan saja.','< 5 menit','Rata-rata waktu respons','https://wa.me/6281263027818?text=Halo%20M2B'],
-        ['🎯','Dukungan Personal Sesuai Kebutuhan','Setiap shipment ditangani konsultan dedikasi, bukan template generik.','1 PIC','Untuk setiap klien & shipment','https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20butuh%20konsultan%20dedikasi'],
-        ['🛡','Penanganan Barang Aman & Terjamin','Proteksi penuh dari gudang hingga tujuan akhir. Asuransi tersedia.','100%','Shipment terlindungi asuransi','https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20ingin%20info%20asuransi%20kargo'],
-      ] as [$icon,$t,$d,$stat,$statLabel,$wa])
+        ['✓','Terdaftar dan Berpengalaman','Registered & Experienced','Resmi terdaftar di Dirjen Bea Cukai, NIB, dan asosiasi industri logistik Indonesia.','Officially registered with the Directorate General of Customs, NIB, and Indonesian logistics associations.','500+','Shipment berhasil diselesaikan','Shipments successfully completed','https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20ingin%20cek%20legalitas%20dan%20pengalaman%20M2B'],
+        ['💎','Harga Transparan, Tanpa Hidden Cost','Transparent Pricing, No Hidden Costs','Quote rinci dan jujur. Tidak ada surprise di akhir transaksi.','Detailed and honest quotes. No surprises at the end of the transaction.','0','Hidden cost dalam setiap quote','Hidden costs in every quote','https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20minta%20quote%20transparan'],
+        ['⚓','Jaringan Kuat di Pelabuhan Utama','Strong Port Network','Akses langsung ke Belawan, Tanjung Priok, dan Tanjung Perak.','Direct access to Belawan, Tanjung Priok, and Tanjung Perak ports.','3','Pelabuhan utama Indonesia','Major ports in Indonesia','https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20butuh%20info%20customs%20di%20pelabuhan'],
+        ['⚡','Komunikasi Cepat & Profesional','Fast & Professional Communication','Respon rapi via WhatsApp, email, atau Portal M2B kapan saja.','Quick response via WhatsApp, email, or M2B Portal anytime.','< 5 menit','Rata-rata waktu respons','Average response time','https://wa.me/6281263027818?text=Halo%20M2B'],
+        ['🎯','Dukungan Personal Sesuai Kebutuhan','Personalized Support','Setiap shipment ditangani konsultan dedikasi, bukan template generik.','Every shipment handled by a dedicated consultant, not a generic template.','1 PIC','Untuk setiap klien & shipment','Per client & shipment','https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20butuh%20konsultan%20dedikasi'],
+        ['🛡','Penanganan Barang Aman & Terjamin','Safe & Secured Cargo Handling','Proteksi penuh dari gudang hingga tujuan akhir. Asuransi tersedia.','Full protection from warehouse to final destination. Insurance available.','100%','Shipment terlindungi asuransi','Shipments covered by insurance','https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20ingin%20info%20asuransi%20kargo'],
+      ] as [$icon,$t,$tEn,$d,$dEn,$stat,$statLabel,$statLabelEn,$wa])
       <div x-data="{ hov: false }" @mouseenter="hov=true" @mouseleave="hov=false"
         style="padding:26px 22px;border-radius:14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);transition:all .25s;cursor:default;display:flex;flex-direction:column"
         :style="hov ? 'background:rgba(30,58,95,0.22);border-color:rgba(74,158,218,0.35);transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,0.3)' : ''">
         <div style="width:46px;height:46px;border-radius:12px;background:rgba(30,58,95,0.45);color:#4a9eda;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;margin-bottom:16px;transition:background .25s"
           :style="hov ? 'background:rgba(30,58,95,0.7)' : ''">{{ $icon }}</div>
-        <div style="font-family:Syne;font-weight:700;font-size:16px;color:#fff;margin-bottom:8px">{{ $t }}</div>
-        <div style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.7;flex:1">{{ $d }}</div>
+        <div style="font-family:Syne;font-weight:700;font-size:16px;color:#fff;margin-bottom:8px" x-text="lang==='en' ? '{{ $tEn }}' : '{{ $t }}'">{{ $t }}</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.7;flex:1" x-text="lang==='en' ? '{{ $dEn }}' : '{{ $d }}'">{{ $d }}</div>
         <div x-show="hov" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
           style="margin-top:18px;padding-top:16px;border-top:1px solid rgba(74,158,218,0.25)">
           <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:12px">
             <span style="font-family:Syne;font-weight:800;font-size:26px;color:#4a9eda;line-height:1">{{ $stat }}</span>
-            <span style="font-size:12px;color:rgba(255,255,255,0.4);line-height:1.3">{{ $statLabel }}</span>
+            <span style="font-size:12px;color:rgba(255,255,255,0.4);line-height:1.3" x-text="lang==='en' ? '{{ $statLabelEn }}' : '{{ $statLabel }}'">{{ $statLabel }}</span>
           </div>
-          <a href="{{ $wa }}" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 14px;border-radius:8px;background:#25D366;color:#fff;text-decoration:none;font-weight:700;font-size:12px">💬 Tanya Sekarang</a>
+          <a href="{{ $wa }}" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 14px;border-radius:8px;background:#25D366;color:#fff;text-decoration:none;font-weight:700;font-size:12px" x-text="lang==='en' ? '💬 Ask Now' : '💬 Tanya Sekarang'">💬 Tanya Sekarang</a>
         </div>
       </div>
       @endforeach
@@ -285,23 +296,29 @@
       </div>
     </div>
     <div>
-      <span style="display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(30,58,95,0.1);color:#1e3a5f;font-size:11px;font-weight:600;letter-spacing:0.3px;text-transform:uppercase">Tentang Kami</span>
+      <span style="display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(30,58,95,0.1);color:#1e3a5f;font-size:11px;font-weight:600;letter-spacing:0.3px;text-transform:uppercase" x-text="lang==='en' ? 'About Us' : 'Tentang Kami'">Tentang Kami</span>
       <h2 style="font-family:Syne;font-weight:800;font-size:32px;letter-spacing:-0.8px;margin-top:12px;margin-bottom:18px;line-height:1.2">
-        Freight Forwarder & Jasa Logistik<br>
-        <span style="color:#1e3a5f">Terpercaya di Indonesia.</span>
+        <span x-show="lang!=='en'">Freight Forwarder & Jasa Logistik<br><span style="color:#1e3a5f">Terpercaya di Indonesia.</span></span>
+        <span x-show="lang==='en'" x-cloak>Trusted Freight Forwarder &<br><span style="color:#1e3a5f">Logistics Partner in Indonesia.</span></span>
       </h2>
-      <p style="font-size:15px;color:#555;line-height:1.85;margin-bottom:18px">Kami adalah perusahaan <strong>freight forwarder</strong> sekaligus <strong>PPJK</strong> yang berbasis di Medan, Sumatera Utara — Indonesia. Kami menyediakan layanan logistik ekspor-impor secara menyeluruh, mulai dari pengurusan dokumen, customs clearance, hingga pengiriman barang ke berbagai destinasi nasional maupun internasional.</p>
-      <p style="font-size:15px;color:#555;line-height:1.85;margin-bottom:24px">Kami hadir untuk membantu UMKM maupun perusahaan besar dengan solusi logistik yang andal dan terukur sesuai kebutuhan Anda.</p>
+      <p style="font-size:15px;color:#555;line-height:1.85;margin-bottom:18px">
+        <span x-show="lang!=='en'">Kami adalah perusahaan <strong>freight forwarder</strong> sekaligus <strong>PPJK</strong> yang berbasis di Medan, Sumatera Utara — Indonesia. Kami menyediakan layanan logistik ekspor-impor secara menyeluruh, mulai dari pengurusan dokumen, customs clearance, hingga pengiriman barang ke berbagai destinasi nasional maupun internasional.</span>
+        <span x-show="lang==='en'" x-cloak>We are a <strong>freight forwarding</strong> and <strong>PPJK</strong> company based in Medan, North Sumatra — Indonesia. We provide comprehensive export-import logistics services, from document processing and customs clearance to cargo delivery across domestic and international destinations.</span>
+      </p>
+      <p style="font-size:15px;color:#555;line-height:1.85;margin-bottom:24px">
+        <span x-show="lang!=='en'">Kami hadir untuk membantu UMKM maupun perusahaan besar dengan solusi logistik yang andal dan terukur sesuai kebutuhan Anda.</span>
+        <span x-show="lang==='en'" x-cloak>We support both SMEs and large corporations with reliable, scalable logistics solutions tailored to your business needs.</span>
+      </p>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px">
-        @foreach([['🏆','5+ Tahun','Berpengalaman'],['🌍','20+','Negara Tujuan'],['🤝','100+','Klien Aktif']] as [$icon,$big,$sub])
+        @foreach([['🏆','5+ Tahun','Berpengalaman','Years of Exp.'],['🌍','20+','Negara Tujuan','Destinations'],['🤝','100+','Klien Aktif','Active Clients']] as [$icon,$big,$sub,$subEn])
         <div style="padding:14px 16px;border-radius:8px;border:1px solid #e5e2dc;background:#fafaf8">
           <div style="font-size:18px;margin-bottom:4px">{{ $icon }}</div>
           <div style="font-family:Syne;font-weight:800;font-size:16px;color:#1e3a5f">{{ $big }}</div>
-          <div style="font-size:11px;color:#888">{{ $sub }}</div>
+          <div style="font-size:11px;color:#888" x-text="lang==='en' ? '{{ $subEn }}' : '{{ $sub }}'">{{ $sub }}</div>
         </div>
         @endforeach
       </div>
-      <a href="{{ route('about') }}" style="display:inline-flex;align-items:center;gap:8px;padding:11px 24px;border-radius:8px;background:#1e3a5f;color:#fff;text-decoration:none;font-weight:600;font-size:14px">Selengkapnya →</a>
+      <a href="{{ route('about') }}" style="display:inline-flex;align-items:center;gap:8px;padding:11px 24px;border-radius:8px;background:#1e3a5f;color:#fff;text-decoration:none;font-weight:600;font-size:14px" x-text="lang==='en' ? 'Learn More →' : 'Selengkapnya →'">Selengkapnya →</a>
     </div>
   </div>
 </section>
@@ -326,12 +343,12 @@
 }">
   <div style="max-width:700px;margin:0 auto;text-align:center">
     <span style="display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(30,58,95,0.3);color:#4a9eda;font-size:11px;font-weight:600;letter-spacing:0.3px;text-transform:uppercase">Free Estimator</span>
-    <h2 style="font-family:Syne;font-weight:800;font-size:34px;color:#fff;letter-spacing:-0.8px;margin-top:12px;margin-bottom:8px">Estimasi Biaya Logistik</h2>
-    <p style="color:rgba(255,255,255,0.5);font-size:15px;margin-bottom:40px">Pilih layanan dan kami akan bantu estimasi kebutuhan Anda via WhatsApp — gratis, cepat, tanpa komitmen.</p>
+    <h2 style="font-family:Syne;font-weight:800;font-size:34px;color:#fff;letter-spacing:-0.8px;margin-top:12px;margin-bottom:8px" x-text="lang==='en' ? 'Logistics Cost Estimator' : 'Estimasi Biaya Logistik'">Estimasi Biaya Logistik</h2>
+    <p style="color:rgba(255,255,255,0.5);font-size:15px;margin-bottom:40px" x-text="lang==='en' ? 'Select a service and we\'ll estimate your needs via WhatsApp — free, fast, no commitment.' : 'Pilih layanan dan kami akan bantu estimasi kebutuhan Anda via WhatsApp — gratis, cepat, tanpa komitmen.'">Pilih layanan dan kami akan bantu estimasi kebutuhan Anda via WhatsApp — gratis, cepat, tanpa komitmen.</p>
 
     {{-- Step 1: Pilih Layanan --}}
     <div x-show="step === 1">
-      <div style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:20px;font-weight:600;text-transform:uppercase;letter-spacing:1px">Langkah 1 dari 3 — Pilih Layanan</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:20px;font-weight:600;text-transform:uppercase;letter-spacing:1px" x-text="lang==='en' ? 'Step 1 of 3 — Select Service' : 'Langkah 1 dari 3 — Pilih Layanan'">Langkah 1 dari 3 — Pilih Layanan</div>
       <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;max-width:520px;margin:0 auto 28px">
         @foreach([
           'export'  => ['📤','Export Handling',   'PEB, COO/SKA, ke 20+ negara'],
@@ -354,33 +371,33 @@
 
     {{-- Step 2: Origin & Destination --}}
     <div x-show="step === 2">
-      <div style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:16px;font-weight:600;text-transform:uppercase;letter-spacing:1px">Langkah 2 dari 3 — Rute Pengiriman</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:16px;font-weight:600;text-transform:uppercase;letter-spacing:1px" x-text="lang==='en' ? 'Step 2 of 3 — Shipping Route' : 'Langkah 2 dari 3 — Rute Pengiriman'">Langkah 2 dari 3 — Rute Pengiriman</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:480px;margin:0 auto 20px">
         <div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:6px;text-align:left">Asal / Origin</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:6px;text-align:left" x-text="lang==='en' ? 'Origin' : 'Asal / Origin'">Asal / Origin</div>
           <input x-model="origin" type="text" placeholder="Mis: Medan, Jakarta" style="width:100%;padding:12px 14px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.08);color:#fff;font-size:14px;font-family:'DM Sans';outline:none" onfocus="this.style.borderColor='#4a9eda'" onblur="this.style.borderColor='rgba(255,255,255,0.15)'">
         </div>
         <div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:6px;text-align:left">Tujuan / Destination</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:6px;text-align:left" x-text="lang==='en' ? 'Destination' : 'Tujuan / Destination'">Tujuan / Destination</div>
           <input x-model="dest" type="text" placeholder="Mis: Singapura, China" style="width:100%;padding:12px 14px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.08);color:#fff;font-size:14px;font-family:'DM Sans';outline:none" onfocus="this.style.borderColor='#4a9eda'" onblur="this.style.borderColor='rgba(255,255,255,0.15)'">
         </div>
       </div>
       <div style="display:flex;gap:12px;justify-content:center;max-width:480px;margin:0 auto">
-        <button @click="step = 1" style="padding:12px 20px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.2);background:transparent;color:#fff;cursor:pointer;font-family:'DM Sans';font-size:14px">← Kembali</button>
-        <button @click="if(origin && dest) step = 3" style="flex:1;padding:12px;border-radius:8px;background:#1e3a5f;color:#fff;border:none;cursor:pointer;font-family:'DM Sans';font-size:14px;font-weight:700">Lanjut →</button>
+        <button @click="step = 1" style="padding:12px 20px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.2);background:transparent;color:#fff;cursor:pointer;font-family:'DM Sans';font-size:14px" x-text="lang==='en' ? '← Back' : '← Kembali'">← Kembali</button>
+        <button @click="if(origin && dest) step = 3" style="flex:1;padding:12px;border-radius:8px;background:#1e3a5f;color:#fff;border:none;cursor:pointer;font-family:'DM Sans';font-size:14px;font-weight:700" x-text="lang==='en' ? 'Next →' : 'Lanjut →'">Lanjut →</button>
       </div>
     </div>
 
     {{-- Step 3: Weight + Final CTA --}}
     <div x-show="step === 3">
-      <div style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:16px;font-weight:600;text-transform:uppercase;letter-spacing:1px">Langkah 3 dari 3 — Estimasi Muatan</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:16px;font-weight:600;text-transform:uppercase;letter-spacing:1px" x-text="lang==='en' ? 'Step 3 of 3 — Cargo Estimate' : 'Langkah 3 dari 3 — Estimasi Muatan'">Langkah 3 dari 3 — Estimasi Muatan</div>
       <div style="max-width:480px;margin:0 auto">
         <div style="margin-bottom:20px">
-          <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:6px;text-align:left">Berat / Volume Kargo (opsional)</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:6px;text-align:left" x-text="lang==='en' ? 'Cargo Weight / Volume (optional)' : 'Berat / Volume Kargo (opsional)'">Berat / Volume Kargo (opsional)</div>
           <input x-model="weight" type="text" placeholder="Mis: 500 kg, 1 FCL 20ft, 2 CBM" style="width:100%;padding:12px 14px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.08);color:#fff;font-size:14px;font-family:'DM Sans';outline:none" onfocus="this.style.borderColor='#4a9eda'" onblur="this.style.borderColor='rgba(255,255,255,0.15)'">
         </div>
         <div style="background:rgba(30,58,95,0.3);border:1px solid rgba(30,58,95,0.5);border-radius:12px;padding:16px;margin-bottom:20px;text-align:left">
-          <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:8px;font-weight:600">RINGKASAN REQUEST</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:8px;font-weight:600" x-text="lang==='en' ? 'REQUEST SUMMARY' : 'RINGKASAN REQUEST'">RINGKASAN REQUEST</div>
           <div style="font-size:14px;color:#fff">🎯 Layanan: <strong x-text="getLabel(service)"></strong></div>
           <div style="font-size:14px;color:#fff;margin-top:4px">🗺️ Rute: <strong x-text="origin + ' → ' + dest"></strong></div>
           <div x-show="weight" style="font-size:14px;color:#fff;margin-top:4px">⚖️ Muatan: <strong x-text="weight"></strong></div>
@@ -388,9 +405,9 @@
         <a :href="'https://wa.me/6281263027818?text=' + encodeURIComponent('Halo M2B, saya ingin estimasi biaya untuk:\n- Layanan: ' + getLabel(service) + '\n- Rute: ' + origin + ' → ' + dest + (weight ? '\n- Muatan: ' + weight : '') + '\n\nMohon bantu estimasi dan quote-nya ya. Terima kasih.')"
           target="_blank"
           style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px;border-radius:10px;background:#25D366;color:#fff;text-decoration:none;font-weight:700;font-size:16px;margin-bottom:12px">
-          💬 Kirim ke WhatsApp & Minta Quote
+          <span x-text="lang==='en' ? '💬 Send to WhatsApp & Request Quote' : '💬 Kirim ke WhatsApp & Minta Quote'">💬 Kirim ke WhatsApp & Minta Quote</span>
         </a>
-        <button @click="step = 2" style="width:100%;padding:12px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.2);background:transparent;color:rgba(255,255,255,0.6);cursor:pointer;font-family:'DM Sans';font-size:14px">← Edit Rute</button>
+        <button @click="step = 2" style="width:100%;padding:12px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.2);background:transparent;color:rgba(255,255,255,0.6);cursor:pointer;font-family:'DM Sans';font-size:14px" x-text="lang==='en' ? '← Edit Route' : '← Edit Rute'">← Edit Rute</button>
       </div>
     </div>
 
@@ -408,29 +425,32 @@
   <div style="max-width:780px;margin:0 auto">
     <div style="text-align:center;margin-bottom:48px">
       <span style="display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(30,58,95,0.1);color:#1e3a5f;font-size:11px;font-weight:600;letter-spacing:0.3px;text-transform:uppercase">FAQ</span>
-      <h2 style="font-family:Syne;font-weight:800;font-size:34px;letter-spacing:-0.8px;margin-top:12px;margin-bottom:12px">Pertanyaan yang Sering Diajukan</h2>
-      <p style="color:#666;font-size:15px">Semua yang ingin Anda tahu tentang layanan ekspor-impor M2B.</p>
+      <h2 style="font-family:Syne;font-weight:800;font-size:34px;letter-spacing:-0.8px;margin-top:12px;margin-bottom:12px" x-text="lang==='en' ? 'Frequently Asked Questions' : 'Pertanyaan yang Sering Diajukan'">Pertanyaan yang Sering Diajukan</h2>
+      <p style="color:#666;font-size:15px" x-text="lang==='en' ? 'Everything you want to know about M2B export-import services.' : 'Semua yang ingin Anda tahu tentang layanan ekspor-impor M2B.'">Semua yang ingin Anda tahu tentang layanan ekspor-impor M2B.</p>
     </div>
     <div x-data="{ open: null }">
       @php
       $faqs = [
-        ['Berapa estimasi biaya customs clearance di M2B?','Biaya customs clearance bervariasi tergantung HS Code, nilai barang, dan jenis jalur (hijau/merah). M2B memberikan kalkulasi transparan termasuk bea masuk, PPN, PPh 22, dan handling fee — tanpa hidden cost. Hubungi kami untuk quote gratis.'],
-        ['Apakah M2B bisa mengurus impor untuk UMKM yang belum punya API?','Ya! Kami menyediakan layanan Undername Import khusus untuk importir yang belum memiliki Angka Pengenal Impor (API). 100% legal — M2B bertindak sebagai importir of record, sementara Anda tetap pemilik sah barang.'],
-        ['Berapa lama proses customs clearance di Pelabuhan Belawan?','Rata-rata 1–3 hari kerja untuk jalur hijau. Jalur merah bisa 3–7 hari tergantung kompleksitas pemeriksaan. M2B memiliki akses langsung ke sistem CEISA 4.0 dan relasi kuat di pelabuhan Belawan, Tanjung Priok, dan Tanjung Perak.'],
-        ['Dokumen apa saja yang diperlukan untuk ekspor?','Untuk ekspor standar: Commercial Invoice, Packing List, Bill of Lading/AWB, dan COO/SKA (Certificate of Origin) jika diperlukan negara tujuan. M2B membantu menyiapkan dan memverifikasi semua dokumen hingga PEB (Pemberitahuan Ekspor Barang).'],
-        ['Apakah M2B menyediakan layanan door-to-door ke luar negeri?','Ya! Kami melayani door-to-door ke 25+ negara — dari pickup di gudang Anda, customs clearance di Indonesia, pengiriman internasional, customs di negara tujuan, hingga last-mile delivery. Satu PIC dari awal hingga akhir.'],
-        ['Bagaimana cara melacak status shipment saya?','Anda dapat menghubungi langsung tim M2B via WhatsApp (+62 812-6302-7818) untuk update real-time status shipment. Tim kami merespons dalam hitungan menit selama jam operasional (Senin–Sabtu, 08.00–17.00 WIB).'],
+        ['Berapa estimasi biaya customs clearance di M2B?','Biaya customs clearance bervariasi tergantung HS Code, nilai barang, dan jenis jalur (hijau/merah). M2B memberikan kalkulasi transparan termasuk bea masuk, PPN, PPh 22, dan handling fee — tanpa hidden cost. Hubungi kami untuk quote gratis.','How much does customs clearance cost at M2B?','Customs clearance fees vary depending on the HS Code, cargo value, and inspection lane (green/red). M2B provides transparent calculations including import duty, VAT, PPh 22, and handling fees — no hidden costs. Contact us for a free quote.'],
+        ['Apakah M2B bisa mengurus impor untuk UMKM yang belum punya API?','Ya! Kami menyediakan layanan Undername Import khusus untuk importir yang belum memiliki Angka Pengenal Impor (API). 100% legal — M2B bertindak sebagai importir of record, sementara Anda tetap pemilik sah barang.','Can M2B handle imports for SMEs without an Import License (API)?','Yes! We offer Undername Import services specifically for importers without an API (Import Registration Number). 100% legal — M2B acts as the importer of record, while you remain the legal owner of the goods.'],
+        ['Berapa lama proses customs clearance di Pelabuhan Belawan?','Rata-rata 1–3 hari kerja untuk jalur hijau. Jalur merah bisa 3–7 hari tergantung kompleksitas pemeriksaan. M2B memiliki akses langsung ke sistem CEISA 4.0 dan relasi kuat di pelabuhan Belawan, Tanjung Priok, dan Tanjung Perak.','How long does customs clearance take at Belawan Port?','Average 1–3 working days for the green lane. Red lane can take 3–7 days depending on inspection complexity. M2B has direct access to the CEISA 4.0 system and strong relationships at Belawan, Tanjung Priok, and Tanjung Perak ports.'],
+        ['Dokumen apa saja yang diperlukan untuk ekspor?','Untuk ekspor standar: Commercial Invoice, Packing List, Bill of Lading/AWB, dan COO/SKA (Certificate of Origin) jika diperlukan negara tujuan. M2B membantu menyiapkan dan memverifikasi semua dokumen hingga PEB (Pemberitahuan Ekspor Barang).','What documents are required for export?','For standard export: Commercial Invoice, Packing List, Bill of Lading/AWB, and COO/SKA (Certificate of Origin) if required by the destination country. M2B helps prepare and verify all documents up to the PEB (Export Customs Declaration).'],
+        ['Apakah M2B menyediakan layanan door-to-door ke luar negeri?','Ya! Kami melayani door-to-door ke 25+ negara — dari pickup di gudang Anda, customs clearance di Indonesia, pengiriman internasional, customs di negara tujuan, hingga last-mile delivery. Satu PIC dari awal hingga akhir.','Does M2B provide door-to-door service overseas?','Yes! We serve door-to-door to 25+ countries — from pickup at your warehouse, customs clearance in Indonesia, international shipping, customs at the destination, to last-mile delivery. One dedicated PIC from start to finish.'],
+        ['Bagaimana cara melacak status shipment saya?','Anda dapat menghubungi langsung tim M2B via WhatsApp (+62 812-6302-7818) untuk update real-time status shipment. Tim kami merespons dalam hitungan menit selama jam operasional (Senin–Sabtu, 08.00–17.00 WIB).','How do I track my shipment status?','Contact the M2B team directly via WhatsApp (+62 812-6302-7818) for real-time shipment updates. Our team responds within minutes during business hours (Monday–Saturday, 08:00–17:00 WIB).'],
       ];
       @endphp
-      @foreach($faqs as $i => [$q, $a])
+      @foreach($faqs as $i => [$q, $a, $qEn, $aEn])
       <div style="border-bottom:1px solid #e5e2dc;padding:4px 0">
         <button @click="open = open === {{ $i }} ? null : {{ $i }}"
           style="width:100%;text-align:left;padding:20px 0;background:transparent;border:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px;font-family:'DM Sans',sans-serif">
-          <span style="font-family:Syne;font-weight:700;font-size:16px;color:#0f0f14;line-height:1.4">{{ $q }}</span>
+          <span style="font-family:Syne;font-weight:700;font-size:16px;color:#0f0f14;line-height:1.4" x-text="lang==='en' ? '{{ addslashes($qEn) }}' : '{{ addslashes($q) }}'">{{ $q }}</span>
           <span :style="open === {{ $i }} ? 'transform:rotate(45deg)' : ''" style="flex-shrink:0;width:28px;height:28px;border-radius:50%;background:rgba(30,58,95,0.1);display:flex;align-items:center;justify-content:center;font-size:16px;color:#1e3a5f;transition:transform .2s;font-weight:700">+</span>
         </button>
         <div x-show="open === {{ $i }}" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100" style="padding:0 0 20px">
-          <p style="font-size:15px;color:#555;line-height:1.8;padding:16px 20px;background:#fff;border-radius:10px;border-left:3px solid #1e3a5f">{{ $a }}</p>
+          <p style="font-size:15px;color:#555;line-height:1.8;padding:16px 20px;background:#fff;border-radius:10px;border-left:3px solid #1e3a5f">
+            <span x-show="lang!=='en'">{{ $a }}</span>
+            <span x-show="lang==='en'" x-cloak>{{ $aEn }}</span>
+          </p>
           @if($i === 0)
           <a href="https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20minta%20quote%20customs%20clearance" target="_blank" style="display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:13px;color:#25D366;font-weight:600;text-decoration:none">💬 Minta Quote Sekarang →</a>
           @endif
@@ -439,8 +459,8 @@
       @endforeach
     </div>
     <div style="margin-top:36px;text-align:center">
-      <p style="color:#777;font-size:14px;margin-bottom:16px">Pertanyaan lain? Tim M2B siap membantu.</p>
-      <a href="https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20punya%20pertanyaan" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:11px 24px;border-radius:8px;background:#1e3a5f;color:#fff;text-decoration:none;font-weight:600;font-size:14px">💬 Tanya via WhatsApp</a>
+      <p style="color:#777;font-size:14px;margin-bottom:16px" x-text="lang==='en' ? 'Have other questions? The M2B team is ready to help.' : 'Pertanyaan lain? Tim M2B siap membantu.'">Pertanyaan lain? Tim M2B siap membantu.</p>
+      <a href="https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20punya%20pertanyaan" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:11px 24px;border-radius:8px;background:#1e3a5f;color:#fff;text-decoration:none;font-weight:600;font-size:14px" x-text="lang==='en' ? '💬 Ask via WhatsApp' : '💬 Tanya via WhatsApp'">💬 Tanya via WhatsApp</a>
     </div>
   </div>
 </section>
@@ -449,9 +469,9 @@
 <section style="padding:80px 40px;background:#fff;border-top:1px solid #e5e2dc">
   <div style="max-width:1200px;margin:0 auto">
     <div style="text-align:center;margin-bottom:48px">
-      <span style="display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(30,58,95,0.1);color:#1e3a5f;font-size:11px;font-weight:600;letter-spacing:0.3px;text-transform:uppercase">Testimoni</span>
-      <h2 style="font-family:Syne;font-weight:800;font-size:34px;letter-spacing:-0.8px;margin-top:12px;margin-bottom:12px">Dipercaya Ratusan Klien</h2>
-      <p style="color:#666">Dari UKM hingga perusahaan ekspor skala besar.</p>
+      <span style="display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(30,58,95,0.1);color:#1e3a5f;font-size:11px;font-weight:600;letter-spacing:0.3px;text-transform:uppercase" x-text="lang==='en' ? 'Testimonials' : 'Testimoni'">Testimoni</span>
+      <h2 style="font-family:Syne;font-weight:800;font-size:34px;letter-spacing:-0.8px;margin-top:12px;margin-bottom:12px" x-text="lang==='en' ? 'Trusted by Hundreds of Clients' : 'Dipercaya Ratusan Klien'">Dipercaya Ratusan Klien</h2>
+      <p style="color:#666" x-text="lang==='en' ? 'From SMEs to large-scale export companies.' : 'Dari UKM hingga perusahaan ekspor skala besar.'">Dari UKM hingga perusahaan ekspor skala besar.</p>
     </div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px" class="home-testimonials-grid">
       @foreach([['"Penanganan impor dengan biaya yang jelas dan terukur, tepat waktu. Sangat layak menjadi rekan bisnis Anda."','Edy Serdawanto','Direktur — PT. Dira Baraka Mulia'],['"Game-changer for our business! The team at M2B is reliable, efficient, and always responsive."','Mr. Jhonson','GM — Anhui Imp & Export Co., Ltd'],['"Tim M2B sangat suportif dan transparan. Tidak ada biaya tersembunyi — ini yang kami cari."','Sarah Aulia','Online Business Owner — Medan']] as [$q,$name,$co])
@@ -477,11 +497,11 @@
   <div style="max-width:1200px;margin:0 auto">
     <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:32px;flex-wrap:wrap;gap:16px">
       <div>
-        <span style="display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(30,58,95,0.1);color:#1e3a5f;font-size:11px;font-weight:600;letter-spacing:0.3px;text-transform:uppercase">Artikel Terbaru</span>
-        <h2 style="font-family:Syne;font-weight:800;font-size:34px;letter-spacing:-0.8px;margin-top:12px;margin-bottom:6px">Update Logistik & Shipment</h2>
-        <p style="color:#666;font-size:15px">Info terkini seputar pelabuhan, regulasi, dan kegiatan pengiriman.</p>
+        <span style="display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(30,58,95,0.1);color:#1e3a5f;font-size:11px;font-weight:600;letter-spacing:0.3px;text-transform:uppercase" x-text="lang==='en' ? 'Latest Articles' : 'Artikel Terbaru'">Artikel Terbaru</span>
+        <h2 style="font-family:Syne;font-weight:800;font-size:34px;letter-spacing:-0.8px;margin-top:12px;margin-bottom:6px" x-text="lang==='en' ? 'Logistics & Shipment Updates' : 'Update Logistik & Shipment'">Update Logistik & Shipment</h2>
+        <p style="color:#666;font-size:15px" x-text="lang==='en' ? 'Latest info on ports, regulations, and shipping activities.' : 'Info terkini seputar pelabuhan, regulasi, dan kegiatan pengiriman.'">Info terkini seputar pelabuhan, regulasi, dan kegiatan pengiriman.</p>
       </div>
-      <a href="{{ route('blog.index') }}" style="font-size:13px;color:#1e3a5f;font-weight:600;text-decoration:none">Lihat semua artikel →</a>
+      <a href="{{ route('blog.index') }}" style="font-size:13px;color:#1e3a5f;font-weight:600;text-decoration:none" x-text="lang==='en' ? 'View all articles →' : 'Lihat semua artikel →'">Lihat semua artikel →</a>
     </div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px" class="home-blog-grid">
       @foreach($latestPosts as $post)
@@ -510,13 +530,13 @@
 <section style="padding:80px 40px;background:#0f0f14">
   <div style="max-width:700px;margin:0 auto;text-align:center">
     <h2 style="font-family:Syne;font-weight:800;font-size:40px;color:#fff;letter-spacing:-1px;margin-bottom:16px;line-height:1.1">
-      Siap Ekspor atau Impor?<br>
-      <span style="color:#4a9eda">Mulai Hari Ini.</span>
+      <span x-text="lang==='en' ? 'Ready to Export or Import?' : 'Siap Ekspor atau Impor?'">Siap Ekspor atau Impor?</span><br>
+      <span style="color:#4a9eda" x-text="lang==='en' ? 'Start Today.' : 'Mulai Hari Ini.'">Mulai Hari Ini.</span>
     </h2>
-    <p style="color:rgba(255,255,255,0.5);font-size:16px;margin-bottom:36px;line-height:1.7">Konsultasi gratis, quote transparan, respon cepat. Tidak ada komitmen sebelum kamu setuju.</p>
+    <p style="color:rgba(255,255,255,0.5);font-size:16px;margin-bottom:36px;line-height:1.7" x-text="lang==='en' ? 'Free consultation, transparent quote, fast response. No commitment until you agree.' : 'Konsultasi gratis, quote transparan, respon cepat. Tidak ada komitmen sebelum kamu setuju.'">Konsultasi gratis, quote transparan, respon cepat. Tidak ada komitmen sebelum kamu setuju.</p>
     <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
-      <a href="https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20mau%20konsultasi" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:8px;background:#1e3a5f;color:#fff;text-decoration:none;font-weight:600;font-size:16px">💬 Chat WhatsApp Sekarang</a>
-      <a href="mailto:sales@m2b.co.id" style="display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:8px;color:#fff;text-decoration:none;font-weight:600;font-size:16px;border:1.5px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.06)">📧 Email Kami</a>
+      <a href="https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20mau%20konsultasi" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:8px;background:#1e3a5f;color:#fff;text-decoration:none;font-weight:600;font-size:16px" x-text="lang==='en' ? '💬 Chat on WhatsApp Now' : '💬 Chat WhatsApp Sekarang'">💬 Chat WhatsApp Sekarang</a>
+      <a href="mailto:sales@m2b.co.id" style="display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:8px;color:#fff;text-decoration:none;font-weight:600;font-size:16px;border:1.5px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.06)" x-text="lang==='en' ? '📧 Email Us' : '📧 Email Kami'">📧 Email Kami</a>
     </div>
   </div>
 </section>
