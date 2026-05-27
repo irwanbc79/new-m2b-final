@@ -141,7 +141,7 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
   style="position:sticky;top:0;z-index:100;border-bottom:1px solid #e5e2dc;transition:background .25s,box-shadow .25s">
   <div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;height:72px;gap:16px;padding:0 24px">
     <a href="{{ route('home') }}" style="display:flex;align-items:center;gap:12px;flex-shrink:0;text-decoration:none">
-      <img src="{{ asset('images/m2b_logo1.svg') }}" alt="M2B Logo" style="height:54px;width:auto">
+      <img src="{{ asset('images/logo-m2b-new2.png') }}" alt="M2B Logo" style="height:52px;width:auto">
       <div style="display:flex;flex-direction:column;line-height:1.1;border-left:1.5px solid #d5d0c8;padding-left:12px" class="hide-mobile">
         <span style="font-family:Syne;font-weight:800;font-size:14px;color:#0B1120;letter-spacing:-0.3px">PT. Mora Multi Berkah</span>
         <span style="font-size:9px;color:#8b1e2b;font-weight:700;letter-spacing:1.5px">LOGISTIC · SOLUTION · PARTNER</span>
@@ -204,7 +204,7 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
   <div style="max-width:1200px;margin:0 auto">
     <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:48px;align-items:start" class="footer-grid">
       <div>
-        <img src="{{ asset('images/m2b_logo1.svg') }}" alt="M2B" style="max-width:200px;max-height:80px;width:100%;height:auto;display:block;margin-bottom:14px">
+        <img src="{{ asset('images/logo-m2b-new2.png') }}" alt="M2B" style="max-width:180px;height:auto;display:block;margin-bottom:14px">
         <div style="font-family:Syne;font-weight:700;font-size:14px;color:#1e3a5f;margin-bottom:6px">PT. Mora Multi Berkah</div>
         <div style="font-size:12px;color:#888;margin-bottom:16px;line-height:1.75">Freight Forwarder & Customs Broker.<br>Mitra logistik tepercaya dari Medan untuk Indonesia & dunia.</div>
         {{-- Social media --}}
