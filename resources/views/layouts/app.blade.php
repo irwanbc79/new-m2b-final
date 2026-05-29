@@ -24,7 +24,7 @@
   "@@type": "LocalBusiness",
   "name": "PT. Mora Multi Berkah (M2B)",
   "description": "Freight Forwarder & Customs Broker terpercaya berbasis di Medan, Indonesia. Layanan ekspor-impor ke 20+ negara.",
-  "url": "https://new.m2b.co.id",
+  "url": "https://m2b.co.id",
   "telephone": "+6281263027818",
   "email": "sales@@m2b.co.id",
   "address": {

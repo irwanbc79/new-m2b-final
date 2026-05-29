@@ -134,15 +134,8 @@ window.addEventListener('scroll',function(){
       <a href="{{ route('blog.index') }}" style="margin-left:auto;color:#1e3a5f;text-decoration:none;font-weight:600;font-size:14px;white-space:nowrap">← Semua Artikel</a>
     </div>
 
-    {{-- Ebook CTA Banner --}}
-    <div style="margin-top:32px;background:linear-gradient(135deg,#0f0f14 0%,#1e3a5f 100%);border-radius:16px;padding:32px 36px;display:flex;align-items:center;gap:28px;flex-wrap:wrap">
-      <div style="font-size:48px;flex-shrink:0">📘</div>
-      <div style="flex:1;min-width:220px">
-        <div style="font-family:Syne;font-weight:800;font-size:18px;color:#fff;margin-bottom:6px">Download Toolkit E-Book Ekspor Impor — GRATIS</div>
-        <div style="font-size:14px;color:rgba(255,255,255,0.65);line-height:1.6">Toolkit lengkap ekspor-impor: checklist dokumen, template, & panduan praktis untuk pemula & UMKM. Ditulis oleh tim expert M2B dari pengalaman 5+ tahun lapangan.</div>
-      </div>
-      <a href="https://ebook.m2b.co.id/toolkit.html" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:10px;background:#f5b91c;color:#0f0f14;text-decoration:none;font-weight:700;font-size:14px;white-space:nowrap;flex-shrink:0">Download Toolkit Gratis ↗</a>
-    </div>
+    {{-- Ebook CTA — produk berbayar (funnel blog → ebook), pembaca paling hangat di sini --}}
+    <x-ebook-cta source="post" />
 
     <div style="margin-top:16px;text-align:center">
       <a href="https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20baca%20artikel:%20{{ urlencode($post->title) }}" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:8px;background:#25D366;color:#fff;text-decoration:none;font-weight:600;font-size:13px">💬 Ada pertanyaan seputar artikel ini? Chat kami</a>

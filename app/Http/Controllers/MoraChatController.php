@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\JsonResponse;
 
 class MoraChatController extends Controller
@@ -160,6 +161,11 @@ PROMPT;
             );
             return response()->json(['success' => true]);
         } catch (\Throwable $e) {
+            // Jangan sampai lead hilang: catat data lengkap + error agar bisa di-recover manual
+            Log::error('MORA lead gagal terkirim', [
+                'lead'  => $data,
+                'error' => $e->getMessage(),
+            ]);
             return response()->json(['success' => false], 500);
         }
     }
