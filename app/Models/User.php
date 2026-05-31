@@ -4,12 +4,24 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
+    /**
+     * Filament requires this in non-local environments. The admin panel has no
+     * public registration (login-only) and accounts are created manually, so any
+     * authenticated user is a trusted operator.
+     */
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return true;
+    }
+
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 

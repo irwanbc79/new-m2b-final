@@ -288,7 +288,10 @@
   <div style="max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1.4fr;gap:56px;align-items:center">
     <div style="position:relative">
       <div style="border-radius:16px;overflow:hidden;aspect-ratio:4/5;border:1px solid #e5e2dc;box-shadow:0 16px 48px rgba(0,0,0,0.12);position:relative">
-        <img src="{{ asset('images/director-eka.jpg') }}" alt="Eka Mayang Sari Harahap, S.E." style="width:100%;height:100%;object-fit:cover;object-position:center top;display:block">
+        <picture style="display:block;width:100%;height:100%">
+          <source srcset="{{ asset('images/director-eka.webp') }}" type="image/webp">
+          <img src="{{ asset('images/director-eka.jpg') }}" alt="Eka Mayang Sari Harahap, S.E." style="width:100%;height:100%;object-fit:cover;object-position:center top;display:block">
+        </picture>
         <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(11,17,32,0.8),transparent);padding:20px 18px 16px">
           <div style="font-family:Syne;font-weight:800;font-size:14px;color:#fff">Eka Mayang Sari Harahap, S.E.</div>
           <div style="font-size:11px;color:rgba(255,255,255,0.7)">Direktur — PT. Mora Multi Berkah</div>

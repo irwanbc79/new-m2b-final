@@ -32,15 +32,19 @@
 
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px">
             @foreach($partners as [$img, $alt])
+            @php $webp = preg_replace('/\.(png|jpe?g)$/i', '.webp', $img); $hasWebp = $webp !== $img; @endphp
             <div style="height:80px;background:#fafaf8;border:1px solid #efefed;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:14px 18px;transition:border-color .2s,background .2s;cursor:default"
                  onmouseover="this.style.borderColor='#c8c5bf';this.style.background='#fff'"
                  onmouseout="this.style.borderColor='#efefed';this.style.background='#fafaf8'">
-                <img src="{{ asset($img) }}" alt="{{ $alt }}"
-                     style="max-width:100%;max-height:44px;width:auto;height:auto;object-fit:contain;filter:grayscale(1);opacity:0.5;transition:all 0.3s"
-                     onmouseover="this.style.filter='grayscale(0)';this.style.opacity='1'"
-                     onmouseout="this.style.filter='grayscale(1)';this.style.opacity='0.5'"
-                     onerror="this.parentElement.style.display='none'"
-                     loading="lazy">
+                <picture>
+                    @if($hasWebp)<source srcset="{{ asset($webp) }}" type="image/webp">@endif
+                    <img src="{{ asset($img) }}" alt="{{ $alt }}"
+                         style="max-width:100%;max-height:44px;width:auto;height:auto;object-fit:contain;filter:grayscale(1);opacity:0.5;transition:all 0.3s"
+                         onmouseover="this.style.filter='grayscale(0)';this.style.opacity='1'"
+                         onmouseout="this.style.filter='grayscale(1)';this.style.opacity='0.5'"
+                         onerror="this.closest('div').style.display='none'"
+                         loading="lazy">
+                </picture>
             </div>
             @endforeach
         </div>

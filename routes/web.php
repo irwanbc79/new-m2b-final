@@ -10,6 +10,7 @@ Route::get("/tentang-kami", [PageController::class, "about"])->name("about");
 Route::get("/tim", [PageController::class, "tim"])->name("tim");
 
 Route::get("/blog", [BlogController::class, "index"])->name("blog.index");
+Route::get("/blog/feed", [BlogController::class, "feed"])->name("blog.feed"); // must precede /blog/{slug}
 Route::get("/blog/{slug}", [BlogController::class, "show"])->name("blog.show");
 
 Route::get("/karir", [CareerController::class, "index"])->name("karir.index");

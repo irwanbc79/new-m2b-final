@@ -7,6 +7,9 @@ use Illuminate\Support\Str;
 
 class Post extends Model
 {
+    /** Single source of truth for blog categories (display labels). */
+    public const CATEGORIES = ['Ekspor', 'Impor', 'UMKM', 'Bea Cukai', 'Uncategorized'];
+
     protected $fillable = [
         "title","slug","excerpt","content","featured_image",
         "meta_title","meta_description",
@@ -40,6 +43,7 @@ class Post extends Model
             Cache::forget("blog_related_{$post->id}");
 
             Cache::forget('blog_hot_ids');
+            Cache::forget('blog_feed');
             static::clearIndexCache();
         });
 
@@ -47,13 +51,14 @@ class Post extends Model
             Cache::forget("blog_post_{$post->slug}");
             Cache::forget("blog_related_{$post->id}");
             Cache::forget('blog_hot_ids');
+            Cache::forget('blog_feed');
             static::clearIndexCache();
         });
     }
 
     protected static function clearIndexCache(): void
     {
-        $cats = ['', 'ekspor', 'impor', 'umkm', 'bea-cukai', 'uncategories'];
+        $cats = array_merge([''], array_map(fn($c) => Str::slug($c), self::CATEGORIES));
         for ($i = 1; $i <= 20; $i++) {
             foreach ($cats as $slug) {
                 Cache::forget('blog_index_' . $i . ($slug ? '_' . $slug : ''));

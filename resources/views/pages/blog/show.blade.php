@@ -73,6 +73,23 @@
   "mainEntityOfPage": "{{ url()->current() }}"
 }
 </script>
+{{-- BreadcrumbList JSON-LD --}}
+<script type="application/ld+json">
+{
+  "@@context": "https://schema.org",
+  "@@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@@type":"ListItem","position":1,"name":"Beranda","item":"{{ route('home') }}"},
+    {"@@type":"ListItem","position":2,"name":"Blog","item":"{{ route('blog.index') }}"},
+@if($post->category)
+    {"@@type":"ListItem","position":3,"name":"{{ addslashes($post->category) }}","item":"{{ route('blog.index', ['category' => $post->category]) }}"},
+    {"@@type":"ListItem","position":4,"name":"{{ addslashes($post->title) }}","item":"{{ url()->current() }}"}
+@else
+    {"@@type":"ListItem","position":3,"name":"{{ addslashes($post->title) }}","item":"{{ url()->current() }}"}
+@endif
+  ]
+}
+</script>
 @endsection
 
 @section('title', $post->meta_title)

@@ -21,7 +21,7 @@ class BlogController extends Controller
             return $query->paginate(9);
         });
 
-        $categories = collect(['Ekspor', 'Impor', 'UMKM', 'Bea Cukai', 'Uncategories']);
+        $categories = collect(Post::CATEGORIES);
 
         $hotIds = Cache::remember('blog_hot_ids', 3600, function () {
             return Post::published()->pluck('id')
@@ -39,7 +39,10 @@ class BlogController extends Controller
         });
 
         Cache::increment("post_views_{$post->id}");
-        Cache::forget('blog_hot_ids');
+        // Note: blog_hot_ids is intentionally NOT forgotten here. View counts change on
+        // every show(); forgetting on each one defeated the 1h TTL and forced a DB
+        // recompute on the next index load. The hot list now refreshes at most hourly
+        // (and immediately when a post is saved/deleted via Post model hooks).
 
         $related = Cache::remember("blog_related_{$post->id}", 3600, function () use ($post) {
             $query = Post::published()->where("id","!=",$post->id);
@@ -50,5 +53,16 @@ class BlogController extends Controller
         });
 
         return view("pages.blog.show", compact("post","related"));
+    }
+
+    public function feed()
+    {
+        $posts = Cache::remember('blog_feed', 3600, function () {
+            return Post::published()->take(20)->get();
+        });
+
+        return response()
+            ->view('pages.blog.feed', compact('posts'))
+            ->header('Content-Type', 'application/rss+xml; charset=UTF-8');
     }
 }

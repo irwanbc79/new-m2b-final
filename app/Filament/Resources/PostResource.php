@@ -41,7 +41,7 @@ class PostResource extends Resource
                     ->imageResizeMode("cover")->imageCropAspectRatio("16:9"),
                 Forms\Components\Select::make("category")
                     ->label("Kategori")
-                    ->options(['Ekspor' => 'Ekspor','Impor' => 'Impor','UMKM' => 'UMKM','Bea Cukai' => 'Bea Cukai','Uncategories' => 'Uncategories'])
+                    ->options(array_combine(Post::CATEGORIES, Post::CATEGORIES))
                     ->placeholder('Pilih kategori'),
                 Forms\Components\TextInput::make("tags")->label("Tags (pisah koma)"),
                 Forms\Components\Select::make("lang")

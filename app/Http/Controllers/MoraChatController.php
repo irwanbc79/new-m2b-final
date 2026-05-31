@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\JsonResponse;
+use App\Models\MoraLead;
 
 class MoraChatController extends Controller
 {
@@ -69,7 +70,7 @@ PROMPT;
         ], $history);
 
         $response = Http::timeout(20)->post(
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key={$key}",
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={$key}",
             [
                 'system_instruction' => ['parts' => [['text' => self::SYSTEM_PROMPT]]],
                 'contents'           => $contents,
@@ -147,6 +148,10 @@ PROMPT;
         ]);
 
         $data = $request->only(['name', 'company', 'email', 'phone']);
+
+        // Persist first so a lead is never lost — even if the email step fails.
+        $lead = MoraLead::create($data + ['emailed' => false]);
+
         $body = "Lead baru dari MORA Chat\n\n"
               . "Nama    : {$data['name']}\n"
               . "Perusahaan: " . ($data['company'] ?: '-') . "\n"
@@ -159,14 +164,16 @@ PROMPT;
                 ->to('mora.multiberkah@gmail.com')
                 ->subject('Lead MORA Chat — ' . now()->format('d M Y'))
             );
-            return response()->json(['success' => true]);
+            $lead->update(['emailed' => true]);
         } catch (\Throwable $e) {
-            // Jangan sampai lead hilang: catat data lengkap + error agar bisa di-recover manual
-            Log::error('MORA lead gagal terkirim', [
-                'lead'  => $data,
-                'error' => $e->getMessage(),
+            // Lead sudah aman tersimpan di DB; cukup log kegagalan email untuk follow-up manual.
+            Log::error('MORA lead email gagal (lead tetap tersimpan di DB)', [
+                'lead_id' => $lead->id,
+                'error'   => $e->getMessage(),
             ]);
-            return response()->json(['success' => false], 500);
         }
+
+        // Lead tercatat apa pun hasil emailnya, jadi selalu sukses dari sisi pengunjung.
+        return response()->json(['success' => true]);
     }
 }

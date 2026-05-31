@@ -3,6 +3,7 @@
 @section('description', 'Artikel terbaru seputar ekspor-impor, regulasi bea cukai, dan tips logistik dari tim M2B.')
 
 @section('head')
+<link rel="alternate" type="application/rss+xml" title="M2B Blog — Ekspor Impor" href="{{ route('blog.feed') }}">
 <style>
 .cat-pills::-webkit-scrollbar{display:none}
 .cat-pills{-ms-overflow-style:none;scrollbar-width:none}

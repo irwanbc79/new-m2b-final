@@ -17,6 +17,13 @@
 <meta name="twitter:title" content="@yield('title', 'M2B — Freight Forwarder & Customs Broker Indonesia')">
 <meta name="twitter:description" content="@yield('description', 'PT. Mora Multi Berkah - Mitra logistik ekspor-impor terpercaya.')">
 <link rel="canonical" href="{{ url()->current() }}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:type" content="image/jpeg">
+<meta name="geo.region" content="ID-SU">
+<meta name="geo.placename" content="Medan, Sumatera Utara">
+<meta name="geo.position" content="3.5952;98.6722">
+<meta name="ICBM" content="3.5952, 98.6722">
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <script type="application/ld+json">
 {
@@ -52,6 +59,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
 @vite(['resources/css/app.css', 'resources/js/app.js'])
+{{-- Preload critical assets untuk LCP --}}
+<link rel="preload" as="image" href="https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?auto=format&fit=crop&w=1600&q=80" fetchpriority="high">
+<link rel="preload" as="image" href="{{ asset('images/logo-m2b-new2.webp') }}" fetchpriority="high">
 <style>
 [x-cloak]{display:none!important}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -141,7 +151,7 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
   style="position:fixed;top:0;left:0;right:0;width:100%;z-index:1000;border-bottom:1px solid #e5e2dc;transition:background .25s,box-shadow .25s">
   <div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;height:72px;gap:16px;padding:0 24px">
     <a href="{{ route('home') }}" style="display:flex;align-items:center;gap:12px;flex-shrink:0;text-decoration:none">
-      <img src="{{ asset('images/logo-m2b-new2.png') }}" alt="M2B Logo" style="height:52px;width:auto">
+      <picture><source srcset="{{ asset('images/logo-m2b-new2.webp') }}" type="image/webp"><img src="{{ asset('images/logo-m2b-new2.png') }}" alt="M2B Logo" style="height:52px;width:auto"></picture>
       <div style="display:flex;flex-direction:column;line-height:1.1;border-left:1.5px solid #d5d0c8;padding-left:12px" class="hide-mobile">
         <span style="font-family:Syne;font-weight:800;font-size:14px;color:#0B1120;letter-spacing:-0.3px">PT. Mora Multi Berkah</span>
         <span style="font-size:9px;color:#8b1e2b;font-weight:700;letter-spacing:1.5px">LOGISTIC · SOLUTION · PARTNER</span>
@@ -206,7 +216,7 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
   <div style="max-width:1200px;margin:0 auto">
     <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:48px;align-items:start" class="footer-grid">
       <div>
-        <img src="{{ asset('images/logo-m2b-new2.png') }}" alt="M2B" style="max-width:180px;height:auto;display:block;margin-bottom:14px">
+        <picture style="display:block"><source srcset="{{ asset('images/logo-m2b-new2.webp') }}" type="image/webp"><img src="{{ asset('images/logo-m2b-new2.png') }}" alt="M2B" style="max-width:180px;height:auto;display:block;margin-bottom:14px"></picture>
         <div style="font-family:Syne;font-weight:700;font-size:14px;color:#1e3a5f;margin-bottom:6px">PT. Mora Multi Berkah</div>
         <div style="font-size:12px;color:#888;margin-bottom:16px;line-height:1.75">Freight Forwarder & Customs Broker.<br>Mitra logistik tepercaya dari Medan untuk Indonesia & dunia.</div>
         {{-- Social media --}}
