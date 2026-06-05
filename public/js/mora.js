@@ -6,16 +6,24 @@
   const CSRF_TOKEN = () => document.querySelector('meta[name="csrf-token"]')?.content || '';
   const STORAGE_KEY = 'mora_history';
 
-  const QUICK_REPLIES = [
+  const QUICK_REPLIES_ID = [
     'Apa layanan utama M2B?',
     'Bagaimana proses import barang?',
     'Apa itu undername import?',
     'Cara konsultasi dengan tim M2B?',
   ];
 
+  const QUICK_REPLIES_EN = [
+    'What are M2B\'s main services?',
+    'How is the import process?',
+    'What is undername import?',
+    'How to consult with M2B team?',
+  ];
+
   const LEAD_KEYWORDS = [
     'harga','biaya','tarif','penawaran','quote','rate','ongkos',
     'ekspor','impor','bea cukai','undername','door-to-door','layanan',
+    'price','cost','fee','offer','export','import','customs',
   ];
 
   const CONTACT_MAP = {
@@ -48,11 +56,15 @@
 
     if (!trigger) return;
 
+    // Read language
+    const lang = localStorage.getItem('m2b_lang') || 'id';
+    const quickReplies = lang === 'en' ? QUICK_REPLIES_EN : QUICK_REPLIES_ID;
+
     // Restore history
     try { history = JSON.parse(sessionStorage.getItem(STORAGE_KEY) || '[]'); } catch {}
 
     // Render quick replies
-    QUICK_REPLIES.forEach(q => {
+    quickReplies.forEach(q => {
       const btn = document.createElement('button');
       btn.className = 'mora-qr';
       btn.textContent = q;
@@ -90,7 +102,10 @@
   }
 
   function showWelcome() {
-    const welcome = 'Halo! Saya MORA 🤖, asisten AI dari PT. Mora Multi Berkah (M2B). Saya siap membantu Anda tentang layanan ekspor-impor, bea cukai, dan logistik. Ada yang bisa saya bantu?';
+    const lang = localStorage.getItem('m2b_lang') || 'id';
+    const welcome = lang === 'en'
+      ? 'Hello! I am MORA 🤖, AI assistant from PT. Mora Multi Berkah (M2B). I am ready to help you with export-import, customs clearance, and logistics services. How can I help you?'
+      : 'Halo! Saya MORA 🤖, asisten AI dari PT. Mora Multi Berkah (M2B). Saya siap membantu Anda tentang layanan ekspor-impor, bea cukai, dan logistik. Ada yang bisa saya bantu?';
     appendBubble('assistant', welcome);
     history.push({ role: 'assistant', content: welcome });
     saveHistory();
@@ -106,6 +121,7 @@
   }
 
   async function sendMessage(text) {
+    const lang = localStorage.getItem('m2b_lang') || 'id';
     // Hide quick replies after first message
     el('mora-quickreplies').style.display = 'none';
 
@@ -130,7 +146,10 @@
       showTyping(false);
 
       if (!res.ok || data.error) {
-        appendBubble('assistant', data.error || 'Maaf, terjadi kesalahan. Silakan coba lagi atau hubungi kami via WhatsApp.');
+        const errText = lang === 'en'
+          ? (data.error || 'Sorry, an error occurred. Please try again or contact us via WhatsApp.')
+          : (data.error || 'Maaf, terjadi kesalahan. Silakan coba lagi atau hubungi kami via WhatsApp.');
+        appendBubble('assistant', errText);
         return;
       }
 
@@ -145,7 +164,10 @@
 
     } catch (err) {
       showTyping(false);
-      appendBubble('assistant', 'Koneksi terputus. Silakan coba lagi atau hubungi WhatsApp kami di +62 812-6302-7818.');
+      const connError = lang === 'en'
+        ? 'Connection lost. Please try again or contact our WhatsApp at +62 812-6302-7818.'
+        : 'Koneksi terputus. Silakan coba lagi atau hubungi WhatsApp kami di +62 812-6302-7818.';
+      appendBubble('assistant', connError);
     }
   }
 
@@ -167,14 +189,15 @@
     const company = el('mora-lead-company')?.value.trim();
     const email   = el('mora-lead-email')?.value.trim();
     const phone   = el('mora-lead-phone')?.value.trim();
+    const lang    = localStorage.getItem('m2b_lang') || 'id';
 
     if (!name || !phone) {
-      alert('Nama dan nomor HP wajib diisi.');
+      alert(lang === 'en' ? 'Name and phone number are required.' : 'Nama dan nomor HP wajib diisi.');
       return;
     }
 
     const submitBtn = el('mora-lead-submit');
-    submitBtn.textContent = 'Mengirim...';
+    submitBtn.textContent = lang === 'en' ? 'Sending...' : 'Mengirim...';
     submitBtn.disabled = true;
 
     try {
@@ -190,12 +213,19 @@
 
       el('mora-lead-form').classList.remove('show');
       leadDone = true;
-      appendBubble('assistant', `Terima kasih ${name}! Tim kami akan segera menghubungi Anda di ${phone}. Apakah ada pertanyaan lain? 😊`);
-      history.push({ role: 'assistant', content: `Terima kasih ${name}! Tim kami akan segera menghubungi Anda.` });
+      const successText = lang === 'en'
+        ? `Thank you ${name}! Our team will contact you soon at ${phone}. Do you have any other questions? 😊`
+        : `Terima kasih ${name}! Tim kami akan segera menghubungi Anda di ${phone}. Apakah ada pertanyaan lain? 😊`;
+      const successHist = lang === 'en'
+        ? `Thank you ${name}! Our team will contact you soon.`
+        : `Terima kasih ${name}! Tim kami akan segera menghubungi Anda.`;
+
+      appendBubble('assistant', successText);
+      history.push({ role: 'assistant', content: successHist });
       saveHistory();
 
     } catch {
-      submitBtn.textContent = 'Kirim';
+      submitBtn.textContent = lang === 'en' ? 'Submit & Get Offer' : 'Kirim';
       submitBtn.disabled = false;
     }
   }

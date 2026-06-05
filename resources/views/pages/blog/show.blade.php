@@ -108,21 +108,45 @@ window.addEventListener('scroll',function(){
 </script>
 <div style="background:#0f0f14;padding:64px 40px 56px" class="blog-hero">
   <div style="max-width:800px;margin:0 auto">
-    <a href="{{ route('blog.index') }}" style="display:inline-flex;align-items:center;gap:8px;color:#4a9eda;text-decoration:none;font-size:14px;margin-bottom:24px">← Kembali ke Blog</a>
-    @if($post->category)<span style="display:inline-block;padding:3px 8px;border-radius:4px;background:#1e3a5f;color:#fff;font-size:10px;font-weight:700;text-transform:uppercase;margin-bottom:16px">{{ $post->category }}</span>@endif
+    <a href="{{ route('blog.index') }}" style="display:inline-flex;align-items:center;gap:8px;color:#4a9eda;text-decoration:none;font-size:14px;margin-bottom:24px" x-text="$store.lang.t('← Kembali ke Blog', '← Back to Blog', '← 返回博客', '← العودة إلى المدونة')">← Kembali ke Blog</a>
+    @if($post->category)
+    @php
+      $postCatEn = [
+        'Ekspor' => 'Export',
+        'Impor' => 'Import',
+        'UMKM' => 'SME',
+        'Bea Cukai' => 'Customs',
+      ][$post->category] ?? $post->category;
+
+      $postCatZh = [
+        'Ekspor' => '出口',
+        'Impor' => '进口',
+        'UMKM' => '中小企业',
+        'Bea Cukai' => '海关与报关',
+      ][$post->category] ?? $postCatEn;
+
+      $postCatAr = [
+        'Ekspor' => 'التصدير',
+        'Impor' => 'الاستيراد',
+        'UMKM' => 'الشركات الصغيرة والمتوسطة',
+        'Bea Cukai' => 'الجمارك',
+      ][$post->category] ?? $postCatEn;
+    @endphp
+    <span style="display:inline-block;padding:3px 8px;border-radius:4px;background:#1e3a5f;color:#fff;font-size:10px;font-weight:700;text-transform:uppercase;margin-bottom:16px" x-text="$store.lang.t('{{ $post->category }}', '{{ $postCatEn }}', '{{ $postCatZh }}', '{{ $postCatAr }}')">{{ $post->category }}</span>
+    @endif
     <h1 style="font-family:Syne;font-weight:800;font-size:40px;color:#fff;letter-spacing:-1px;margin-bottom:16px;line-height:1.2">{{ $post->title }}</h1>
     <div style="display:flex;gap:16px;font-size:13px;color:rgba(255,255,255,0.5);flex-wrap:wrap;align-items:center">
       <span>{{ $post->published_at?->format('d F Y') }}</span>
       <span>·</span>
-      <span>⏱ {{ $post->reading_time }} menit baca</span>
+      <span>⏱ {{ $post->reading_time }} <span x-text="$store.lang.t('menit baca', 'min read', '分钟阅读', 'دقائق قراءة')">menit baca</span></span>
     </div>
   </div>
 </div>
 
 <section style="padding:60px 40px;background:#f7f5f0">
   <div style="max-width:800px;margin:0 auto">
-    @if($post->featured_image)
-    <img src="{{ Storage::url($post->featured_image) }}" alt="{{ $post->title }}" loading="lazy" style="width:100%;height:420px;object-fit:cover;border-radius:16px;margin-bottom:40px;box-shadow:0 12px 40px rgba(0,0,0,0.12)">
+     @if($post->featured_image)
+    <img src="{{ Str::startsWith($post->featured_image, ['http://', 'https://']) ? $post->featured_image : Storage::url($post->featured_image) }}" alt="{{ $post->title }}" loading="lazy" style="width:100%;height:420px;object-fit:cover;border-radius:16px;margin-bottom:40px;box-shadow:0 12px 40px rgba(0,0,0,0.12)">
     @endif
 
     <div id="article-body" style="background:#fff;border-radius:16px;padding:48px;border:1px solid #e5e2dc" class="prose-m2b blog-article-box">
@@ -143,31 +167,47 @@ window.addEventListener('scroll',function(){
 
     {{-- Social Sharing --}}
     <div style="margin-top:32px;padding:20px 28px;background:#fff;border-radius:12px;border:1px solid #e5e2dc;display:flex;align-items:center;gap:12px;flex-wrap:wrap" class="share-row">
-      <span style="font-size:13px;font-weight:600;color:#555;white-space:nowrap;flex-shrink:0">Bagikan artikel ini:</span>
+      <span style="font-size:13px;font-weight:600;color:#555;white-space:nowrap;flex-shrink:0" x-text="$store.lang.t('Bagikan artikel ini:', 'Share this article:', '分享这篇文章：', 'شارك هذا المقال:')">Bagikan artikel ini:</span>
       <a href="https://wa.me/?text={{ urlencode($post->title . ' — ' . url()->current()) }}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;background:#25D366;color:#fff;text-decoration:none;font-weight:600;font-size:13px">💬 WhatsApp</a>
-      <a href="https://twitter.com/intent/tweet?text={{ urlencode($post->title) }}&url={{ urlencode(url()->current()) }}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;background:#000;color:#fff;text-decoration:none;font-weight:600;font-size:13px">𝕏 Twitter</a>
+      <a href="https://twitter.com/intent/tweet?text={{ urlencode($post->title) }}&url={{ urlencode(url()->current()) }}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;background:#000;color:#fff;text-decoration:none;font-weight:600;font-size:13px">𕪏 Twitter</a>
       <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ urlencode(url()->current()) }}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;background:#0A66C2;color:#fff;text-decoration:none;font-weight:600;font-size:13px">in LinkedIn</a>
-      <button onclick="navigator.clipboard.writeText(window.location.href);this.textContent='✅ Link disalin!';setTimeout(()=>this.textContent='🔗 Salin Link',2000)" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;background:#f0ede8;color:#333;border:1px solid #e5e2dc;cursor:pointer;font-weight:600;font-size:13px;font-family:DM Sans">🔗 Salin Link</button>
-      <a href="{{ route('blog.index') }}" style="margin-left:auto;color:#1e3a5f;text-decoration:none;font-weight:600;font-size:14px;white-space:nowrap">← Semua Artikel</a>
+      
+      {{-- Copy Link with fully reactive languages via Alpine --}}
+      <button x-data="{ copied: false }" @click="navigator.clipboard.writeText(window.location.href); copied = true; setTimeout(() => copied = false, 2000)"
+        style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;background:#f0ede8;color:#333;border:1px solid #e5e2dc;cursor:pointer;font-weight:600;font-size:13px;font-family:DM Sans"
+        x-text="copied ? $store.lang.t('✅ Link disalin!', '✅ Link copied!', '✅ 链接已复制！', '✅ تم نسخ الرابط!') : $store.lang.t('🔗 Salin Link', '🔗 Copy Link', '🔗 复制链接', '🔗 نسخ الرابط')">
+        🔗 Salin Link
+      </button>
+
+      <a href="{{ route('blog.index') }}" style="margin-left:auto;color:#1e3a5f;text-decoration:none;font-weight:600;font-size:14px;white-space:nowrap" x-text="$store.lang.t('← Semua Artikel', '← All Articles', '← 所有文章', '← جميع المقالات')">← Semua Artikel</a>
     </div>
 
     {{-- Ebook CTA — produk berbayar (funnel blog → ebook), pembaca paling hangat di sini --}}
     <x-ebook-cta source="post" />
 
     <div style="margin-top:16px;text-align:center">
-      <a href="https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20baca%20artikel:%20{{ urlencode($post->title) }}" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:8px;background:#25D366;color:#fff;text-decoration:none;font-weight:600;font-size:13px">💬 Ada pertanyaan seputar artikel ini? Chat kami</a>
+      <a :href="'https://wa.me/6281263027818?text=' + encodeURIComponent($store.lang.t(
+        'Halo M2B, saya punya pertanyaan seputar artikel: {{ $post->title }}',
+        'Hello M2B, I have a question about the article: {{ $post->title }}',
+        '您好 M2B，我关于这篇文章有一个问题：{{ $post->title }}',
+        'مرحباً M2B، لدي سؤال حول المقال: {{ $post->title }}'
+      ))" target="_blank"
+         style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:8px;background:#25D366;color:#fff;text-decoration:none;font-weight:600;font-size:13px"
+         x-text="$store.lang.t('💬 Ada pertanyaan seputar artikel ini? Chat kami', '💬 Have questions about this article? Chat with us', '💬 对这篇文章有疑问？联系我们', '💬 لديك أسئلة حول هذا المقال؟ تواصل معنا')">
+         💬 Ada pertanyaan seputar artikel ini? Chat kami
+      </a>
     </div>
 
     @if($related->count() > 0)
     <div style="margin-top:56px">
-      <h3 style="font-family:Syne;font-weight:800;font-size:22px;margin-bottom:24px">Artikel Terkait</h3>
+      <h3 style="font-family:Syne;font-weight:800;font-size:22px;margin-bottom:24px" x-text="$store.lang.t('Artikel Terkait', 'Related Articles', '相关文章', 'مقالات ذات صلة')">Artikel Terkait</h3>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px" class="related-grid">
         @foreach($related as $r)
         <a href="{{ route('blog.show', $r->slug) }}" style="text-decoration:none;border-radius:10px;overflow:hidden;border:1px solid #e5e2dc;background:#fff;transition:box-shadow .2s" onmouseover="this.style.boxShadow='0 6px 20px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'">
-          <div style="height:140px;background:{{ $r->featured_image ? 'url('.Storage::url($r->featured_image).') center/cover' : 'linear-gradient(135deg,#1e3a5f,#2a5298)' }}"></div>
+          <div style="height:140px;background:{{ $r->featured_image ? 'url('.(Str::startsWith($r->featured_image, ['http://', 'https://']) ? $r->featured_image : Storage::url($r->featured_image)).') center/cover' : 'linear-gradient(135deg,#1e3a5f,#2a5298)' }}"></div>
           <div style="padding:14px 16px">
             <div style="font-family:Syne;font-weight:700;font-size:14px;line-height:1.4;color:#0f0f14;margin-bottom:8px">{{ Str::limit($r->title, 70) }}</div>
-            <span style="font-size:12px;color:#1e3a5f;font-weight:600">Baca →</span>
+            <span style="font-size:12px;color:#1e3a5f;font-weight:600" x-text="$store.lang.t('Baca →', 'Read →', '阅读 →', 'اقرأ ←')">Baca →</span>
           </div>
         </a>
         @endforeach

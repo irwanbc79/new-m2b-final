@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}" x-data="{ lang: localStorage.getItem('m2b_lang') || 'id' }" x-init="$watch('lang', v => localStorage.setItem('m2b_lang', v))">
+<html lang="{{ app()->getLocale() }}" x-data="{ get lang() { return $store.lang.current }, set lang(v) { $store.lang.current = v; localStorage.setItem('m2b_lang', v) } }">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -75,6 +75,35 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
 @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
 @keyframes wapulse{0%,100%{transform:scale(1);box-shadow:0 8px 24px rgba(37,211,102,0.4)}50%{transform:scale(1.05);box-shadow:0 12px 36px rgba(37,211,102,0.55)}}
 .wa-btn{animation:wapulse 2s ease-in-out infinite}
+.wa-btn-main {
+  width: 68px !important;
+  height: 68px !important;
+  border-radius: 50% !important;
+  background: #25D366 !important;
+  border: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 8px 24px rgba(37,211,102,0.4) !important;
+  cursor: pointer !important;
+  transition: transform .2s !important;
+}
+.m2b-navbar {
+  position: sticky !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  z-index: 9999 !important;
+  border-bottom: 1px solid #e5e2dc !important;
+  transition: background .25s, box-shadow .25s !important;
+  background: #f7f5f0 !important;
+}
+.m2b-navbar.scrolled {
+  background: rgba(247, 245, 240, 0.96) !important;
+  backdrop-filter: blur(14px) !important;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.07) !important;
+}
 ::-webkit-scrollbar{width:6px}
 @media(max-width:768px){.footer-grid{grid-template-columns:1fr 1fr!important;gap:32px!important}.footer-contact-grid{grid-template-columns:1fr 1fr!important}}
 ::-webkit-scrollbar-track{background:#f0ede8}
@@ -83,10 +112,8 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
 @media(max-width:768px){.container{padding:0 20px}.hide-mobile{display:none!important}.show-mobile{display:flex!important}}@media(min-width:769px){.show-mobile{display:none!important}}
 </style>
 @yield('head')
-{{-- ═══ GOOGLE ADSENSE — hanya di halaman blog ═══ --}}
-@if(request()->is('blog*'))
+{{-- ═══ GOOGLE ADSENSE ═══ --}}
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5616961797801657" crossorigin="anonymous"></script>
-@endif
 {{-- ═══ GOOGLE ANALYTICS 4 — deferred loading, tidak blokir FCP ═══ --}}
 @production
 <script>
@@ -112,7 +139,7 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
 <body>
 
 {{-- News Ticker --}}
-<div style="background:#0f0f14;overflow:hidden;padding:8px 0;border-bottom:2px solid #1e3a5f">
+<div id="m2b-ticker" style="background:#0f0f14;overflow:hidden;padding:8px 0;border-bottom:2px solid #1e3a5f">
   <div style="display:flex;align-items:center;gap:16px">
     <div style="flex-shrink:0;background:#1e3a5f;color:#fff;padding:2px 14px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;z-index:1;margin-left:0">TERKINI</div>
     <div style="flex:1;overflow:hidden">
@@ -123,12 +150,12 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
           ['📘 FREE E-Book Ekspor Impor untuk Pemula — Download GRATIS di ebook.m2b.co.id', 'https://ebook.m2b.co.id', true],
           ['📘 E-Book Ekspor Impor tersedia GRATIS — kunjungi ebook.m2b.co.id sekarang', 'https://ebook.m2b.co.id', true],
           // Local media — bisnis & logistik
-          ['📰 Bisnis.com: Update terkini industri logistik & ekspor-impor Indonesia', 'https://ekonomi.bisnis.com/perdagangan', false],
-          ['🗞️ Kontan.co.id: Berita bisnis & perdagangan internasional', 'https://industri.kontan.co.id/logistik', false],
-          ['📊 Katadata: Analisis ekspor-impor & komoditas unggulan Indonesia', 'https://katadata.co.id/tags/ekspor-impor', false],
-          ['⚖️ Bea Cukai RI: Berita & regulasi kepabeanan terbaru', 'https://www.beacukai.go.id/berita.html', false],
-          ['🛳️ Pelindo: Update operasional pelabuhan utama Indonesia', 'https://www.pelindo.co.id/id/media/berita', false],
-          ['📋 DJPEN Kemendag: Peluang ekspor & pasar internasional', 'https://djpen.kemendag.go.id/app_frontend/contents/83-berita', false],
+          ['📰 Bisnis.com: Portal Informasi Logistik & Ekspor-Impor', 'https://www.bisnis.com/topic/ekspor-impor', false],
+          ['🗞️ Kontan.co.id: Update Perdagangan & Rantai Pasok', 'https://www.kontan.co.id/tag/logistik', false],
+          ['📊 Katadata: Analisis Ekspor-Impor Komoditas', 'https://katadata.co.id/tags/ekspor-impor', false],
+          ['⚖️ Bea Cukai RI: Regulasi Kepabeanan Terbaru', 'https://www.beacukai.go.id/berita.html', false],
+          ['🛳️ Pelindo: Info Pelabuhan & Konektivitas Laut', 'https://www.pelindo.co.id/id/media/berita', false],
+          ['📋 DJPEN Kemendag: Peluang Pasar Ekspor Global', 'https://djpen.kemendag.go.id/app_frontend/contents/83-berita', false],
           // International media
           ['🌐 FreightWaves: Global freight & logistics news', 'https://www.freightwaves.com/news', false],
           ['⚓ The Loadstar: International shipping & logistics updates', 'https://theloadstar.com', false],
@@ -146,9 +173,8 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
 </div>
 
 {{-- Navbar --}}
-<nav x-data="{ scrolled: false, mobileOpen: false }" x-init="window.addEventListener('scroll', () => { scrolled = window.scrollY > 40 })"
-  :style="scrolled ? 'background:rgba(247,245,240,0.96);backdrop-filter:blur(14px);box-shadow:0 2px 16px rgba(0,0,0,0.07)' : 'background:#f7f5f0'"
-  style="position:fixed;top:0;left:0;right:0;width:100%;z-index:1000;border-bottom:1px solid #e5e2dc;transition:background .25s,box-shadow .25s">
+<nav x-data="{ scrolled: false, mobileOpen: false }" x-init="window.addEventListener('scroll', () => { scrolled = window.scrollY > 40; mobileOpen = false })"
+  class="m2b-navbar" :class="{ 'scrolled': scrolled }">
   <div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;height:72px;gap:16px;padding:0 24px">
     <a href="{{ route('home') }}" style="display:flex;align-items:center;gap:12px;flex-shrink:0;text-decoration:none">
       <picture><source srcset="{{ asset('images/logo-m2b-new2.webp') }}" type="image/webp"><img src="{{ asset('images/logo-m2b-new2.png') }}" alt="M2B Logo" style="height:52px;width:auto"></picture>
@@ -159,30 +185,30 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
     </a>
     <div style="display:flex;gap:20px;flex:1;justify-content:center" class="hide-mobile">
       <a href="{{ route('home') }}#layanan" style="font-size:13px;text-decoration:none;font-weight:500;color:#555;transition:color .15s" onmouseover="this.style.color='#1e3a5f'" onmouseout="this.style.color='#555'">
-        <span x-text="lang==='en' ? 'Services' : 'Layanan'">Layanan</span>
+        <span x-text="$store.lang.t('Layanan', 'Services', '服务', 'الخدمات')">Layanan</span>
       </a>
       <a href="{{ route('home') }}#proses" style="font-size:13px;text-decoration:none;font-weight:500;color:#555;transition:color .15s" onmouseover="this.style.color='#1e3a5f'" onmouseout="this.style.color='#555'">
-        <span x-text="lang==='en' ? 'Process' : 'Proses'">Proses</span>
+        <span x-text="$store.lang.t('Proses', 'Process', '流程', 'العملية')">Proses</span>
       </a>
       <a href="{{ route('blog.index') }}" style="font-size:13px;text-decoration:none;font-weight:500;color:#555;transition:color .15s" onmouseover="this.style.color='#1e3a5f'" onmouseout="this.style.color='#555'">Blog</a>
       <a href="{{ route('about') }}" style="font-size:13px;text-decoration:none;font-weight:500;color:#555;transition:color .15s" onmouseover="this.style.color='#1e3a5f'" onmouseout="this.style.color='#555'">
-        <span x-text="lang==='en' ? 'About Us' : 'Tentang'">Tentang</span>
+        <span x-text="$store.lang.t('Tentang', 'About Us', '关于我们', 'من نحن')">Tentang</span>
       </a>
       <a href="{{ route('karir.index') }}" style="font-size:13px;text-decoration:none;font-weight:500;color:#555;transition:color .15s" onmouseover="this.style.color='#1e3a5f'" onmouseout="this.style.color='#555'">
-        <span x-text="lang==='en' ? 'Careers' : 'Karir'">Karir</span>
+        <span x-text="$store.lang.t('Karir', 'Careers', '职业生涯', 'الوظائف')">Karir</span>
       </a>
     </div>
     {{-- Language switcher — akses root lang tanpa x-data baru --}}
-    <button @click="lang = lang === 'id' ? 'en' : 'id'; localStorage.setItem('m2b_lang', lang)"
+    <button @click="$store.lang.toggle()"
       style="display:inline-flex;align-items:center;gap:5px;padding:6px 11px;border-radius:6px;border:1px solid #e5e2dc;background:#fff;cursor:pointer;font-size:12px;font-weight:600;color:#555;flex-shrink:0;transition:border-color .15s"
       onmouseover="this.style.borderColor='#1e3a5f';this.style.color='#1e3a5f'"
       onmouseout="this.style.borderColor='#e5e2dc';this.style.color='#555'"
       class="hide-mobile">
-      <span x-text="lang === 'id' ? '🇮🇩 ID' : '🇬🇧 EN'">🇮🇩 ID</span>
+      <span x-text="{ id: '🇮🇩 ID', en: '🇬🇧 EN', zh: '🇨🇳 中文', ar: '🇸🇦 العربية' }[$store.lang.current]">🇮🇩 ID</span>
     </button>
     <a href="https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20ingin%20konsultasi%20gratis" target="_blank"
       style="display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:8px;background:#1e3a5f;color:#fff;text-decoration:none;font-weight:600;font-size:13px;white-space:nowrap;flex-shrink:0" class="hide-mobile">
-      <span x-text="lang==='en' ? '💬 Free Consultation' : '💬 Konsultasi Gratis'">💬 Konsultasi Gratis</span>
+      <span x-text="$store.lang.t('💬 Konsultasi Gratis', '💬 Free Consultation', '💬 免费咨询', '💬 استشارة مجانية')">💬 Konsultasi Gratis</span>
     </a>
     {{-- Hamburger button — mobile only --}}
     <button @click="mobileOpen = !mobileOpen" class="show-mobile"
@@ -196,17 +222,31 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
   <div x-show="mobileOpen" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-end="opacity-0"
     style="border-top:1px solid #e5e2dc;background:#f7f5f0;padding:16px 24px 24px" class="show-mobile">
     <div style="display:flex;flex-direction:column;gap:0">
-      <a href="{{ route('home') }}#layanan" @click="mobileOpen=false" style="padding:14px 0;font-size:15px;font-weight:500;color:#333;text-decoration:none;border-bottom:1px solid #e5e2dc">📦 Layanan</a>
-      <a href="{{ route('home') }}#proses" @click="mobileOpen=false" style="padding:14px 0;font-size:15px;font-weight:500;color:#333;text-decoration:none;border-bottom:1px solid #e5e2dc">⚙️ Proses</a>
-      <a href="{{ route('blog.index') }}" @click="mobileOpen=false" style="padding:14px 0;font-size:15px;font-weight:500;color:#333;text-decoration:none;border-bottom:1px solid #e5e2dc">📝 Blog</a>
-      <a href="{{ route('about') }}" @click="mobileOpen=false" style="padding:14px 0;font-size:15px;font-weight:500;color:#333;text-decoration:none;border-bottom:1px solid #e5e2dc">🏢 Tentang M2B</a>
-      <a href="{{ route('karir.index') }}" @click="mobileOpen=false" style="padding:14px 0;font-size:15px;font-weight:500;color:#333;text-decoration:none;border-bottom:1px solid #e5e2dc">💼 Karir</a>
-      <a href="https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20ingin%20konsultasi%20gratis" target="_blank" style="margin-top:16px;display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;border-radius:10px;background:#1e3a5f;color:#fff;text-decoration:none;font-weight:700;font-size:15px">💬 Konsultasi Gratis via WhatsApp</a>
+      <a href="{{ route('home') }}#layanan" @click="mobileOpen=false" style="padding:14px 0;font-size:15px;font-weight:500;color:#333;text-decoration:none;border-bottom:1px solid #e5e2dc">
+        <span x-text="$store.lang.t('📦 Layanan', '📦 Services', '📦 服务', '📦 الخدمات')">📦 Layanan</span>
+      </a>
+      <a href="{{ route('home') }}#proses" @click="mobileOpen=false" style="padding:14px 0;font-size:15px;font-weight:500;color:#333;text-decoration:none;border-bottom:1px solid #e5e2dc">
+        <span x-text="$store.lang.t('⚙️ Proses', '⚙️ Process', '⚙️ 流程', '⚙️ العملية')">⚙️ Proses</span>
+      </a>
+      <a href="{{ route('blog.index') }}" @click="mobileOpen=false" style="padding:14px 0;font-size:15px;font-weight:500;color:#333;text-decoration:none;border-bottom:1px solid #e5e2dc">
+        <span x-text="$store.lang.t('📝 Blog', '📝 Blog', '📝 博客', '📝 المدونة')">📝 Blog</span>
+      </a>
+      <a href="{{ route('about') }}" @click="mobileOpen=false" style="padding:14px 0;font-size:15px;font-weight:500;color:#333;text-decoration:none;border-bottom:1px solid #e5e2dc">
+        <span x-text="$store.lang.t('🏢 Tentang M2B', '🏢 About M2B', '🏢 关于M2B', '🏢 عن M2B')">🏢 Tentang M2B</span>
+      </a>
+      <a href="{{ route('karir.index') }}" @click="mobileOpen=false" style="padding:14px 0;font-size:15px;font-weight:500;color:#333;text-decoration:none;border-bottom:1px solid #e5e2dc">
+        <span x-text="$store.lang.t('💼 Karir', '💼 Careers', '💼 职业生涯', '💼 الوظائف')">💼 Karir</span>
+      </a>
+      <button @click="$store.lang.toggle()" style="margin-top:16px;padding:14px;font-size:15px;font-weight:700;color:#1e3a5f;background:#fff;border:1px solid #e5e2dc;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
+        <span x-text="{ id: '🇮🇩 Bahasa Indonesia', en: '🇬🇧 English', zh: '🇨🇳 中文 (Chinese)', ar: '🇸🇦 العربية (Arabic)' }[$store.lang.current]">🇮🇩 Bahasa Indonesia</span>
+      </button>
+      <a href="https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20ingin%20konsultasi%20gratis" target="_blank" style="margin-top:10px;display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;border-radius:10px;background:#1e3a5f;color:#fff;text-decoration:none;font-weight:700;font-size:15px">
+        <span x-text="$store.lang.t('💬 Konsultasi Gratis via WhatsApp', '💬 Free Consultation via WhatsApp', '💬 免费微信/WhatsApp咨询', '💬 استشارة مجانية عبر الواتساب')">💬 Konsultasi Gratis via WhatsApp</span>
+      </a>
     </div>
   </div>
 </nav>
-{{-- Spacer untuk kompensasi navbar fixed height 72px --}}
-<div style="height:72px" aria-hidden="true"></div>
+{{-- Spacer tidak diperlukan lagi karena navbar menggunakan position: sticky --}}
 
 {{-- Page Content --}}
 @yield('content')
@@ -218,7 +258,7 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
       <div>
         <picture style="display:block"><source srcset="{{ asset('images/logo-m2b-new2.webp') }}" type="image/webp"><img src="{{ asset('images/logo-m2b-new2.png') }}" alt="M2B" style="max-width:180px;height:auto;display:block;margin-bottom:14px"></picture>
         <div style="font-family:Syne;font-weight:700;font-size:14px;color:#1e3a5f;margin-bottom:6px">PT. Mora Multi Berkah</div>
-        <div style="font-size:12px;color:#888;margin-bottom:16px;line-height:1.75">Freight Forwarder & Customs Broker.<br>Mitra logistik tepercaya dari Medan untuk Indonesia & dunia.</div>
+        <div style="font-size:12px;color:#888;margin-bottom:16px;line-height:1.75" x-text="$store.lang.t('Freight Forwarder & Customs Broker. Mitra logistik tepercaya dari Medan untuk Indonesia & dunia.', 'Freight Forwarder & Customs Broker. Trusted logistics partner from Medan for Indonesia & the world.', '货运代理与报关行。来自棉兰、服务印尼与全球的信赖物流合作伙伴。', 'وكيل شحن ومخلص جمركي. شريك لوجستي موثوق من ميدان لإندونيسيا والعالم.')">Freight Forwarder & Customs Broker.<br>Mitra logistik tepercaya dari Medan untuk Indonesia & dunia.</div>
         {{-- Social media --}}
         <div style="display:flex;gap:8px;margin-bottom:16px">
           <a href="https://www.instagram.com/moramultiberkah" target="_blank" rel="noopener" title="Instagram @moramultiberkah"
@@ -254,47 +294,98 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
         </div>
       </div>
       <div>
-        <div style="font-family:Syne;font-weight:700;font-size:12px;color:#1e3a5f;margin-bottom:18px;text-transform:uppercase;letter-spacing:1px">Layanan</div>
+        <div style="font-family:Syne;font-weight:700;font-size:12px;color:#1e3a5f;margin-bottom:18px;text-transform:uppercase;letter-spacing:1px" x-text="$store.lang.t('Layanan', 'Services', '服务', 'الخدمات')">Layanan</div>
         @foreach(['Export Handling','Import Handling','Customs Clearance','Door-to-Door','Undername Import','Konsultasi'] as $l)
-        <div style="font-size:13px;margin-bottom:10px"><a href="{{ route('home') }}#layanan" style="color:#555;text-decoration:none" onmouseover="this.style.color='#1e3a5f'" onmouseout="this.style.color='#555'">{{ $l }}</a></div>
+        @php
+          $lEn = [
+            'Export Handling' => 'Export Handling',
+            'Import Handling' => 'Import Handling',
+            'Customs Clearance' => 'Customs Clearance',
+            'Door-to-Door' => 'Door-to-Door',
+            'Undername Import' => 'Undername Import',
+            'Konsultasi' => 'Consultation'
+          ][$l] ?? $l;
+          $lZh = [
+            'Export Handling' => '出口服务',
+            'Import Handling' => '进口服务',
+            'Customs Clearance' => '清关服务',
+            'Door-to-Door' => '双清门到门服务',
+            'Undername Import' => '买单进口代理(Undername)',
+            'Konsultasi' => '咨询与策划'
+          ][$l] ?? $lEn;
+          $lAr = [
+            'Export Handling' => 'تخليص الصادرات',
+            'Import Handling' => 'تخليص الواردات',
+            'Customs Clearance' => 'التخليص الجمركي',
+            'Door-to-Door' => 'من الباب إلى الباب',
+            'Undername Import' => 'الاستيراد باسم الغير',
+            'Konsultasi' => 'الاستشارات اللوجستية'
+          ][$l] ?? $lEn;
+        @endphp
+        <div style="font-size:13px;margin-bottom:10px">
+          <a href="{{ route('home') }}#layanan" style="color:#555;text-decoration:none" onmouseover="this.style.color='#1e3a5f'" onmouseout="this.style.color='#555'">
+            <span x-text="$store.lang.t('{{ $l }}', '{{ $lEn }}', '{{ $lZh }}', '{{ $lAr }}')">{{ $l }}</span>
+          </a>
+        </div>
         @endforeach
       </div>
       <div>
-        <div style="font-family:Syne;font-weight:700;font-size:12px;color:#1e3a5f;margin-bottom:18px;text-transform:uppercase;letter-spacing:1px">Perusahaan</div>
-        <div style="font-size:13px;margin-bottom:10px"><a href="{{ route('about') }}" style="color:#555;text-decoration:none" onmouseover="this.style.color='#1e3a5f'" onmouseout="this.style.color='#555'">About M2B</a></div>
-        <div style="font-size:13px;margin-bottom:10px"><a href="{{ route('tim') }}" style="color:#555;text-decoration:none" onmouseover="this.style.color='#1e3a5f'" onmouseout="this.style.color='#555'">Tim Kami</a></div>
-        <div style="font-size:13px;margin-bottom:10px"><a href="{{ route('karir.index') }}" style="color:#555;text-decoration:none" onmouseover="this.style.color='#1e3a5f'" onmouseout="this.style.color='#555'">Karir</a></div>
+        <div style="font-family:Syne;font-weight:700;font-size:12px;color:#1e3a5f;margin-bottom:18px;text-transform:uppercase;letter-spacing:1px" x-text="$store.lang.t('Perusahaan', 'Company', '公司', 'الشركة')">Perusahaan</div>
+        <div style="font-size:13px;margin-bottom:10px"><a href="{{ route('about') }}" style="color:#555;text-decoration:none" onmouseover="this.style.color='#1e3a5f'" onmouseout="this.style.color='#555'"><span x-text="$store.lang.t('Tentang M2B', 'About M2B', '关于 M2B', 'عن M2B')">Tentang M2B</span></a></div>
+        <div style="font-size:13px;margin-bottom:10px"><a href="{{ route('tim') }}" style="color:#555;text-decoration:none" onmouseover="this.style.color='#1e3a5f'" onmouseout="this.style.color='#555'"><span x-text="$store.lang.t('Tim Kami', 'Our Team', '我们的团队', 'فريقنا')">Tim Kami</span></a></div>
+        <div style="font-size:13px;margin-bottom:10px"><a href="{{ route('karir.index') }}" style="color:#555;text-decoration:none" onmouseover="this.style.color='#1e3a5f'" onmouseout="this.style.color='#555'"><span x-text="$store.lang.t('Karir', 'Careers', '职业生涯', 'الوظائف')">Karir</span></a></div>
         <div style="font-size:13px;margin-bottom:10px"><a href="https://portal.m2b.co.id" target="_blank" style="color:#555;text-decoration:none" onmouseover="this.style.color='#1e3a5f'" onmouseout="this.style.color='#555'">Portal M2B ↗</a></div>
       </div>
       <div>
-        <div style="font-family:Syne;font-weight:700;font-size:12px;color:#1e3a5f;margin-bottom:18px;text-transform:uppercase;letter-spacing:1px">Konten</div>
-        <div style="font-size:13px;margin-bottom:10px"><a href="{{ route('blog.index') }}" style="color:#555;text-decoration:none" onmouseover="this.style.color='#1e3a5f'" onmouseout="this.style.color='#555'">Blog & Artikel</a></div>
-        <div style="font-size:13px;margin-bottom:10px"><a href="https://ebook.m2b.co.id" target="_blank" style="color:#555;text-decoration:none" onmouseover="this.style.color='#1e3a5f'" onmouseout="this.style.color='#555'">Download E-Book ↗</a></div>
+        <div style="font-family:Syne;font-weight:700;font-size:12px;color:#1e3a5f;margin-bottom:18px;text-transform:uppercase;letter-spacing:1px" x-text="$store.lang.t('Konten', 'Content', '内容', 'المحتوى')">Konten</div>
+        <div style="font-size:13px;margin-bottom:10px"><a href="{{ route('blog.index') }}" style="color:#555;text-decoration:none" onmouseover="this.style.color='#1e3a5f'" onmouseout="this.style.color='#555'"><span x-text="$store.lang.t('Blog & Artikel', 'Blog & Articles', '博客与文章', 'المدونة والمقالات')">Blog & Artikel</span></a></div>
+        <div style="font-size:13px;margin-bottom:10px"><a href="https://ebook.m2b.co.id" target="_blank" style="color:#555;text-decoration:none" onmouseover="this.style.color='#1e3a5f'" onmouseout="this.style.color='#555'"><span x-text="$store.lang.t('Unduh E-Book ↗', 'Download E-Book ↗', '下载电子书 ↗', 'تحميل الكتاب الإلكتروني ↗')">Download E-Book ↗</span></a></div>
       </div>
     </div>
     <div style="background:#fafaf8;border:1px solid #e5e2dc;border-radius:16px;overflow:hidden;margin-bottom:32px;display:grid;grid-template-columns:1fr 1.5fr" class="footer-contact-grid">
       {{-- Kiri: Info Kontak --}}
       <div style="padding:24px 28px">
-        <div style="font-family:Syne;font-weight:800;font-size:12px;color:#1e3a5f;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px">Hubungi Kami</div>
+        <div style="font-family:Syne;font-weight:800;font-size:12px;color:#1e3a5f;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px" x-text="$store.lang.t('Hubungi Kami', 'Contact Us', '联系我们', 'اتصل بنا')">Hubungi Kami</div>
         <p style="font-size:12.5px;color:#666;line-height:1.75;margin-bottom:18px">Komplek Graha Metropolitan Blok G No. 24,<br>Jl. Kapten Sumarsono, Kp. Lalang,<br>Kec. Sunggal, Kota Medan 20114</p>
         @php
       $footerContacts = [
-        ['📧','Email','sales@m2b.co.id','mailto:sales@m2b.co.id'],
-        ['📱','WhatsApp','+62 812-6302-7818','https://wa.me/6281263027818'],
-        ['🕒','Jam Buka','Senin–Sabtu · 08–17 WIB',null],
+        ['📧','Email','sales@m2b.co.id','mailto:sales@m2b.co.id', 'Email'],
+        ['📱','WhatsApp','+62 812-6302-7818','https://wa.me/6281263027818', 'WhatsApp'],
+        ['🕒','Jam Buka','Senin–Sabtu · 08–17 WIB',null, 'Jam Buka'],
       ];
       @endphp
       @foreach($footerContacts as $fc)
+        @php
+          $fcLabelEn = [
+            'Email' => 'Email',
+            'WhatsApp' => 'WhatsApp',
+            'Jam Buka' => 'Opening Hours'
+          ][$fc[4]] ?? $fc[4];
+          $fcLabelZh = [
+            'Email' => '电子邮件',
+            'WhatsApp' => '微信/WhatsApp',
+            'Jam Buka' => '营业时间'
+          ][$fc[4]] ?? $fc[4];
+          $fcLabelAr = [
+            'Email' => 'البريد الإلكتروني',
+            'WhatsApp' => 'الواتساب',
+            'Jam Buka' => 'ساعات العمل'
+          ][$fc[4]] ?? $fc[4];
+          
+          $fcValEn = $fc[4] === 'Jam Buka' ? 'Monday–Saturday · 08–17 WIB' : $fc[2];
+          $fcValZh = $fc[4] === 'Jam Buka' ? '周一至周六 · 08:00–17:00' : $fc[2];
+          $fcValAr = $fc[4] === 'Jam Buka' ? 'الإثنين–السبت · ٠٨–١٧ بتوقيت غرب إندونيسيا' : $fc[2];
+        @endphp
         <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px">
           <div style="width:30px;height:30px;border-radius:8px;background:rgba(30,58,95,0.08);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">{{ $fc[0] }}</div>
           <div>
-            <div style="font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:0.5px;font-weight:600">{{ $fc[1] }}</div>
-            @if($fc[3])<a href="{{ $fc[3] }}" style="font-size:13px;color:#1e3a5f;font-weight:600;text-decoration:none">{{ $fc[2] }}</a>
-            @else<div style="font-size:13px;color:#1e3a5f;font-weight:600">{{ $fc[2] }}</div>@endif
+            <div style="font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:0.5px;font-weight:600" x-text="$store.lang.t('{{ $fc[1] }}', '{{ $fcLabelEn }}', '{{ $fcLabelZh }}', '{{ $fcLabelAr }}')">{{ $fc[1] }}</div>
+            @if($fc[3])<a href="{{ $fc[3] }}" style="font-size:13px;color:#1e3a5f;font-weight:600;text-decoration:none" x-text="$store.lang.t('{{ $fc[2] }}', '{{ $fcValEn }}', '{{ $fcValZh }}', '{{ $fcValAr }}')">{{ $fc[2] }}</a>
+            @else<div style="font-size:13px;color:#1e3a5f;font-weight:600" x-text="$store.lang.t('{{ $fc[2] }}', '{{ $fcValEn }}', '{{ $fcValZh }}', '{{ $fcValAr }}')">{{ $fc[2] }}</div>@endif
           </div>
         </div>
       @endforeach
-        <a href="https://maps.app.goo.gl/qxDf2EHjkEngXNGP7" target="_blank" style="display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-size:12px;color:#4a9eda;font-weight:600;text-decoration:none">🗺️ Buka di Google Maps ↗</a>
+        <a href="https://maps.app.goo.gl/qxDf2EHjkEngXNGP7" target="_blank" style="display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-size:12px;color:#4a9eda;font-weight:600;text-decoration:none" x-text="$store.lang.t('🗺️ Buka di Google Maps ↗', '🗺️ Open in Google Maps ↗', '🗺️ 在谷歌地图中打开 ↗', '🗺️ الفتح في خرائط جوجل ↗')">🗺️ Buka di Google Maps ↗</a>
       </div>
       {{-- Kanan: Google Maps --}}
       <iframe
@@ -310,7 +401,7 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
       <div style="display:flex;gap:16px;flex-wrap:wrap">
         <a href="{{ route('privacy') }}" style="color:#888;text-decoration:none" onmouseover="this.style.color='#1e3a5f'" onmouseout="this.style.color='#888'">Privacy Policy</a>
         <a href="{{ route('disclaimer') }}" style="color:#888;text-decoration:none" onmouseover="this.style.color='#1e3a5f'" onmouseout="this.style.color='#888'">Disclaimer</a>
-        <a href="{{ route('terms') }}" style="color:#888;text-decoration:none" onmouseover="this.style.color='#1e3a5f'" onmouseout="this.style.color='#888'">Ketentuan Layanan</a>
+        <a href="{{ route('terms') }}" style="color:#888;text-decoration:none" onmouseover="this.style.color='#1e3a5f'" onmouseout="this.style.color='#888'"><span x-text="$store.lang.t('Ketentuan Layanan', 'Terms of Service', '服务条款', 'شروط الخدمة')">Ketentuan Layanan</span></a>
       </div>
     </div>
   </div>
@@ -324,6 +415,57 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
 
 {{-- MORA AI Chat Widget --}}
 <x-mora-widget />
+
+{{-- Dynamic News Ticker Script --}}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const track = document.querySelector('.ticker-track');
+  if (!track) return;
+  
+  // Base static ebook items (always retained and prioritized)
+  const ebookItems = [
+    { text: '📘 FREE E-Book Ekspor Impor untuk Pemula — Download GRATIS di ebook.m2b.co.id', url: 'https://ebook.m2b.co.id', isEbook: true },
+    { text: '📘 E-Book Ekspor Impor tersedia GRATIS — kunjungi ebook.m2b.co.id sekarang', url: 'https://ebook.m2b.co.id', isEbook: true }
+  ];
+  
+  // Fetch real-time Indonesian logistics and export-import news from Google News feed via RSS-to-JSON API
+  fetch('https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3Dlogistik%2Bekspor%2Bimpor%2BIndonesia%26hl%3Did%26gl%3DID%26ceid%3DID%3Aid')
+    .then(res => res.json())
+    .then(data => {
+      if (data && data.status === 'ok' && data.items && data.items.length > 0) {
+        const newsItems = data.items.slice(0, 10).map(item => {
+          // Clean the title by removing the publisher suffix (e.g., " - ANTARA News")
+          let title = item.title;
+          const lastDash = title.lastIndexOf(' - ');
+          if (lastDash !== -1) {
+            title = title.substring(0, lastDash);
+          }
+          return {
+            text: `📰 ${title}`,
+            url: item.link,
+            isEbook: false
+          };
+        });
+        
+        // Combine E-Book CTA items and real-time news
+        const combined = [...ebookItems, ...newsItems];
+        // Double the list to support seamless marquee loop animation
+        const doubled = [...combined, ...combined];
+        
+        // Render links into the DOM
+        track.innerHTML = doubled.map(item => {
+          const color = item.isEbook ? '#f5b91c' : '#d1d0cf';
+          const hoverColor = item.isEbook ? '#ffd44d' : '#fff';
+          const weight = item.isEbook ? 'font-weight:600;' : '';
+          return `<a href="${item.url}" target="_blank" rel="noopener" style="color:${color};font-size:12px;white-space:nowrap;text-decoration:none;${weight}" onmouseover="this.style.color='${hoverColor}'" onmouseout="this.style.color='${color}'">${item.text} ↗</a>`;
+        }).join('');
+      }
+    })
+    .catch(err => {
+      console.warn('Failed to load dynamic news feed, using static fallback:', err);
+    });
+});
+</script>
 
 </body>
 </html>

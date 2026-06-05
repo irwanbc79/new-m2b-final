@@ -1,9 +1,9 @@
-<section style="padding:48px 40px;background:#fff;border-bottom:1px solid #f0ede8">
+<section class="home-section" style="background:#fff;border-bottom:1px solid #f0ede8">
     <div style="max-width:960px;margin:0 auto">
 
         <div style="text-align:center;margin-bottom:36px">
-            <p style="font-size:11px;font-weight:700;letter-spacing:2.5px;color:#bbb;text-transform:uppercase;margin-bottom:10px">Ekosistem &amp; Mitra Strategis</p>
-            <p style="font-size:14px;color:#999;line-height:1.6">Terintegrasi dengan regulasi, asosiasi, dan ekosistem logistik Indonesia</p>
+            <p style="font-size:11px;font-weight:700;letter-spacing:2.5px;color:#bbb;text-transform:uppercase;margin-bottom:10px" x-text="$store.lang.t('Ekosistem &amp; Mitra Strategis', 'Ecosystem &amp; Strategic Partners', '生态系统与战略合作伙伴', 'النظام البيئي والشركاء الاستراتيجيون')">Ekosistem &amp; Mitra Strategis</p>
+            <p style="font-size:14px;color:#999;line-height:1.6" x-text="$store.lang.t('Terintegrasi dengan regulasi, asosiasi, dan ekosistem logistik Indonesia', 'Integrated with Indonesian regulations, associations, and logistics ecosystem', '与印尼法规、协会和物流生态系统深度整合', 'متكامل مع اللوائح والجمعيات والنظام البيئي اللوجستي في إندونيسيا')">Terintegrasi dengan regulasi, asosiasi, dan ekosistem logistik Indonesia</p>
         </div>
 
         @php
@@ -30,9 +30,9 @@
         ];
         @endphp
 
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px">
-            @foreach($partners as [$img, $alt])
-            @php $webp = preg_replace('/\.(png|jpe?g)$/i', '.webp', $img); $hasWebp = $webp !== $img; @endphp
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:14px">
+            @foreach($partners as $partner)
+            @php $img = $partner[0]; $alt = $partner[1]; $webp = preg_replace('/\.(png|jpe?g)$/i', '.webp', $img); $hasWebp = $webp !== $img; @endphp
             <div style="height:80px;background:#fafaf8;border:1px solid #efefed;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:14px 18px;transition:border-color .2s,background .2s;cursor:default"
                  onmouseover="this.style.borderColor='#c8c5bf';this.style.background='#fff'"
                  onmouseout="this.style.borderColor='#efefed';this.style.background='#fafaf8'">
