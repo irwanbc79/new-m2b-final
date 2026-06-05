@@ -15,7 +15,7 @@
     <div style="background:#fff;border-radius:16px;padding:48px;border:1px solid #e5e2dc;font-size:15px;color:#444;line-height:1.85">
       @if($slug === 'privacy-policy')
         <h2 style="font-family:Syne;font-weight:800;font-size:22px;color:#0f0f14;margin-bottom:16px">Kebijakan Privasi</h2>
-        <p style="margin-bottom:24px">Selamat datang di <strong>new.m2b.co.id</strong>. Kami menghargai privasi Anda dan berkomitmen melindungi informasi pribadi yang Anda berikan.</p>
+        <p style="margin-bottom:24px">Selamat datang di <strong>m2b.co.id</strong>. Kami menghargai privasi Anda dan berkomitmen melindungi informasi pribadi yang Anda berikan.</p>
         <h3 style="font-family:Syne;font-weight:700;font-size:16px;color:#1e3a5f;margin-bottom:8px">Informasi yang Kami Kumpulkan</h3>
         <p style="margin-bottom:20px">Kami mengumpulkan informasi seperti nama, email, nomor telepon, dan data penggunaan untuk meningkatkan kualitas layanan dan berkomunikasi mengenai kebutuhan logistik Anda.</p>
         <h3 style="font-family:Syne;font-weight:700;font-size:16px;color:#1e3a5f;margin-bottom:8px">Penggunaan Informasi</h3>
@@ -29,7 +29,7 @@
 
       @elseif($slug === 'disclaimer')
         <h2 style="font-family:Syne;font-weight:800;font-size:22px;color:#0f0f14;margin-bottom:16px">Penafian (Disclaimer)</h2>
-        <p style="margin-bottom:24px">Konten pada situs <strong>new.m2b.co.id</strong> disediakan hanya untuk tujuan informasi umum tentang layanan PT. Mora Multi Berkah.</p>
+        <p style="margin-bottom:24px">Konten pada situs <strong>m2b.co.id</strong> disediakan hanya untuk tujuan informasi umum tentang layanan PT. Mora Multi Berkah.</p>
         <h3 style="font-family:Syne;font-weight:700;font-size:16px;color:#1e3a5f;margin-bottom:8px">Keterbatasan Informasi</h3>
         <p style="margin-bottom:20px">Meskipun kami berusaha menjaga keakuratan konten, kami tidak memberikan jaminan mengenai kelengkapan atau ketepatannya. Regulasi bea cukai dan tarif logistik dapat berubah sewaktu-waktu.</p>
         <h3 style="font-family:Syne;font-weight:700;font-size:16px;color:#1e3a5f;margin-bottom:8px">Penggunaan Informasi</h3>
