@@ -237,25 +237,133 @@
 }
 
 @media print {
-  body > * {
+  /* Halaman utama dan komponen pendukung */
+  #m2b-ticker,
+  nav,
+  footer,
+  .print-hide,
+  iframe,
+  section:not(:first-of-type),
+  .home-hero-container {
     display: none !important;
   }
-  #print-calc-area, #print-calc-area * {
-    display: block !important;
-    visibility: visible !important;
+  
+  body {
+    background: #fff !important;
+    color: #000 !important;
   }
-  #print-calc-area {
-    position: absolute !important;
-    left: 0 !important;
-    top: 0 !important;
-    width: 100% !important;
-    margin: 0 !important;
+  
+  /* Reset backdrop modal saat mencetak */
+  div[x-show="openCalculator"] {
+    position: static !important;
+    background: transparent !important;
     padding: 0 !important;
-    background: #0B132B !important;
-    color: #fff !important;
+    display: block !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
   }
-  .print-hide {
-    display: none !important;
+  
+  /* Sempurnakan tampilan kartu kalkulator di kertas putih */
+  #print-calc-area {
+    position: static !important;
+    background: #fff !important;
+    color: #000 !important;
+    border: none !important;
+    box-shadow: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: none !important;
+    overflow: visible !important;
+    display: block !important;
+    margin: 0 !important;
+    padding: 10px !important;
+  }
+
+  /* Header Panel */
+  .calc-header-panel {
+    background: #f3f4f6 !important;
+    border-bottom: 2px solid #000 !important;
+    border-radius: 0 !important;
+    color: #000 !important;
+    padding: 15px 0 !important;
+  }
+  .calc-header-panel h2 {
+    color: #000 !important;
+    font-size: 20px !important;
+  }
+  .calc-header-panel p {
+    color: #333 !important;
+    font-size: 13px !important;
+  }
+
+  /* Card metrics (FOB, Kurs, Nilai Pabean) */
+  .calc-card {
+    background: #f9fafb !important;
+    border: 1px solid #d1d5db !important;
+    color: #000 !important;
+    border-radius: 8px !important;
+  }
+  .calc-card-label {
+    color: #4b5563 !important;
+  }
+  .calc-card-value {
+    color: #000 !important;
+    font-size: 20px !important;
+  }
+
+  /* Table styling */
+  .calc-table {
+    border: 1px solid #000 !important;
+    width: 100% !important;
+  }
+  .calc-table th {
+    background: #e5e7eb !important;
+    color: #000 !important;
+    border-bottom: 2px solid #000 !important;
+    padding: 8px 10px !important;
+  }
+  .calc-table td {
+    color: #000 !important;
+    border-bottom: 1px solid #ccc !important;
+    padding: 10px 10px !important;
+  }
+  .calc-table td .calc-table-dot {
+    display: none !important; /* Hembuskan bulatan berwarna di print */
+  }
+  .calc-table-formula {
+    color: #4b5563 !important;
+  }
+  .calc-table-value {
+    color: #000 !important;
+  }
+
+  /* Total Banner */
+  .calc-total-banner {
+    background: #e5e7eb !important;
+    border: 2px solid #000 !important;
+    color: #000 !important;
+    border-radius: 8px !important;
+  }
+  .calc-total-label,
+  .calc-total-value {
+    color: #000 !important;
+  }
+
+  /* Disclaimer Box */
+  .calc-disclaimer-box {
+    background: #f9fafb !important;
+    border: 1px solid #d1d5db !important;
+    color: #374151 !important;
+    border-radius: 8px !important;
+  }
+  .calc-disclaimer-icon {
+    color: #4f46e5 !important;
+  }
+  .calc-disclaimer-text {
+    color: #374151 !important;
+    font-size: 11px !important;
+    line-height: 1.4 !important;
   }
 }
 </style>
@@ -628,7 +736,6 @@
 
   {{-- Customs Calculator Modal --}}
   <div x-show="openCalculator" x-cloak @click="openCalculator = false"
-    class="print-hide"
     style="position:fixed;inset:0;z-index:10000;background:rgba(11,17,32,0.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:20px">
     
     <div id="print-calc-area" @click.stop 
@@ -767,7 +874,7 @@
       <div x-show="calcStep === 'result'" style="display:flex;flex-direction:column;flex:1">
         
         <!-- Header Panel (Bright Gradient Blue) -->
-        <div style="background:linear-gradient(90deg, #1e40af 0%, #4338ca 100%);padding:20px 24px;border-radius:24px 24px 0 0;display:flex;align-items:center;justify-content:space-between">
+        <div class="calc-header-panel" style="background:linear-gradient(90deg, #1e40af 0%, #4338ca 100%);padding:20px 24px;border-radius:24px 24px 0 0;display:flex;align-items:center;justify-content:space-between">
           <div>
             <h2 style="font-family:Syne;font-weight:800;font-size:18px;color:#fff;letter-spacing:-0.5px;text-transform:uppercase" x-text="$store.lang.t('Hasil Perhitungan Besaran Bea Masuk', 'Result of Import Duty Calculation', '海关关税及进口环节税计算结果', 'نتيجة حساب الرسوم الجمركية')">Hasil Perhitungan Besaran Bea Masuk</h2>
             <p style="font-size:11.5px;color:rgba(255,255,255,0.8);margin-top:2px" x-text="$store.lang.t('DAN PAJAK YANG HARUS DILUNASI', 'AND TAXES TO BE SETTLED', '及应当缴纳的进口环节税费', 'الرسوم والضرائب الواجب تسويتها')">DAN PAJAK YANG HARUS DILUNASI</p>
@@ -787,19 +894,19 @@
           <!-- Top Card Panels (3 Columns since Exemption is omitted) -->
           <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:14px">
             <!-- FOB Card -->
-            <div style="background:rgba(88,28,135,0.12);border:1px solid rgba(139,92,246,0.25);border-radius:12px;padding:12px 18px">
-              <div style="font-size:10px;font-weight:800;color:rgba(255,255,255,0.4);text-transform:uppercase" x-text="'FOB (' + selectedCurrency + ')'">FOB (USD)</div>
-              <div style="font-family:Syne;font-weight:800;font-size:20px;color:#c084fc;margin-top:4px" x-text="formatNumber(fobVal, 2)">5.000,00</div>
+            <div class="calc-card calc-card-fob" style="background:rgba(88,28,135,0.12);border:1px solid rgba(139,92,246,0.25);border-radius:12px;padding:12px 18px">
+              <div class="calc-card-label" style="font-size:10px;font-weight:800;color:rgba(255,255,255,0.4);text-transform:uppercase" x-text="'FOB (' + selectedCurrency + ')'">FOB (USD)</div>
+              <div class="calc-card-value" style="font-family:Syne;font-weight:800;font-size:20px;color:#c084fc;margin-top:4px" x-text="formatNumber(fobVal, 2)">5.000,00</div>
             </div>
             <!-- Kurs Card -->
-            <div style="background:rgba(6,78,59,0.15);border:1px solid rgba(16,185,129,0.25);border-radius:12px;padding:12px 18px">
-              <div style="font-size:10px;font-weight:800;color:rgba(255,255,255,0.4);text-transform:uppercase" x-text="'KURS (' + selectedCurrency + ')'">KURS (USD)</div>
-              <div style="font-family:Syne;font-weight:800;font-size:20px;color:#34d399;margin-top:4px" x-text="formatIDR(manualKurs)">Rp 17.805,00</div>
+            <div class="calc-card calc-card-kurs" style="background:rgba(6,78,59,0.15);border:1px solid rgba(16,185,129,0.25);border-radius:12px;padding:12px 18px">
+              <div class="calc-card-label" style="font-size:10px;font-weight:800;color:rgba(255,255,255,0.4);text-transform:uppercase" x-text="'KURS (' + selectedCurrency + ')'">KURS (USD)</div>
+              <div class="calc-card-value" style="font-family:Syne;font-weight:800;font-size:20px;color:#34d399;margin-top:4px" x-text="formatIDR(manualKurs)">Rp 17.805,00</div>
             </div>
             <!-- Nilai Pabean Card -->
-            <div style="background:rgba(159,18,57,0.12);border:1px solid rgba(244,63,94,0.25);border-radius:12px;padding:12px 18px">
-              <div style="font-size:10px;font-weight:800;color:rgba(255,255,255,0.4);text-transform:uppercase" x-text="$store.lang.t('NILAI PABEAN', 'CUSTOMS VALUE', '海关完税价格', 'القيمة الجمركية')">NILAI PABEAN</div>
-              <div style="font-family:Syne;font-weight:800;font-size:20px;color:#fda4af;margin-top:4px" x-text="formatIDR(getNilaiPabean())">Rp 88.134.750,00</div>
+            <div class="calc-card calc-card-pabean" style="background:rgba(159,18,57,0.12);border:1px solid rgba(244,63,94,0.25);border-radius:12px;padding:12px 18px">
+              <div class="calc-card-label" style="font-size:10px;font-weight:800;color:rgba(255,255,255,0.4);text-transform:uppercase" x-text="$store.lang.t('NILAI PABEAN', 'CUSTOMS VALUE', '海关完税价格', 'القيمة الجمركية')">NILAI PABEAN</div>
+              <div class="calc-card-value" style="font-family:Syne;font-weight:800;font-size:20px;color:#fda4af;margin-top:4px" x-text="formatIDR(getNilaiPabean())">Rp 88.134.750,00</div>
             </div>
           </div>
 
@@ -819,76 +926,76 @@
                 <tr>
                   <td>1.</td>
                   <td style="font-weight:700">
-                    <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#f97316;margin-right:8px"></span>
+                    <span class="calc-table-dot" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#f97316;margin-right:8px"></span>
                     <span x-text="$store.lang.t('Bea Masuk (BM)', 'Import Duty (BM)', '进口关税 (BM)', 'الرسوم الجمركية')">Bea Masuk (BM)</span>
                   </td>
-                  <td style="color:rgba(255,255,255,0.6)" x-text="bmRate + '% x ' + $store.lang.t('Nilai Pabean', 'Customs Value', '完税价格', 'القيمة الجمركية')">10% x Nilai Pabean</td>
-                  <td style="text-align:right;font-weight:800;color:#f97316;font-family:monospace" x-text="formatNumber(getBeaMasuk(), 2)">8.814.000,00</td>
+                  <td class="calc-table-formula" style="color:rgba(255,255,255,0.6)" x-text="bmRate + '% x ' + $store.lang.t('Nilai Pabean', 'Customs Value', '完税价格', 'القيمة الجمركية')">10% x Nilai Pabean</td>
+                  <td class="calc-table-value" style="text-align:right;font-weight:800;color:#f97316;font-family:monospace" x-text="formatNumber(getBeaMasuk(), 2)">8.814.000,00</td>
                 </tr>
                 <!-- Row 2: BMTP -->
                 <tr>
                   <td>2.</td>
                   <td style="font-weight:700">
-                    <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#ef4444;margin-right:8px"></span>
+                    <span class="calc-table-dot" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#ef4444;margin-right:8px"></span>
                     <span x-text="$store.lang.t('Bea Masuk Tindakan Pengamanan (BMTP)', 'Safeguard Duty (BMTP)', '保障措施关税 (BMTP)', 'رسوم الحماية الجمركية')">Bea Masuk Tindakan Pengamanan (BMTP)</span>
                   </td>
-                  <td style="color:rgba(255,255,255,0.6)" x-text="bmtpRate + '% x ' + $store.lang.t('Nilai Pabean', 'Customs Value', '完税价格', 'القيمة الجمركية')">0% x Nilai Pabean</td>
-                  <td style="text-align:right;font-weight:800;color:#ef4444;font-family:monospace" x-text="formatNumber(getBmtp(), 2)">0,00</td>
+                  <td class="calc-table-formula" style="color:rgba(255,255,255,0.6)" x-text="bmtpRate + '% x ' + $store.lang.t('Nilai Pabean', 'Customs Value', '完税价格', 'القيمة الجمركية')">0% x Nilai Pabean</td>
+                  <td class="calc-table-value" style="text-align:right;font-weight:800;color:#ef4444;font-family:monospace" x-text="formatNumber(getBmtp(), 2)">0,00</td>
                 </tr>
                 <!-- Row 3: PPN -->
                 <tr>
                   <td>3.</td>
                   <td style="font-weight:700">
-                    <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#38bdf8;margin-right:8px"></span>
+                    <span class="calc-table-dot" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#38bdf8;margin-right:8px"></span>
                     <span x-text="$store.lang.t('PPN', 'VAT', '进口增值税 (PPN)', 'ضريبة القيمة المضافة')">PPN</span>
                   </td>
-                  <td style="color:rgba(255,255,255,0.6)" x-text="ppnRate + '% x (' + $store.lang.t('Nilai Pabean + Bea Masuk', 'Customs Value + Duty', '完税价格 + 关税', 'القيمة الجمركية + الرسوم') + ')'">11% x (Nilai Pabean + Bea Masuk)</td>
-                  <td style="text-align:right;font-weight:800;color:#38bdf8;font-family:monospace" x-text="formatNumber(getPpn(), 2)">10.664.305,00</td>
+                  <td class="calc-table-formula" style="color:rgba(255,255,255,0.6)" x-text="ppnRate + '% x (' + $store.lang.t('Nilai Pabean + Bea Masuk', 'Customs Value + Duty', '完税价格 + 关税', 'القيمة الجمركية + الرسوم') + ')'">11% x (Nilai Pabean + Bea Masuk)</td>
+                  <td class="calc-table-value" style="text-align:right;font-weight:800;color:#38bdf8;font-family:monospace" x-text="formatNumber(getPpn(), 2)">10.664.305,00</td>
                 </tr>
                 <!-- Row 4: PPnBM -->
                 <tr>
                   <td>4.</td>
                   <td style="font-weight:700">
-                    <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#ec4899;margin-right:8px"></span>
+                    <span class="calc-table-dot" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#ec4899;margin-right:8px"></span>
                     <span x-text="$store.lang.t('PPnBM', 'Luxury Goods Tax (PPnBM)', '奢侈品税 (PPnBM)', 'ضريبة السلع الفاخرة')">PPnBM</span>
                   </td>
-                  <td style="color:rgba(255,255,255,0.6)" x-text="ppnbmRate + '% x (' + $store.lang.t('Nilai Pabean + Bea Masuk', 'Customs Value + Duty', '完税价格 + 关税', 'القيمة الجمركية + الرسوم') + ')'">0% x (Nilai Pabean + Bea Masuk)</td>
-                  <td style="text-align:right;font-weight:800;color:#ec4899;font-family:monospace" x-text="formatNumber(getPpnbm(), 2)">0,00</td>
+                  <td class="calc-table-formula" style="color:rgba(255,255,255,0.6)" x-text="ppnbmRate + '% x (' + $store.lang.t('Nilai Pabean + Bea Masuk', 'Customs Value + Duty', '完税价格 + 关税', 'القيمة الجمركية + الرسوم') + ')'">0% x (Nilai Pabean + Bea Masuk)</td>
+                  <td class="calc-table-value" style="text-align:right;font-weight:800;color:#ec4899;font-family:monospace" x-text="formatNumber(getPpnbm(), 2)">0,00</td>
                 </tr>
                 <!-- Row 5: PPh -->
                 <tr>
                   <td>5.</td>
                   <td style="font-weight:700">
-                    <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#eab308;margin-right:8px"></span>
+                    <span class="calc-table-dot" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#eab308;margin-right:8px"></span>
                     <span x-text="$store.lang.t('PPh', 'Income Tax (PPh)', '所得税 (PPh)', 'ضريبة الدخل')">PPh</span>
                   </td>
-                  <td style="color:rgba(255,255,255,0.6)" x-text="pphRate + '% x (' + $store.lang.t('Nilai Pabean + Bea Masuk', 'Customs Value + Duty', '完税价格 + 关税', 'القيمة الجمركية + الرسوم') + ')'">5% x (Nilai Pabean + Bea Masuk)</td>
-                  <td style="text-align:right;font-weight:800;color:#eab308;font-family:monospace" x-text="formatNumber(getPph(), 2)">4.847.412,00</td>
+                  <td class="calc-table-formula" style="color:rgba(255,255,255,0.6)" x-text="pphRate + '% x (' + $store.lang.t('Nilai Pabean + Bea Masuk', 'Customs Value + Duty', '完税价格 + 关税', 'القيمة الجمركية + الرسوم') + ')'">5% x (Nilai Pabean + Bea Masuk)</td>
+                  <td class="calc-table-value" style="text-align:right;font-weight:800;color:#eab308;font-family:monospace" x-text="formatNumber(getPph(), 2)">4.847.412,00</td>
                 </tr>
                 <!-- Row 6: Denda -->
                 <tr>
                   <td>6.</td>
                   <td style="font-weight:700">
-                    <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#ef4444;margin-right:8px"></span>
+                    <span class="calc-table-dot" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#ef4444;margin-right:8px"></span>
                     <span x-text="$store.lang.t('Denda', 'Fine', '罚金/滞纳金', 'الغرامة')">Denda</span>
                   </td>
-                  <td style="color:rgba(255,255,255,0.6)" x-text="dendaRate + '% x ' + $store.lang.t('Bea Masuk', 'Import Duty', '关税金额', 'الرسوم الجمركية')">0% x Bea Masuk</td>
-                  <td style="text-align:right;font-weight:800;color:#ef4444;font-family:monospace" x-text="formatNumber(getDenda(), 2)">0,00</td>
+                  <td class="calc-table-formula" style="color:rgba(255,255,255,0.6)" x-text="dendaRate + '% x ' + $store.lang.t('Bea Masuk', 'Import Duty', '关税金额', 'الرسوم الجمركية')">0% x Bea Masuk</td>
+                  <td class="calc-table-value" style="text-align:right;font-weight:800;color:#ef4444;font-family:monospace" x-text="formatNumber(getDenda(), 2)">0,00</td>
                 </tr>
               </tbody>
             </table>
           </div>
 
           <!-- Total (Violent Background) -->
-          <div style="background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);border-radius:12px;padding:16px 24px;display:flex;align-items:center;justify-content:space-between">
-            <span style="font-family:Syne;font-weight:800;font-size:18px;color:#fff;text-transform:uppercase" x-text="$store.lang.t('Jumlah Pungutan (Rp)', 'Total Levies (Rp)', '进口税费总计 (Rp)', 'إجمالي الرسوم والضرائب (روبية)')">Jumlah Pungutan (Rp)</span>
-            <span style="font-family:Syne;font-weight:800;font-size:24px;color:#fff" x-text="formatNumber(getTotalPungutan(), 2)">24.325.717,00</span>
+          <div class="calc-total-banner" style="background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);border-radius:12px;padding:16px 24px;display:flex;align-items:center;justify-content:space-between">
+            <span class="calc-total-label" style="font-family:Syne;font-weight:800;font-size:18px;color:#fff;text-transform:uppercase" x-text="$store.lang.t('Jumlah Pungutan (Rp)', 'Total Levies (Rp)', '进口税费总计 (Rp)', 'إجمالي الرسوم والضرائب (روبية)')">Jumlah Pungutan (Rp)</span>
+            <span class="calc-total-value" style="font-family:Syne;font-weight:800;font-size:24px;color:#fff" x-text="formatNumber(getTotalPungutan(), 2)">24.325.717,00</span>
           </div>
 
           <!-- Disclaimer -->
-          <div style="background:rgba(15,23,42,0.6);border:1px solid rgba(99,102,241,0.15);border-radius:10px;padding:12px 16px;font-size:11px;color:rgba(255,255,255,0.55);line-height:1.5;display:flex;align-items:start;gap:10px">
-            <span style="font-size:14px;color:#a78bfa;margin-top:-2px">ℹ</span>
-            <span x-text="$store.lang.t('Perhitungan berdasarkan kurs pajak resmi Kementerian Keuangan RI periode ' + '{{ $rates['pajak']['period'] ?? '03 Jun - 09 Jun 2026' }}' + '. Hasil ini bersifat simulasi.', 'Calculations are based on the official tax rate of the Ministry of Finance RI for period ' + '{{ $rates['pajak']['period'] ?? '03 Jun - 09 Jun 2026' }}' + '. This result is a simulation.', '计算依据印尼财政部官方海关税率汇率周期（' + '{{ $rates['pajak']['period'] ?? '03 Jun - 09 Jun 2026' }}' + '）。该结果仅作为模拟参考。', 'تعتمد الحسابات على أسعار الصرف الرسمية الصادرة عن وزارة المالية للفترة ' + '{{ $rates['pajak']['period'] ?? '03 Jun - 09 Jun 2026' }}' + '. هذه النتيجة هي مجرد محاكاة.')"></span>
+          <div class="calc-disclaimer-box" style="background:rgba(15,23,42,0.6);border:1px solid rgba(99,102,241,0.15);border-radius:10px;padding:12px 16px;font-size:11px;color:rgba(255,255,255,0.55);line-height:1.5;display:flex;align-items:start;gap:10px">
+            <span class="calc-disclaimer-icon" style="font-size:14px;color:#a78bfa;margin-top:-2px">ℹ</span>
+            <span class="calc-disclaimer-text" x-text="$store.lang.t('Disclaimer: Hasil perhitungan ini merupakan estimasi simulasi berdasarkan parameter tarif standar dan Kurs Pajak Kementerian Keuangan RI periode ' + '{{ $rates['pajak']['period'] ?? '03 Jun - 09 Jun 2026' }}' + '. Perhitungan riil dapat bervariasi tergantung pada hasil pemeriksaan fisik, keabsahan dokumen pendukung, dan keputusan final pejabat Bea Cukai di lapangan. PT Mora Multi Berkah tidak bertanggung jawab atas perbedaan nilai yang terjadi pada ketetapan resmi.', 'Disclaimer: This calculation is a simulation estimate based on standard tariff parameters and the current Ministry of Finance RI tax rate for period ' + '{{ $rates['pajak']['period'] ?? '03 Jun - 09 Jun 2026' }}' + '. The actual calculation may vary depending on physical inspection, document validation, and the final decision of Customs officers. PT Mora Multi Berkah is not responsible for any differences in the official assessment.', '免责声明：此计算结果是基于标准税率和印尼财政部当前海关汇率周期（' + '{{ $rates['pajak']['period'] ?? '03 Jun - 09 Jun 2026' }}' + '）的模拟估算。实际税费可能因货物查验、单证审核及海关官员的最终裁定而有所差异。PT Mora Multi Berkah 对官方最终评估的任何差异不承担责任。', 'إخلاء مسؤولية: هذا الحساب هو تقدير محاكاة يعتمد على معايير التعريفة القياسية وسعر صرف وزارة المالية للفترة ' + '{{ $rates['pajak']['period'] ?? '03 Jun - 09 Jun 2026' }}' + '. قد يختلف الحساب الفعلي اعتماداً على التفتيش المادي وصحة المستندات والقرار النهائي لمسؤولي الجمارك في الموقع. لا تتحمل شركة PT Mora Multi Berkah المسؤولية عن أي فروقات في التقدير الرسمي.')"></span>
           </div>
 
           <!-- Print-hide Action Buttons Footer -->

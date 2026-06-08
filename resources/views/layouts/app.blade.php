@@ -141,7 +141,7 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
 <body>
 
 {{-- News Ticker --}}
-<div id="m2b-ticker" style="background:#0f0f14;overflow:hidden;padding:8px 0;border-bottom:2px solid #1e3a5f">
+<div id="m2b-ticker" class="print-hide" style="background:#0f0f14;overflow:hidden;padding:8px 0;border-bottom:2px solid #1e3a5f">
   <div style="display:flex;align-items:center;gap:16px">
     <div style="flex-shrink:0;background:#1e3a5f;color:#fff;padding:2px 14px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;z-index:1;margin-left:0">TERKINI</div>
     <div style="flex:1;overflow:hidden">
@@ -156,7 +156,7 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
 
 {{-- Navbar --}}
 <nav x-data="{ scrolled: false, mobileOpen: false }" x-init="window.addEventListener('scroll', () => { scrolled = window.scrollY > 40; mobileOpen = false })"
-  class="m2b-navbar" :class="{ 'scrolled': scrolled }">
+  class="m2b-navbar print-hide" :class="{ 'scrolled': scrolled }">
   <div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;height:72px;gap:16px;padding:0 24px">
     <a href="{{ route('home') }}" style="display:flex;align-items:center;gap:12px;flex-shrink:0;text-decoration:none">
       <img src="{{ asset('images/logo_m2b_final.svg') }}" alt="M2B Logo" style="height:52px;width:auto">
@@ -258,7 +258,7 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
 @yield('content')
 
 {{-- Footer --}}
-<footer style="background:#fff;border-top:4px solid #1e3a5f;padding:64px 40px 32px;color:#555">
+<footer class="print-hide" style="background:#fff;border-top:4px solid #1e3a5f;padding:64px 40px 32px;color:#555">
   <div style="max-width:1200px;margin:0 auto">
     <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:48px;align-items:start" class="footer-grid">
       <div>
@@ -414,13 +414,17 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
 </footer>
 
 {{-- Scroll to Top --}}
-<button x-data="{ show: false }" x-init="window.addEventListener('scroll', () => show = window.scrollY > 300)" x-show="show" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click="window.scrollTo({top:0,behavior:'smooth'})" style="position:fixed;bottom:155px;right:20px;z-index:998;width:44px;height:44px;border-radius:50%;background:#1e3a5f;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;box-shadow:0 4px 14px rgba(30,58,95,0.35);transition:background .2s" onmouseover="this.style.background='#162d4a'" onmouseout="this.style.background='#1e3a5f'">↑</button>
+<button class="print-hide" x-data="{ show: false }" x-init="window.addEventListener('scroll', () => show = window.scrollY > 300)" x-show="show" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click="window.scrollTo({top:0,behavior:'smooth'})" style="position:fixed;bottom:155px;right:20px;z-index:998;width:44px;height:44px;border-radius:50%;background:#1e3a5f;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;box-shadow:0 4px 14px rgba(30,58,95,0.35);transition:background .2s" onmouseover="this.style.background='#162d4a'" onmouseout="this.style.background='#1e3a5f'">↑</button>
 
 {{-- Floating Buttons (eBook, WhatsApp right; Language switcher left) --}}
-<x-floating-buttons />
+<div class="print-hide">
+  <x-floating-buttons />
+</div>
 
 {{-- MORA AI Chat Widget --}}
-<x-mora-widget />
+<div class="print-hide">
+  <x-mora-widget />
+</div>
 
 </body>
 </html>
