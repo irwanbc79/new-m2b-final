@@ -13,6 +13,8 @@
             ['images/partners/ceisa.png',                  'CEISA 4.0'],
             ['images/partners/karantina.png',              'Badan Karantina Indonesia'],
             ['images/partners/kemendag.png',               'Kementerian Perdagangan RI'],
+            ['images/partners/kemenperin.png',             'Kementerian Perindustrian RI'],
+            ['images/partners/kementan.png',               'Kementerian Pertanian RI'],
             ['images/partners/lnsw.jpeg',                  'LNSW'],
             ['images/partners/oss.png',                    'OSS RI'],
             ['images/partners/bpom.jpg',                   'BPOM RI'],
@@ -22,6 +24,8 @@
             ['images/partners/bnct.png',                   'BNCT'],
             ['images/partners/alfi.png',                   'ALFI'],
             ['images/partners/kadin.jpeg',                 'KADIN'],
+            ['images/partners/posind.png',                 'POS IND Logistik Indonesia'],
+            ['images/partners/dhl.png',                    'DHL Express'],
             ['images/partners/celebi.jpg',                 'Celebi Cargo'],
             ['images/partners/pertamina.png',              'Pertamina'],
             ['images/partners/indoplas_1.png',             'Indoplas'],
@@ -32,7 +36,12 @@
 
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:14px">
             @foreach($partners as $partner)
-            @php $img = $partner[0]; $alt = $partner[1]; $webp = preg_replace('/\.(png|jpe?g)$/i', '.webp', $img); $hasWebp = $webp !== $img; @endphp
+            @php
+                $img = $partner[0];
+                $alt = $partner[1];
+                $webp = preg_replace('/\.(png|jpe?g)$/i', '.webp', $img);
+                $hasWebp = ($webp !== $img) && file_exists(public_path($webp));
+            @endphp
             <div style="height:80px;background:#fafaf8;border:1px solid #efefed;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:14px 18px;transition:border-color .2s,background .2s;cursor:default"
                  onmouseover="this.style.borderColor='#c8c5bf';this.style.background='#fff'"
                  onmouseout="this.style.borderColor='#efefed';this.style.background='#fafaf8'">

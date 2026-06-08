@@ -142,6 +142,122 @@
   background: rgba(74, 158, 218, 0.25);
   color: #4a9eda;
 }
+
+/* Import Calculator Styles */
+.calc-input {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 8px !important;
+  color: #fff !important;
+  padding: 10px 12px !important;
+  font-size: 14px !important;
+  font-family: inherit !important;
+  width: 100% !important;
+  transition: all 0.2s !important;
+  outline: none !important;
+}
+.calc-input:focus {
+  border-color: #4a9eda !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 0 0 2px rgba(74, 158, 218, 0.2) !important;
+}
+.calc-input[readonly] {
+  background: rgba(255, 255, 255, 0.02) !important;
+  color: rgba(255, 255, 255, 0.6) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  cursor: not-allowed !important;
+}
+.calc-select {
+  background: #1e293b !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 8px !important;
+  color: #fff !important;
+  padding: 10px 12px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  width: 100% !important;
+  outline: none !important;
+  cursor: pointer !important;
+}
+.calc-select:focus {
+  border-color: #4a9eda !important;
+}
+.calc-preset-btn {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: rgba(255, 255, 255, 0.7) !important;
+  padding: 6px 12px !important;
+  border-radius: 20px !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  transition: all 0.2s !important;
+}
+.calc-preset-btn:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+.calc-preset-btn.active {
+  background: #1e3a5f !important;
+  color: #fff !important;
+  border-color: #4a9eda !important;
+  box-shadow: 0 0 8px rgba(74, 158, 218, 0.25) !important;
+}
+.calc-label {
+  display: block !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: rgba(255, 255, 255, 0.65) !important;
+  margin-bottom: 5px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+}
+.calc-table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  margin: 16px 0 !important;
+  font-size: 13.5px !important;
+}
+.calc-table th {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-weight: 700 !important;
+  text-align: left !important;
+  padding: 12px 16px !important;
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.12) !important;
+}
+.calc-table td {
+  padding: 14px 16px !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+.calc-table tr:hover td {
+  background: rgba(255, 255, 255, 0.01) !important;
+}
+
+@media print {
+  body > * {
+    display: none !important;
+  }
+  #print-calc-area, #print-calc-area * {
+    display: block !important;
+    visibility: visible !important;
+  }
+  #print-calc-area {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #0B132B !important;
+    color: #fff !important;
+  }
+  .print-hide {
+    display: none !important;
+  }
+}
 </style>
 @endsection
 
@@ -149,122 +265,651 @@
 @section('content')
 
 {{-- ═══ HERO ═══ --}}
-<section style="position:relative;min-height:640px;display:flex;align-items:center;overflow:hidden">
+<section x-data="{
+    openCalculator: false,
+    calcStep: 'input',
+    fobVal: 0,
+    selectedCurrency: 'USD',
+    manualKurs: {{ $rates['pajak']['rates']['USD'] ?? 17805.00 }},
+    isAutoKurs: true,
+    selectedPreset: 'custom',
+    bmRate: 10,
+    bmtpRate: 0,
+    ppnRate: 11,
+    ppnbmRate: 0,
+    pphRate: 7.5,
+    dendaRate: 0,
+    hasApi: false,
+    ratesMap: {
+      USD: {{ $rates['pajak']['rates']['USD'] ?? 17805.00 }},
+      CNY: {{ $rates['pajak']['rates']['CNY'] ?? 2627.25 }},
+      SGD: {{ $rates['pajak']['rates']['SGD'] ?? 13944.36 }},
+      EUR: {{ $rates['pajak']['rates']['EUR'] ?? 20728.94 }}
+    },
+    syncCurrency() {
+      if (this.isAutoKurs && this.ratesMap[this.selectedCurrency]) {
+        this.manualKurs = this.ratesMap[this.selectedCurrency];
+      }
+    },
+    presets: {
+      elektronik: { bm: 0, ppn: 11, ppnbm: 0, pphApi: 10, pphNonApi: 10, bmtp: 0, denda: 0 },
+      pakaian: { bm: 25, ppn: 11, ppnbm: 0, pphApi: 7.5, pphNonApi: 7.5, bmtp: 0, denda: 0 },
+      makanan: { bm: 5, ppn: 11, ppnbm: 0, pphApi: 2.5, pphNonApi: 7.5, bmtp: 0, denda: 0 },
+      kosmetik: { bm: 15, ppn: 11, ppnbm: 0, pphApi: 7.5, pphNonApi: 7.5, bmtp: 0, denda: 0 },
+      sepatu: { bm: 30, ppn: 11, ppnbm: 0, pphApi: 7.5, pphNonApi: 7.5, bmtp: 0, denda: 0 },
+      custom: { bm: 10, ppn: 11, ppnbm: 0, pphApi: 7.5, pphNonApi: 7.5, bmtp: 0, denda: 0 }
+    },
+    applyPreset(name) {
+      this.selectedPreset = name;
+      const p = this.presets[name];
+      this.bmRate = p.bm;
+      this.ppnRate = p.ppn;
+      this.ppnbmRate = p.ppnbm;
+      this.pphRate = this.hasApi ? p.pphApi : p.pphNonApi;
+      this.bmtpRate = p.bmtp;
+      this.dendaRate = p.denda;
+    },
+    updateApiToggle() {
+      const p = this.presets[this.selectedPreset] || this.presets.custom;
+      if (this.selectedPreset === 'elektronik') {
+        this.pphRate = 10;
+      } else {
+        this.pphRate = this.hasApi ? p.pphApi : p.pphNonApi;
+      }
+    },
+    getNilaiPabean() {
+      return (parseFloat(this.fobVal) || 0) * (parseFloat(this.manualKurs) || 0);
+    },
+    getBeaMasuk() {
+      const raw = this.getNilaiPabean() * (parseFloat(this.bmRate) / 100);
+      return Math.ceil(raw / 1000) * 1000;
+    },
+    getBmtp() {
+      const raw = this.getNilaiPabean() * (parseFloat(this.bmtpRate) / 100);
+      return Math.ceil(raw / 1000) * 1000;
+    },
+    getNilaiImpor() {
+      const bmUnrounded = this.getNilaiPabean() * (parseFloat(this.bmRate) / 100);
+      return this.getNilaiPabean() + bmUnrounded;
+    },
+    getPpn() {
+      const raw = this.getNilaiImpor() * (parseFloat(this.ppnRate) / 100);
+      return Math.ceil(raw);
+    },
+    getPpnbm() {
+      const raw = this.getNilaiImpor() * (parseFloat(this.ppnbmRate) / 100);
+      return Math.ceil(raw);
+    },
+    getPph() {
+      const raw = this.getNilaiImpor() * (parseFloat(this.pphRate) / 100);
+      return Math.ceil(raw);
+    },
+    getDenda() {
+      const raw = this.getBeaMasuk() * (parseFloat(this.dendaRate) / 100);
+      return Math.ceil(raw);
+    },
+    getTotalPungutan() {
+      return this.getBeaMasuk() + this.getBmtp() + this.getPpn() + this.getPpnbm() + this.getPph() + this.getDenda();
+    },
+    formatNumber(val, decimals = 2) {
+      return new Intl.NumberFormat('id-ID', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }).format(val);
+    },
+    formatIDR(val) {
+      return 'Rp ' + this.formatNumber(val, 2);
+    },
+    getWaMessage() {
+      const fob = parseFloat(this.fobVal) || 0;
+      const cur = this.selectedCurrency;
+      const kurs = this.manualKurs;
+      const pabean = this.getNilaiPabean();
+      const bm = this.getBeaMasuk();
+      const bmtp = this.getBmtp();
+      const ppn = this.getPpn();
+      const ppnbm = this.getPpnbm();
+      const pph = this.getPph();
+      const denda = this.getDenda();
+      const total = this.getTotalPungutan();
+      
+      let text = 'Halo M2B, saya ingin berkonsultasi mengenai pengapalan impor dengan estimasi pungutan berikut:\n\n';
+      text += `- FOB: ${cur} ${this.formatNumber(fob, 2)}\n`;
+      text += `- Kurs Pajak: Rp ${this.formatNumber(kurs, 2)}\n`;
+      text += `- Nilai Pabean: ${this.formatIDR(pabean)}\n\n`;
+      text += `Detail Estimasi Pungutan:\n`;
+      text += `1. Bea Masuk (${this.bmRate}%): ${this.formatIDR(bm)}\n`;
+      if (bmtp > 0) text += `2. BMTP (${this.bmtpRate}%): ${this.formatIDR(bmtp)}\n`;
+      text += `3. PPN (${this.ppnRate}%): ${this.formatIDR(ppn)}\n`;
+      if (ppnbm > 0) text += `4. PPnBM (${this.ppnbmRate}%): ${this.formatIDR(ppnbm)}\n`;
+      text += `5. PPh (${this.pphRate}%): ${this.formatIDR(pph)}\n`;
+      if (denda > 0) text += `6. Denda (${this.dendaRate}%): ${this.formatIDR(denda)}\n`;
+      text += `-------------------------------------------\n`;
+      text += `Jumlah Pungutan: ${this.formatIDR(total)}\n\n`;
+      text += 'Mohon dibantu info kelayakan impor dan quotation pengirimannya. Terima kasih.';
+      return encodeURIComponent(text);
+    },
+    copyToClipboard() {
+      const fob = parseFloat(this.fobVal) || 0;
+      const cur = this.selectedCurrency;
+      const kurs = this.manualKurs;
+      const pabean = this.getNilaiPabean();
+      const bm = this.getBeaMasuk();
+      const bmtp = this.getBmtp();
+      const ppn = this.getPpn();
+      const ppnbm = this.getPpnbm();
+      const pph = this.getPph();
+      const denda = this.getDenda();
+      const total = this.getTotalPungutan();
+      
+      let text = 'SIMULASI PERHITUNGAN BESARAN BEA MASUK DAN PAJAK YANG HARUS DILUNASI\n';
+      text += 'PT MORA MULTI BERKAH (M2B) - Mitra Logistik & Customs Broker\n';
+      text += '====================================================================\n';
+      text += `FOB (${cur})        : ${this.formatNumber(fob, 2)}\n`;
+      text += `Kurs (${cur})       : Rp ${this.formatNumber(kurs, 2)}\n`;
+      text += `Nilai Pabean       : Rp ${this.formatNumber(pabean, 2)}\n`;
+      text += '--------------------------------------------------------------------\n';
+      text += `1. Bea Masuk (${this.bmRate}%)               : ${this.formatIDR(bm)}\n`;
+      text += `2. BMTP (${this.bmtpRate}%)                    : ${this.formatIDR(bmtp)}\n`;
+      text += `3. PPN (${this.ppnRate}%)                    : ${this.formatIDR(ppn)}\n`;
+      text += `4. PPnBM (${this.ppnbmRate}%)                  : ${this.formatIDR(ppnbm)}\n`;
+      text += `5. PPh (${this.pphRate}%)                    : ${this.formatIDR(pph)}\n`;
+      text += `6. Denda (${this.dendaRate}%)                  : ${this.formatIDR(denda)}\n`;
+      text += '--------------------------------------------------------------------\n';
+      text += `JUMLAH PUNGUTAN IMPOR      : ${this.formatIDR(total)}\n`;
+      text += '====================================================================\n';
+      text += 'Hubungi M2B via sales@m2b.co.id / WhatsApp 0812-6302-7818';
+      
+      navigator.clipboard.writeText(text);
+      alert('Hasil perhitungan berhasil disalin ke clipboard!');
+    },
+    printResults() {
+      window.print();
+    },
+    resetCalculator() {
+      this.fobVal = 0;
+      this.selectedPreset = 'custom';
+      this.bmRate = 10;
+      this.bmtpRate = 0;
+      this.ppnRate = 11;
+      this.ppnbmRate = 0;
+      this.pphRate = 7.5;
+      this.dendaRate = 0;
+      this.hasApi = false;
+      this.calcStep = 'input';
+      this.syncCurrency();
+    }
+  }" style="position:relative;min-height:640px;display:flex;align-items:center;overflow:hidden">
   <div style="position:absolute;inset:0;background-image:url(https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?auto=format&fit=crop&w=1600&q=80);background-size:cover;background-position:center"></div>
   <div style="position:absolute;inset:0;background:linear-gradient(105deg,rgba(11,17,32,0.92) 40%,rgba(11,17,32,0.55) 75%,rgba(11,17,32,0.25) 100%)"></div>
-  <div class="home-hero-container">
-    <div style="max-width:620px">
+  <div class="home-hero-container" style="display:flex;flex-direction:column;gap:28px;width:100%">
+    <!-- Top Part: H1 & Desc -->
+    <div style="max-width:620px;width:100%">
       <div style="display:flex;gap:8px;margin-bottom:22px;flex-wrap:wrap">
         <span style="display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,0.15);color:#fff;font-size:11px;font-weight:600;letter-spacing:0.3px;text-transform:uppercase">Freight Forwarder</span>
         <span style="display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,0.15);color:#fff;font-size:11px;font-weight:600;letter-spacing:0.3px;text-transform:uppercase">Customs Broker</span>
         <span style="display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(30,58,95,0.4);color:#7eb3e8;font-size:11px;font-weight:600;letter-spacing:0.3px;text-transform:uppercase">Medan · Indonesia</span>
+      </div>
       <h1 style="font-family:Syne;font-weight:800;font-size:54px;line-height:1.06;color:#fff;letter-spacing:-1.8px;margin-bottom:22px" class="home-hero-h1">
         <span x-text="$store.lang.t('Ekspor & Impor', 'Export & Import', '进出口服务', 'الاستيراد والتصدير')">Ekspor &amp; Impor</span><br>
         <span style="color:#4a9eda" x-text="$store.lang.t('Lebih Mudah,', 'Made Easy,', '更便捷，', 'أصبح سهلاً،')">Lebih Mudah,</span><br>
         <span x-text="$store.lang.t('Lebih Aman.', 'Made Secure.', '更安全。', 'أصبح آمناً.')">Lebih Aman.</span>
       </h1>
-      <p style="font-size:17px;color:rgba(255,255,255,0.78);margin-bottom:36px;line-height:1.7;max-width:480px">
+      <p style="font-size:17px;color:rgba(255,255,255,0.78);line-height:1.7;max-width:480px;margin-bottom:0">
         <span x-show="lang==='id'">End-to-end freight forwarding &amp; customs brokerage. Dari dokumen, bea cukai, hingga door-to-door delivery — M2B handle semuanya.</span>
         <span x-show="lang==='en'" x-cloak>End-to-end freight forwarding &amp; customs brokerage. From documents, customs clearance, to door-to-door delivery — M2B handles it all.</span>
         <span x-show="lang==='zh'" x-cloak>端到端货运代理与报关服务。从文件处理、清关到门到门交付——M2B 为您一手包办。</span>
         <span x-show="lang==='ar'" x-cloak>شحن شامل من الباب إلى الباب وتخليص جمركي. من المستندات والتخليص الجمركي إلى التسليم من الباب إلى الباب — M2B تتولى كل شيء.</span>
       </p>
-      <div style="background:rgba(255,255,255,0.08);backdrop-filter:blur(16px);border-radius:14px;padding:18px 22px;border:1px solid rgba(255,255,255,0.18);max-width:520px;margin-bottom:20px;box-shadow:0 12px 36px rgba(0,0,0,0.25)">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-          <div style="width:36px;height:36px;border-radius:8px;background:#1e3a5f;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">🔐</div>
-          <div>
-            <div style="font-family:Syne;font-weight:700;font-size:13px;color:#fff">Portal M2B</div>
-            <div style="font-size:11px;color:rgba(255,255,255,0.45)">ERP & Client Portal — portal.m2b.co.id</div>
+    </div>
+
+    <!-- Cards Row: Portal M2B (Left) & Kurs Pajak (Right) -->
+    <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:stretch;width:100%;max-width:1080px">
+      <!-- Portal M2B Card -->
+      <div style="flex:1;min-width:300px;max-width:520px;background:rgba(255,255,255,0.08);backdrop-filter:blur(16px);border-radius:14px;padding:18px 22px;border:1px solid rgba(255,255,255,0.18);box-shadow:0 12px 36px rgba(0,0,0,0.25);display:flex;flex-direction:column;justify-content:space-between">
+        <div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+            <div style="width:36px;height:36px;border-radius:8px;background:#1e3a5f;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">🔐</div>
+            <div>
+              <div style="font-family:Syne;font-weight:700;font-size:13px;color:#fff">Portal M2B</div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.45)">ERP & Client Portal — portal.m2b.co.id</div>
+            </div>
+            <span style="margin-left:auto;padding:2px 9px;border-radius:10px;background:rgba(74,158,218,0.2);color:#4a9eda;font-size:10px;font-weight:700;border:1px solid rgba(74,158,218,0.3)">LIVE</span>
           </div>
-          <span style="margin-left:auto;padding:2px 9px;border-radius:10px;background:rgba(74,158,218,0.2);color:#4a9eda;font-size:10px;font-weight:700;border:1px solid rgba(74,158,218,0.3)">LIVE</span>
+          <p style="font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:14px;line-height:1.6">
+            <span x-show="lang==='id'">Pantau status shipment, unduh dokumen, invoice, dan laporan logistik real-time.</span>
+            <span x-show="lang==='en'" x-cloak>Monitor shipment status, download documents, invoices &amp; logistics reports in real-time.</span>
+            <span x-show="lang==='zh'" x-cloak>实时监控货物 status，下载文件、发票及物流报告。</span>
+            <span x-show="lang==='ar'" x-cloak>راقب حالة الشحنة، وحمل المستندات، والفواتير، والتقارير اللوجستية في الوقت الفعلي.</span>
+          </p>
         </div>
-        <p style="font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:14px;line-height:1.6">
-          <span x-show="lang==='id'">Pantau status shipment, unduh dokumen, invoice, dan laporan logistik real-time.</span>
-          <span x-show="lang==='en'" x-cloak>Monitor shipment status, download documents, invoices &amp; logistics reports in real-time.</span>
-          <span x-show="lang==='zh'" x-cloak>实时监控货物状态，下载文件、发票及物流报告。</span>
-          <span x-show="lang==='ar'" x-cloak>راقب حالة الشحنة، وحمل المستندات، والفواتير، والتقارير اللوجستية في الوقت الفعلي.</span>
-        </p>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:auto">
           <a href="https://portal.m2b.co.id" target="_blank" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 14px;border-radius:8px;background:#1e3a5f;color:#fff;text-decoration:none;font-weight:700;font-size:13px;white-space:nowrap" x-text="$store.lang.t('🔐 Login Portal', '🔐 Portal Login', '🔐 登录门户', '🔐 دخول البوابة')">🔐 Login Portal</a>
           <a href="https://portal.m2b.co.id/register" target="_blank" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 14px;border-radius:8px;background:rgba(255,255,255,0.08);color:#fff;text-decoration:none;font-weight:600;font-size:13px;border:1px solid rgba(255,255,255,0.2);white-space:nowrap" x-text="$store.lang.t('✏️ Daftar Akun', '✏️ Register Account', '✏️ 注册账户', '✏️ تسجيل الحساب')">✏️ Daftar Akun</a>
         </div>
       </div>
-      <div class="flex gap-3 flex-wrap" x-data="{ open: false }">
-        <a :href="$store.lang.t('https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20mau%20konsultasi%20gratis', 'https://wa.me/6281263027818?text=Hello%20M2B,%20I%20would%20like%20a%20free%20consultation', 'https://wa.me/6281263027818?text=您好M2B，我想进行免费咨询', 'https://wa.me/6281263027818?text=مرحباً%20M2B،%20أرغب%20في%20استشارة%20مجانية')" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:13px 28px;border-radius:8px;background:#1e3a5f;color:#fff;text-decoration:none;font-weight:600;font-size:15px;transition:all .18s"
-          x-text="$store.lang.t('💬 Konsultasi GRATIS', '💬 Free Consultation', '💬 免费咨询', '💬 استشارة مجانية')">💬 Konsultasi GRATIS</a>
- 
-        <button @click="open = true"
-                class="inline-flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-lg border border-white/30 backdrop-blur-sm transition-all duration-300 cursor-pointer">
-            <svg class="w-5 h-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-            </svg>
-            <span x-text="$store.lang.t('Tonton Profil M2B', 'Watch M2B Profile', '观看 M2B 简介视频', 'مشاهدة الملف التعريفي لـ M2B')">Tonton Profil M2B</span> <span class="text-xs opacity-60">(16d)</span>
-        </button>
- 
-        <a href="#layanan" style="display:inline-flex;align-items:center;gap:8px;padding:13px 24px;border-radius:8px;color:#fff;text-decoration:none;font-weight:600;font-size:15px;border:1.5px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.05)"
-          x-text="$store.lang.t('Lihat Layanan →', 'View Services →', '查看服务 →', 'عرض الخدمات ←')">Lihat Layanan →</a>
 
-        {{-- YouTube Modal --}}
-        <div x-show="open"
-             x-transition:enter="transition ease-out duration-300"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             x-transition:leave="transition ease-in duration-200"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0"
-             @keydown.escape.window="open = false"
-             class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 sm:p-6 backdrop-blur-sm"
-             style="display: none;">
-            <div @click.outside="open = false"
-                 class="relative w-full max-w-4xl bg-black rounded-2xl shadow-2xl overflow-hidden aspect-video border border-gray-800">
-                <button @click="open = false"
-                        class="absolute top-4 right-4 z-10 p-2 bg-black/50 hover:bg-red-600 rounded-full text-white transition-colors">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-                {{-- Lazy load: iframe hanya render saat modal dibuka --}}
-                <template x-if="open">
-                    <iframe class="w-full h-full"
-                            src="https://www.youtube.com/embed/ZkZVVKRXuuA?autoplay=1&rel=0&modestbranding=1"
-                            title="PT. Mora Multi Berkah Official"
-                            frameborder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowfullscreen>
-                    </iframe>
-                </template>
+      <!-- Right Column: Kurs Pajak Widget -->
+      <div class="hero-widget-wrapper" style="flex:1.1;min-width:300px;max-width:540px;z-index:2;position:relative">
+        <div style="background:rgba(255,255,255,0.03);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1.5px solid rgba(255,255,255,0.08);border-radius:18px;padding:16px 20px;box-shadow:0 20px 50px rgba(0,0,0,0.3);width:100%;height:100%;display:flex;flex-direction:column;justify-content:space-between">
+          <div>
+            <!-- Widget Header -->
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+              <div style="display:flex;align-items:center;gap:6px">
+                <span style="display:inline-block;width:6px;height:6px;background:#10b981;border-radius:50%;box-shadow:0 0 6px #10b981;animation:pulse 2s infinite"></span>
+                <span style="font-family:Syne;font-weight:700;font-size:12.5px;color:#fff" x-text="$store.lang.t('Kurs Pajak Kemenkeu', 'Customs Tax Rate', '海关税率', 'سعر الضريبة الجمركية')">Kurs Pajak Kemenkeu</span>
+              </div>
+              <span style="padding:2px 6px;border-radius:6px;background:rgba(245,185,28,0.15);color:#f5b91c;font-size:8px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase" x-text="$store.lang.t('Mingguan', 'Weekly', '每周', 'أسبوعي')">Mingguan</span>
             </div>
-        </div>
-      </div>
-      <div style="display:flex;gap:32px;margin-top:48px;border-top:1px solid rgba(255,255,255,0.18);padding-top:28px;flex-wrap:wrap" class="home-stats">
-        @foreach([
-          ['target'=>5,   'label_id'=>'Tahun berpengalaman', 'label_en'=>'Years of experience',  'label_zh'=>'年行业经验', 'label_ar'=>'سنوات الخبرة',  'suffix'=>'+'],
-          ['target'=>100, 'label_id'=>'Klien aktif',          'label_en'=>'Active clients',       'label_zh'=>'活跃客户',   'label_ar'=>'عميل نشط',    'suffix'=>'+'],
-          ['target'=>20,  'label_id'=>'Negara tujuan',        'label_en'=>'Destination countries','label_zh'=>'覆盖国家',   'label_ar'=>'وجهة شحن',    'suffix'=>'+'],
-        ] as $stat)
-        <div x-data="{ count: 0 }"
-             x-intersect.once="
-               let start = null, target = {{ $stat['target'] }};
-               const step = (ts) => {
-                 if (!start) start = ts;
-                 const progress = Math.min((ts - start) / 1800, 1);
-                 count = Math.floor(progress * target);
-                 if (progress < 1) requestAnimationFrame(step);
-               };
-               requestAnimationFrame(step);
-             ">
-          <div style="font-family:Syne;font-weight:800;font-size:28px;color:#4a9eda;line-height:1">
-            <span x-text="count + '{{ $stat['suffix'] }}'">{{ $stat['target'] }}{{ $stat['suffix'] }}</span>
+
+            <!-- Period info -->
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.08);font-size:9.5px;color:rgba(255,255,255,0.4);flex-wrap:wrap;gap:4px">
+              <div>
+                <span x-text="$store.lang.t('Periode:', 'Period:', '期限:', 'الفترة:')">Periode:</span>
+                <span style="color:#f5b91c;font-weight:700;margin-left:2px">{{ $rates['pajak']['period'] ?? '03 Jun - 09 Jun 2026' }}</span>
+              </div>
+              <div style="font-size:8px">
+                KMK No. {{ $rates['pajak']['kmk'] ?? '25/MK/EF.2/2026' }}
+              </div>
+            </div>
+            
+            <!-- Currency List (Horizontal Grid) -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(105px, 1fr)); gap: 8px;">
+              <!-- USD -->
+              <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04);border-radius:12px;padding:8px 6px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px">
+                <span style="font-size:16px">🇺🇸</span>
+                <span style="font-weight:700;font-size:10px;color:rgba(255,255,255,0.4)">USD</span>
+                <span style="font-family:Syne;font-weight:700;font-size:11px;color:#fff;white-space:nowrap">Rp {{ number_format($rates['pajak']['rates']['USD'] ?? 17805.00, 2, ',', '.') }}</span>
+              </div>
+              <!-- CNY -->
+              <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04);border-radius:12px;padding:8px 6px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px">
+                <span style="font-size:16px">🇨🇳</span>
+                <span style="font-weight:700;font-size:10px;color:rgba(255,255,255,0.4)">CNY</span>
+                <span style="font-family:Syne;font-weight:700;font-size:11px;color:#fff;white-space:nowrap">Rp {{ number_format($rates['pajak']['rates']['CNY'] ?? 2627.25, 2, ',', '.') }}</span>
+              </div>
+              <!-- SGD -->
+              <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04);border-radius:12px;padding:8px 6px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px">
+                <span style="font-size:16px">🇸🇬</span>
+                <span style="font-weight:700;font-size:10px;color:rgba(255,255,255,0.4)">SGD</span>
+                <span style="font-family:Syne;font-weight:700;font-size:11px;color:#fff;white-space:nowrap">Rp {{ number_format($rates['pajak']['rates']['SGD'] ?? 13944.36, 2, ',', '.') }}</span>
+              </div>
+              <!-- EUR -->
+              <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04);border-radius:12px;padding:8px 6px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px">
+                <span style="font-size:16px">🇪🇺</span>
+                <span style="font-weight:700;font-size:10px;color:rgba(255,255,255,0.4)">EUR</span>
+                <span style="font-family:Syne;font-weight:700;font-size:11px;color:#fff;white-space:nowrap">Rp {{ number_format($rates['pajak']['rates']['EUR'] ?? 20728.94, 2, ',', '.') }}</span>
+              </div>
+            </div>
           </div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.55);margin-top:6px" x-text="$store.lang.t('{{ $stat['label_id'] }}', '{{ $stat['label_en'] }}', '{{ $stat['label_zh'] }}', '{{ $stat['label_ar'] }}')">{{ $stat['label_id'] }}</div>
-        </div>
-        @endforeach
-        <div>
-          <div style="font-family:Syne;font-weight:800;font-size:28px;color:#4a9eda;line-height:1">A–Z</div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.55);margin-top:6px" x-text="$store.lang.t('Layanan end-to-end', 'End-to-end service', '端到端一站式服务', 'خدمة متكاملة من البداية للنهاية')">Layanan end-to-end</div>
+
+          <!-- Link to Estimator -->
+          <a href="#" @click.prevent="openCalculator = true; calcStep = 'input'" style="display:block;margin-top:12px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.05);text-align:center;color:#4a9eda;font-size:10px;font-weight:700;text-decoration:none;transition:opacity 0.2s" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1" x-text="$store.lang.t('Hitung Estimasi Bea Masuk →', 'Calculate Import Duties →', '计算进口税费 →', 'حساب الرسوم الجمركية ←')">
+            Hitung Estimasi Bea Masuk →
+          </a>
         </div>
       </div>
     </div>
+
+    <!-- Row 2: Buttons -->
+    <div class="flex gap-3 flex-wrap" x-data="{ open: false }" style="width:100%;max-width:1080px">
+      <a :href="$store.lang.t('https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20mau%20konsultasi%20gratis', 'https://wa.me/6281263027818?text=Hello%20M2B,%20I%20would%20like%20a%20free%20consultation', 'https://wa.me/6281263027818?text=您好M2B，我想进行免费咨询', 'https://wa.me/6281263027818?text=مرحباً%20M2B،%20أرغب%20في%20استشارة%20مجانية')" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:13px 28px;border-radius:8px;background:#1e3a5f;color:#fff;text-decoration:none;font-weight:600;font-size:15px;transition:all .18s"
+        x-text="$store.lang.t('💬 Konsultasi GRATIS', '💬 Free Consultation', '💬 免费咨询', '💬 استشارة مجانية')">💬 Konsultasi GRATIS</a>
+
+      <button @click="open = true"
+              class="inline-flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-lg border border-white/30 backdrop-blur-sm transition-all duration-300 cursor-pointer">
+          <svg class="w-5 h-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+          </svg>
+          <span x-text="$store.lang.t('Tonton Profil M2B', 'Watch M2B Profile', '观看 M2B 简介视频', 'مشاهدة الملف التعريفي لـ M2B')">Tonton Profil M2B</span> <span class="text-xs opacity-60">(16d)</span>
+      </button>
+
+      <a href="#layanan" style="display:inline-flex;align-items:center;gap:8px;padding:13px 24px;border-radius:8px;color:#fff;text-decoration:none;font-weight:600;font-size:15px;border:1.5px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.05)"
+        x-text="$store.lang.t('Lihat Layanan →', 'View Services →', '查看服务 →', 'عرض الخدمات ←')">Lihat Layanan →</a>
+
+      {{-- YouTube Modal --}}
+      <div x-show="open"
+           x-transition:enter="transition ease-out duration-300"
+           x-transition:enter-start="opacity-0"
+           x-transition:enter-end="opacity-100"
+           x-transition:leave="transition ease-in duration-200"
+           x-transition:leave-start="opacity-100"
+           x-transition:leave-end="opacity-0"
+           @keydown.escape.window="open = false"
+           class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 sm:p-6 backdrop-blur-sm"
+           style="display: none;">
+          <div @click.outside="open = false"
+               class="relative w-full max-w-4xl bg-black rounded-2xl shadow-2xl overflow-hidden aspect-video border border-gray-800">
+              <button @click="open = false"
+                      class="absolute top-4 right-4 z-10 p-2 bg-black/50 hover:bg-red-600 rounded-full text-white transition-colors">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+              </button>
+              <template x-if="open">
+                  <iframe class="w-full h-full"
+                          src="https://www.youtube.com/embed/ZkZVVKRXuuA?autoplay=1&rel=0&modestbranding=1"
+                          title="PT. Mora Multi Berkah Official"
+                          frameborder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowfullscreen>
+                  </iframe>
+              </template>
+          </div>
+      </div>
+    </div>
+
+    <!-- Row 3: Stats -->
+    <div style="display:flex;gap:32px;margin-top:20px;border-top:1px solid rgba(255,255,255,0.18);padding-top:20px;flex-wrap:wrap;width:100%;max-width:1080px" class="home-stats">
+      @foreach([
+        ['target'=>5,   'label_id'=>'Tahun berpengalaman', 'label_en'=>'Years of experience',  'label_zh'=>'年行业经验', 'label_ar'=>'سنوات الخبرة',  'suffix'=>'+'],
+        ['target'=>100, 'label_id'=>'Klien aktif',          'label_en'=>'Active clients',       'label_zh'=>'活跃客户',   'label_ar'=>'عميل نشط',    'suffix'=>'+'],
+        ['target'=>20,  'label_id'=>'Negara tujuan',        'label_en'=>'Destination countries','label_zh'=>'覆盖国家',   'label_ar'=>'وجهة شحن',    'suffix'=>'+'],
+      ] as $stat)
+      <div x-data="{ count: 0 }"
+           x-intersect.once="
+             let start = null, target = {{ $stat['target'] }};
+             const step = (ts) => {
+               if (!start) start = ts;
+               const progress = Math.min((ts - start) / 1800, 1);
+               count = Math.floor(progress * target);
+               if (progress < 1) requestAnimationFrame(step);
+             };
+             requestAnimationFrame(step);
+           ">
+        <div style="font-family:Syne;font-weight:800;font-size:28px;color:#4a9eda;line-height:1">
+          <span x-text="count + '{{ $stat['suffix'] }}'">{{ $stat['target'] }}{{ $stat['suffix'] }}</span>
+        </div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.55);margin-top:6px" x-text="$store.lang.t('{{ $stat['label_id'] }}', '{{ $stat['label_en'] }}', '{{ $stat['label_zh'] }}', '{{ $stat['label_ar'] }}')">{{ $stat['label_id'] }}</div>
+      </div>
+      @endforeach
+      <div>
+        <div style="font-family:Syne;font-weight:800;font-size:28px;color:#4a9eda;line-height:1">A–Z</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.55);margin-top:6px" x-text="$store.lang.t('Layanan end-to-end', 'End-to-end service', '端到端一站式服务', 'خدمة متكاملة من البداية للنهاية')">Layanan end-to-end</div>
+      </div>
+    </div>
+  </div>
+
+  {{-- Customs Calculator Modal --}}
+  <div x-show="openCalculator" x-cloak @click="openCalculator = false"
+    class="print-hide"
+    style="position:fixed;inset:0;z-index:10000;background:rgba(11,17,32,0.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:20px">
+    
+    <div id="print-calc-area" @click.stop 
+      style="background:#0B132B;border-radius:24px;max-width:960px;width:100%;max-height:94vh;overflow-y:auto;box-shadow:0 30px 70px rgba(0,0,0,0.8);border:1px solid rgba(255,255,255,0.08);display:flex;flex-direction:column;position:relative">
+      
+      <!-- STEP 1: INPUT FORM -->
+      <div x-show="calcStep === 'input'" style="padding:32px;display:flex;flex-direction:column;gap:20px">
+        <!-- Header -->
+        <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.08);padding-bottom:16px">
+          <div>
+            <h3 style="font-family:Syne;font-weight:800;font-size:24px;color:#fff;letter-spacing:-0.5px" x-text="$store.lang.t('Kalkulator Pajak Impor', 'Import Tax Calculator', '进口税费计算器', 'حاسبة ضرائب الاستيراد')">Kalkulator Pajak Impor</h3>
+            <p style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px" x-text="$store.lang.t('Simulasi bea masuk & pajak dalam rangka impor secara cepat & akurat', 'Simulate import duties & taxes (PDRI) quickly & accurately', '快速准确地模拟计算进口关税及进口环节税', 'محاكاة الرسوم الجمركية وضرائب الاستيراد بسرعة ودقة')"></p>
+          </div>
+          <button @click="openCalculator = false" style="background:rgba(255,255,255,0.05);border:none;border-radius:50%;color:rgba(255,255,255,0.6);width:36px;height:36px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">✕</button>
+        </div>
+
+        <!-- Presets -->
+        <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);border-radius:14px;padding:16px">
+          <div style="font-size:10.5px;font-weight:800;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:10px;letter-spacing:0.5px" x-text="$store.lang.t('Pilih Kategori Barang (Preset):', 'Select Goods Category Preset:', '货物品类预设：', 'اختر الفئة المحددة مسبقاً للسلع:')">Pilih Kategori Barang (Preset):</div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            <button @click="applyPreset('elektronik')" :class="selectedPreset === 'elektronik' && 'active'" class="calc-preset-btn">💻 Elektronik</button>
+            <button @click="applyPreset('pakaian')" :class="selectedPreset === 'pakaian' && 'active'" class="calc-preset-btn">👕 Pakaian & Tekstil</button>
+            <button @click="applyPreset('makanan')" :class="selectedPreset === 'makanan' && 'active'" class="calc-preset-btn">🍎 Makanan & Minuman</button>
+            <button @click="applyPreset('kosmetik')" :class="selectedPreset === 'kosmetik' && 'active'" class="calc-preset-btn">💄 Kosmetik & Skincare</button>
+            <button @click="applyPreset('sepatu')" :class="selectedPreset === 'sepatu' && 'active'" class="calc-preset-btn">👟 Sepatu & Tas</button>
+            <button @click="applyPreset('custom')" :class="selectedPreset === 'custom' && 'active'" class="calc-preset-btn">⚙️ Custom / Manual</button>
+          </div>
+        </div>
+
+        <!-- Money Inputs -->
+        <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:20px">
+          <!-- FOB Value Input -->
+          <div>
+            <label class="calc-label" x-text="$store.lang.t('Nilai FOB (Harga Barang)', 'FOB Value (Goods Value)', '离岸价格 FOB (货值)', 'قيمة البضاعة (FOB)')">Nilai FOB (Harga Barang)</label>
+            <div style="position:relative">
+              <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-weight:800;color:rgba(255,255,255,0.4);font-size:14px" x-text="selectedCurrency"></span>
+              <input type="number" x-model.number="fobVal" placeholder="0.00" style="padding-left:55px" class="calc-input" />
+            </div>
+            <p style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:6px" x-text="$store.lang.t('*FOB (Free on Board) tidak termasuk freight dan asuransi', '*FOB (Free on Board) excludes freight and insurance', '*FOB (离岸价格) 不包含国际运费和保险费', '*FOB لا تشمل الشحن والتأمين')"></p>
+          </div>
+
+          <!-- Currency & Exchange Rate -->
+          <div style="display:grid;grid-template-columns:1fr 1.1fr;gap:12px">
+            <div>
+              <label class="calc-label" x-text="$store.lang.t('Mata Uang', 'Currency', '币种', 'العملة')">Mata Uang</label>
+              <select x-model="selectedCurrency" @change="syncCurrency()" class="calc-select">
+                <option value="USD">🇺🇸 USD</option>
+                <option value="CNY">🇨🇳 CNY</option>
+                <option value="SGD">🇸🇬 SGD</option>
+                <option value="EUR">🇪🇺 EUR</option>
+              </select>
+            </div>
+            <div>
+              <label class="calc-label">
+                <span x-text="$store.lang.t('Kurs Pajak', 'Tax Rate', '海关税率', 'سعر الصرف')">Kurs Pajak</span>
+                <span style="font-size:9px;color:#10b981;font-weight:700" x-show="isAutoKurs">(AUTO)</span>
+              </label>
+              <input type="number" x-model.number="manualKurs" :readonly="isAutoKurs" class="calc-input" style="font-weight:700" />
+              <label style="display:flex;align-items:center;gap:6px;margin-top:6px;font-size:9.5px;color:rgba(255,255,255,0.5);cursor:pointer">
+                <input type="checkbox" x-model="isAutoKurs" @change="syncCurrency()" />
+                <span x-text="$store.lang.t('Gunakan Kurs Kemenkeu', 'Use Kemenkeu Rate', '使用财政部汇率', 'استخدام سعر وزارة المالية')">Gunakan Kurs Kemenkeu</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Custom Percentages Inputs Grid -->
+        <div style="background:rgba(255,255,255,0.01);border:1px solid rgba(255,255,255,0.05);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.05);padding-bottom:10px">
+            <span style="font-size:11px;font-weight:800;text-transform:uppercase;color:rgba(255,255,255,0.6);letter-spacing:0.5px" x-text="$store.lang.t('Detail Parameter Tarif Pajak (%)', 'Tax Rate Details (%)', '税率参数详情 (%)', 'تفاصيل معدلات الضرائب (%)')">Detail Parameter Tarif Pajak (%)</span>
+            <!-- API Toggle -->
+            <label style="display:flex;align-items:center;gap:6px;font-size:11px;cursor:pointer;font-weight:700;color:#4a9eda">
+              <input type="checkbox" x-model="hasApi" @change="updateApiToggle()" />
+              <span x-text="$store.lang.t('Memiliki API / NIB', 'Have API / NIB License', '拥有 API / NIB 证书', 'لديه رخصة استيراد API')">Memiliki API / NIB</span>
+            </label>
+          </div>
+          
+          <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px">
+            <div>
+              <label class="calc-label" style="text-align:center">BM</label>
+              <div style="position:relative">
+                <input type="number" step="0.1" x-model.number="bmRate" class="calc-input" style="text-align:center;padding-right:16px" />
+                <span style="position:absolute;right:6px;top:50%;transform:translateY(-50%);font-size:9.5px;color:rgba(255,255,255,0.3)">%</span>
+              </div>
+            </div>
+            <div>
+              <label class="calc-label" style="text-align:center">BMTP</label>
+              <div style="position:relative">
+                <input type="number" step="0.1" x-model.number="bmtpRate" class="calc-input" style="text-align:center;padding-right:16px" />
+                <span style="position:absolute;right:6px;top:50%;transform:translateY(-50%);font-size:9.5px;color:rgba(255,255,255,0.3)">%</span>
+              </div>
+            </div>
+            <div>
+              <label class="calc-label" style="text-align:center">PPN</label>
+              <div style="position:relative">
+                <input type="number" step="0.1" x-model.number="ppnRate" class="calc-input" style="text-align:center;padding-right:16px" />
+                <span style="position:absolute;right:6px;top:50%;transform:translateY(-50%);font-size:9.5px;color:rgba(255,255,255,0.3)">%</span>
+              </div>
+            </div>
+            <div>
+              <label class="calc-label" style="text-align:center">PPnBM</label>
+              <div style="position:relative">
+                <input type="number" step="0.1" x-model.number="ppnbmRate" class="calc-input" style="text-align:center;padding-right:16px" />
+                <span style="position:absolute;right:6px;top:50%;transform:translateY(-50%);font-size:9.5px;color:rgba(255,255,255,0.3)">%</span>
+              </div>
+            </div>
+            <div>
+              <label class="calc-label" style="text-align:center">PPh</label>
+              <div style="position:relative">
+                <input type="number" step="0.1" x-model.number="pphRate" class="calc-input" style="text-align:center;padding-right:16px" />
+                <span style="position:absolute;right:6px;top:50%;transform:translateY(-50%);font-size:9.5px;color:rgba(255,255,255,0.3)">%</span>
+              </div>
+            </div>
+            <div>
+              <label class="calc-label" style="text-align:center">Denda</label>
+              <div style="position:relative">
+                <input type="number" step="0.1" x-model.number="dendaRate" class="calc-input" style="text-align:center;padding-right:16px" />
+                <span style="position:absolute;right:6px;top:50%;transform:translateY(-50%);font-size:9.5px;color:rgba(255,255,255,0.3)">%</span>
+              </div>
+            </div>
+          </div>
+          
+          <div style="background:rgba(74,158,218,0.05);border-left:3px solid #4a9eda;padding:10px 14px;border-radius:4px;font-size:11px;color:rgba(255,255,255,0.8);line-height:1.5">
+            <span x-show="hasApi" x-text="$store.lang.t('💡 Dengan API / NIB (misal melalui Jasa Undername M2B), tarif PPh Impor Anda dipotong menjadi 2.5%!', '💡 With API / NIB (e.g. via M2B Undername Import Service), your Import PPh is reduced to 2.5%!', '💡 拥有 API / NIB 证书（例如通过 M2B 进出口代理），您的进口所得税 (PPh) 将降至 2.5%！', '💡 مع رخصة API / NIB (مثل خدمة M2B Undername)، يتم تخفيض ضريبة PPh إلى 2.5%!')"></span>
+            <span x-show="!hasApi" x-text="$store.lang.t('💡 Tanpa API / NIB, Anda dikenakan tarif PPh standar (7.5% - 10%). Gunakan Jasa Undername M2B untuk menghemat Pajak Impor Anda!', '💡 Without API / NIB, standard PPh rate (7.5% - 10%) applies. Use M2B Undername Import Service to save on taxes!', '💡 没有 API / NIB 证书，您将适用标准所得税率 (7.5% - 10%)。建议使用 M2B 进出口代理以节省进口税！', '💡 بدون رخصة API / NIB، تنطبق ضريبة PPh القياسية (7.5% - 10%). استخدم خدمة M2B Undername للتوفير!')"></span>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button @click="calcStep = 'result'" style="background:linear-gradient(135deg, #3b82f6 0%, #4f46e5 100%);color:#fff;border:none;border-radius:10px;padding:16px;font-weight:800;font-size:15px;cursor:pointer;text-align:center;box-shadow:0 8px 25px rgba(59,130,246,0.3);transition:transform 0.2s" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='none'" x-text="$store.lang.t('Hitung Estimasi Sekarang →', 'Calculate Estimation Now →', '立即计算估算 →', 'احسب التقدير الآن ←')">
+          Hitung Estimasi Sekarang →
+        </button>
+      </div>
+
+      <!-- STEP 2: RESULTS SCREEN (MATCHING SCREENSHOT) -->
+      <div x-show="calcStep === 'result'" style="display:flex;flex-direction:column;flex:1">
+        
+        <!-- Header Panel (Bright Gradient Blue) -->
+        <div style="background:linear-gradient(90deg, #1e40af 0%, #4338ca 100%);padding:20px 24px;border-radius:24px 24px 0 0;display:flex;align-items:center;justify-content:space-between">
+          <div>
+            <h2 style="font-family:Syne;font-weight:800;font-size:18px;color:#fff;letter-spacing:-0.5px;text-transform:uppercase" x-text="$store.lang.t('Hasil Perhitungan Besaran Bea Masuk', 'Result of Import Duty Calculation', '海关关税及进口环节税计算结果', 'نتيجة حساب الرسوم الجمركية')">Hasil Perhitungan Besaran Bea Masuk</h2>
+            <p style="font-size:11.5px;color:rgba(255,255,255,0.8);margin-top:2px" x-text="$store.lang.t('DAN PAJAK YANG HARUS DILUNASI', 'AND TAXES TO BE SETTLED', '及应当缴纳的进口环节税费', 'الرسوم والضرائب الواجب تسويتها')">DAN PAJAK YANG HARUS DILUNASI</p>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px" class="print-hide">
+            <button @click="printResults()" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:8px;color:#fff;font-weight:700;font-size:11.5px;padding:8px 16px;cursor:pointer;display:inline-flex;align-items:center;gap:6px">
+              <svg style="width:14px;height:14px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+              <span x-text="$store.lang.t('PRINT', 'PRINT', '打印', 'طباعة')">PRINT</span>
+            </button>
+            <button @click="openCalculator = false" style="background:rgba(255,255,255,0.15);border:none;border-radius:8px;color:#fff;width:34px;height:34px;cursor:pointer;font-size:16px;font-weight:700;display:inline-flex;align-items:center;justify-content:center">✕</button>
+          </div>
+        </div>
+
+        <!-- Body Content -->
+        <div style="padding:24px 32px 32px 32px;display:flex;flex-direction:column;gap:18px">
+          
+          <!-- Top Card Panels (3 Columns since Exemption is omitted) -->
+          <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:14px">
+            <!-- FOB Card -->
+            <div style="background:rgba(88,28,135,0.12);border:1px solid rgba(139,92,246,0.25);border-radius:12px;padding:12px 18px">
+              <div style="font-size:10px;font-weight:800;color:rgba(255,255,255,0.4);text-transform:uppercase" x-text="'FOB (' + selectedCurrency + ')'">FOB (USD)</div>
+              <div style="font-family:Syne;font-weight:800;font-size:20px;color:#c084fc;margin-top:4px" x-text="formatNumber(fobVal, 2)">5.000,00</div>
+            </div>
+            <!-- Kurs Card -->
+            <div style="background:rgba(6,78,59,0.15);border:1px solid rgba(16,185,129,0.25);border-radius:12px;padding:12px 18px">
+              <div style="font-size:10px;font-weight:800;color:rgba(255,255,255,0.4);text-transform:uppercase" x-text="'KURS (' + selectedCurrency + ')'">KURS (USD)</div>
+              <div style="font-family:Syne;font-weight:800;font-size:20px;color:#34d399;margin-top:4px" x-text="formatIDR(manualKurs)">Rp 17.805,00</div>
+            </div>
+            <!-- Nilai Pabean Card -->
+            <div style="background:rgba(159,18,57,0.12);border:1px solid rgba(244,63,94,0.25);border-radius:12px;padding:12px 18px">
+              <div style="font-size:10px;font-weight:800;color:rgba(255,255,255,0.4);text-transform:uppercase" x-text="$store.lang.t('NILAI PABEAN', 'CUSTOMS VALUE', '海关完税价格', 'القيمة الجمركية')">NILAI PABEAN</div>
+              <div style="font-family:Syne;font-weight:800;font-size:20px;color:#fda4af;margin-top:4px" x-text="formatIDR(getNilaiPabean())">Rp 88.134.750,00</div>
+            </div>
+          </div>
+
+          <!-- Table Results -->
+          <div style="overflow-x:auto">
+            <table class="calc-table">
+              <thead>
+                <tr>
+                  <th style="width:50px">No</th>
+                  <th x-text="$store.lang.t('Jenis Pungutan', 'Type of Levy', '税费种类', 'نوع الضريبة')">Jenis Pungutan</th>
+                  <th x-text="$store.lang.t('Perhitungan', 'Calculation', '计算公式', 'الحساب')">Perhitungan</th>
+                  <th style="text-align:right" x-text="$store.lang.t('Nilai Pungutan (Rp)', 'Levy Value (Rp)', '应缴金额 (Rp)', 'قيمة الضريبة بالروبية')">Nilai Pungutan (Rp)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Row 1: BM -->
+                <tr>
+                  <td>1.</td>
+                  <td style="font-weight:700">
+                    <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#f97316;margin-right:8px"></span>
+                    <span x-text="$store.lang.t('Bea Masuk (BM)', 'Import Duty (BM)', '进口关税 (BM)', 'الرسوم الجمركية')">Bea Masuk (BM)</span>
+                  </td>
+                  <td style="color:rgba(255,255,255,0.6)" x-text="bmRate + '% x ' + $store.lang.t('Nilai Pabean', 'Customs Value', '完税价格', 'القيمة الجمركية')">10% x Nilai Pabean</td>
+                  <td style="text-align:right;font-weight:800;color:#f97316;font-family:monospace" x-text="formatNumber(getBeaMasuk(), 2)">8.814.000,00</td>
+                </tr>
+                <!-- Row 2: BMTP -->
+                <tr>
+                  <td>2.</td>
+                  <td style="font-weight:700">
+                    <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#ef4444;margin-right:8px"></span>
+                    <span x-text="$store.lang.t('Bea Masuk Tindakan Pengamanan (BMTP)', 'Safeguard Duty (BMTP)', '保障措施关税 (BMTP)', 'رسوم الحماية الجمركية')">Bea Masuk Tindakan Pengamanan (BMTP)</span>
+                  </td>
+                  <td style="color:rgba(255,255,255,0.6)" x-text="bmtpRate + '% x ' + $store.lang.t('Nilai Pabean', 'Customs Value', '完税价格', 'القيمة الجمركية')">0% x Nilai Pabean</td>
+                  <td style="text-align:right;font-weight:800;color:#ef4444;font-family:monospace" x-text="formatNumber(getBmtp(), 2)">0,00</td>
+                </tr>
+                <!-- Row 3: PPN -->
+                <tr>
+                  <td>3.</td>
+                  <td style="font-weight:700">
+                    <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#38bdf8;margin-right:8px"></span>
+                    <span x-text="$store.lang.t('PPN', 'VAT', '进口增值税 (PPN)', 'ضريبة القيمة المضافة')">PPN</span>
+                  </td>
+                  <td style="color:rgba(255,255,255,0.6)" x-text="ppnRate + '% x (' + $store.lang.t('Nilai Pabean + Bea Masuk', 'Customs Value + Duty', '完税价格 + 关税', 'القيمة الجمركية + الرسوم') + ')'">11% x (Nilai Pabean + Bea Masuk)</td>
+                  <td style="text-align:right;font-weight:800;color:#38bdf8;font-family:monospace" x-text="formatNumber(getPpn(), 2)">10.664.305,00</td>
+                </tr>
+                <!-- Row 4: PPnBM -->
+                <tr>
+                  <td>4.</td>
+                  <td style="font-weight:700">
+                    <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#ec4899;margin-right:8px"></span>
+                    <span x-text="$store.lang.t('PPnBM', 'Luxury Goods Tax (PPnBM)', '奢侈品税 (PPnBM)', 'ضريبة السلع الفاخرة')">PPnBM</span>
+                  </td>
+                  <td style="color:rgba(255,255,255,0.6)" x-text="ppnbmRate + '% x (' + $store.lang.t('Nilai Pabean + Bea Masuk', 'Customs Value + Duty', '完税价格 + 关税', 'القيمة الجمركية + الرسوم') + ')'">0% x (Nilai Pabean + Bea Masuk)</td>
+                  <td style="text-align:right;font-weight:800;color:#ec4899;font-family:monospace" x-text="formatNumber(getPpnbm(), 2)">0,00</td>
+                </tr>
+                <!-- Row 5: PPh -->
+                <tr>
+                  <td>5.</td>
+                  <td style="font-weight:700">
+                    <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#eab308;margin-right:8px"></span>
+                    <span x-text="$store.lang.t('PPh', 'Income Tax (PPh)', '所得税 (PPh)', 'ضريبة الدخل')">PPh</span>
+                  </td>
+                  <td style="color:rgba(255,255,255,0.6)" x-text="pphRate + '% x (' + $store.lang.t('Nilai Pabean + Bea Masuk', 'Customs Value + Duty', '完税价格 + 关税', 'القيمة الجمركية + الرسوم') + ')'">5% x (Nilai Pabean + Bea Masuk)</td>
+                  <td style="text-align:right;font-weight:800;color:#eab308;font-family:monospace" x-text="formatNumber(getPph(), 2)">4.847.412,00</td>
+                </tr>
+                <!-- Row 6: Denda -->
+                <tr>
+                  <td>6.</td>
+                  <td style="font-weight:700">
+                    <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#ef4444;margin-right:8px"></span>
+                    <span x-text="$store.lang.t('Denda', 'Fine', '罚金/滞纳金', 'الغرامة')">Denda</span>
+                  </td>
+                  <td style="color:rgba(255,255,255,0.6)" x-text="dendaRate + '% x ' + $store.lang.t('Bea Masuk', 'Import Duty', '关税金额', 'الرسوم الجمركية')">0% x Bea Masuk</td>
+                  <td style="text-align:right;font-weight:800;color:#ef4444;font-family:monospace" x-text="formatNumber(getDenda(), 2)">0,00</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Total (Violent Background) -->
+          <div style="background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);border-radius:12px;padding:16px 24px;display:flex;align-items:center;justify-content:space-between">
+            <span style="font-family:Syne;font-weight:800;font-size:18px;color:#fff;text-transform:uppercase" x-text="$store.lang.t('Jumlah Pungutan (Rp)', 'Total Levies (Rp)', '进口税费总计 (Rp)', 'إجمالي الرسوم والضرائب (روبية)')">Jumlah Pungutan (Rp)</span>
+            <span style="font-family:Syne;font-weight:800;font-size:24px;color:#fff" x-text="formatNumber(getTotalPungutan(), 2)">24.325.717,00</span>
+          </div>
+
+          <!-- Disclaimer -->
+          <div style="background:rgba(15,23,42,0.6);border:1px solid rgba(99,102,241,0.15);border-radius:10px;padding:12px 16px;font-size:11px;color:rgba(255,255,255,0.55);line-height:1.5;display:flex;align-items:start;gap:10px">
+            <span style="font-size:14px;color:#a78bfa;margin-top:-2px">ℹ</span>
+            <span x-text="$store.lang.t('Perhitungan berdasarkan kurs pajak resmi Kementerian Keuangan RI periode ' + '{{ $rates['pajak']['period'] ?? '03 Jun - 09 Jun 2026' }}' + '. Hasil ini bersifat simulasi.', 'Calculations are based on the official tax rate of the Ministry of Finance RI for period ' + '{{ $rates['pajak']['period'] ?? '03 Jun - 09 Jun 2026' }}' + '. This result is a simulation.', '计算依据印尼财政部官方海关税率汇率周期（' + '{{ $rates['pajak']['period'] ?? '03 Jun - 09 Jun 2026' }}' + '）。该结果仅作为模拟参考。', 'تعتمد الحسابات على أسعار الصرف الرسمية الصادرة عن وزارة المالية للفترة ' + '{{ $rates['pajak']['period'] ?? '03 Jun - 09 Jun 2026' }}' + '. هذه النتيجة هي مجرد محاكاة.')"></span>
+          </div>
+
+          <!-- Print-hide Action Buttons Footer -->
+          <div style="display:flex;gap:12px;margin-top:10px" class="print-hide">
+            <button @click="calcStep = 'input'" style="flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:#fff;padding:14px;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;transition:all 0.2s" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'" x-text="$store.lang.t('← Hitung Ulang / Ubah Data', '← Recalculate / Edit Inputs', '← 重新计算 / 修改数据', '← إعادة حساب / تعديل البيانات')">
+              ← Hitung Ulang / Ubah Data
+            </button>
+            <a :href="'https://wa.me/6281263027818?text=' + getWaMessage()" target="_blank"
+               style="flex:1.5;background:#25D366;color:#fff;text-align:center;padding:14px;border-radius:10px;text-decoration:none;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 8px 20px rgba(37,211,102,0.3);transition:transform 0.2s"
+               onmouseover="this.style.transform='scale(1.01)'" onmouseout="this.style.transform='none'">
+              <span>💬</span>
+              <span x-text="$store.lang.t('Konsultasi Logistik & Pengapalan via WhatsApp', 'WhatsApp Logistics & Shipping Consultation', '微信/WhatsApp 咨询进口物流与出运', 'استشارة اللوجستيات والشحن عبر الواتساب')">Konsultasi Logistik & Pengapalan via WhatsApp</span>
+            </a>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
   </div>
 </section>
 

@@ -8,6 +8,10 @@
 <meta property="article:modified_time" content="{{ $post->updated_at?->toISOString() }}">
 @if($post->category)<meta property="article:section" content="{{ $post->category }}">@endif
 <meta property="article:author" content="PT. Mora Multi Berkah (M2B)">
+@php
+  $keywords = $post->tags ? implode(', ', (array)json_decode($post->tags)) : ($post->category ?: 'ekspor, impor, logistik, bea cukai');
+@endphp
+<meta name="keywords" content="{{ $keywords }}">
 <style>
 .prose-m2b{line-height:1.9;font-size:16px;color:#333}
 .prose-m2b h1,.prose-m2b h2,.prose-m2b h3,.prose-m2b h4{font-family:Syne,sans-serif;font-weight:800;color:#0f0f14;margin-top:2em;margin-bottom:.6em;line-height:1.3;letter-spacing:-0.4px}
@@ -150,6 +154,7 @@ window.addEventListener('scroll',function(){
     @endif
 
     <div id="article-body" style="background:#fff;border-radius:16px;padding:48px;border:1px solid #e5e2dc" class="prose-m2b blog-article-box">
+      <!-- google_ad_section_start -->
       @php
         $rawContent = preg_replace('/<!--.*?-->/s', '', $post->content);
         $paragraphs = explode('</p>', $rawContent);
@@ -160,6 +165,7 @@ window.addEventListener('scroll',function(){
         @if($i === 3)<x-adsense-block type="in_content" />@endif
         @if($total > 10 && $i === 8)<x-adsense-block type="in_content" />@endif
       @endforeach
+      <!-- google_ad_section_end -->
     </div>
 
     {{-- Post-read ad — zona engagement tinggi setelah selesai baca --}}

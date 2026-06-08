@@ -110,6 +110,8 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
 ::-webkit-scrollbar-thumb{background:#c0bdb7;border-radius:3px}
 .container{max-width:1200px;margin:0 auto;padding:0 40px}
 @media(max-width:768px){.container{padding:0 20px}.hide-mobile{display:none!important}.show-mobile{display:flex!important}}@media(min-width:769px){.show-mobile{display:none!important}}
+.m2b-mobile-drawer { display: none; }
+@media(max-width:768px) { .m2b-mobile-drawer { display: block; } }
 </style>
 @yield('head')
 {{-- ═══ GOOGLE ADSENSE ═══ --}}
@@ -144,27 +146,7 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
     <div style="flex-shrink:0;background:#1e3a5f;color:#fff;padding:2px 14px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;z-index:1;margin-left:0">TERKINI</div>
     <div style="flex:1;overflow:hidden">
       <div class="ticker-track" style="gap:60px">
-        @php
-        $ticker = [
-          // M2B own — gold
-          ['📘 FREE E-Book Ekspor Impor untuk Pemula — Download GRATIS di ebook.m2b.co.id', 'https://ebook.m2b.co.id', true],
-          ['📘 E-Book Ekspor Impor tersedia GRATIS — kunjungi ebook.m2b.co.id sekarang', 'https://ebook.m2b.co.id', true],
-          // Local media — bisnis & logistik
-          ['📰 Bisnis.com: Portal Informasi Logistik & Ekspor-Impor', 'https://www.bisnis.com/topic/ekspor-impor', false],
-          ['🗞️ Kontan.co.id: Update Perdagangan & Rantai Pasok', 'https://www.kontan.co.id/tag/logistik', false],
-          ['📊 Katadata: Analisis Ekspor-Impor Komoditas', 'https://katadata.co.id/tags/ekspor-impor', false],
-          ['⚖️ Bea Cukai RI: Regulasi Kepabeanan Terbaru', 'https://www.beacukai.go.id/berita.html', false],
-          ['🛳️ Pelindo: Info Pelabuhan & Konektivitas Laut', 'https://www.pelindo.co.id/id/media/berita', false],
-          ['📋 DJPEN Kemendag: Peluang Pasar Ekspor Global', 'https://djpen.kemendag.go.id/app_frontend/contents/83-berita', false],
-          // International media
-          ['🌐 FreightWaves: Global freight & logistics news', 'https://www.freightwaves.com/news', false],
-          ['⚓ The Loadstar: International shipping & logistics updates', 'https://theloadstar.com', false],
-          ['🚢 JOC.com: Journal of Commerce — container shipping news', 'https://www.joc.com', false],
-          ['✈️ Air Cargo World: Global air freight industry news', 'https://aircargoworld.com/news/', false],
-          ['📦 Supply Chain Dive: Supply chain & logistics analysis', 'https://www.supplychaindive.com', false],
-        ];
-        @endphp
-        @foreach(array_merge($ticker,$ticker) as $item)
+        @foreach($tickerItems as $item)
         <a href="{{ $item[1] }}" target="_blank" rel="noopener" style="color:{{ $item[2] ? '#f5b91c' : '#d1d0cf' }};font-size:12px;white-space:nowrap;text-decoration:none;{{ $item[2] ? 'font-weight:600' : '' }}" onmouseover="this.style.color='{{ $item[2] ? '#ffd44d' : '#fff' }}'" onmouseout="this.style.color='{{ $item[2] ? '#f5b91c' : '#d1d0cf' }}'">{{ $item[0] }} ↗</a>
         @endforeach
       </div>
@@ -219,8 +201,8 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
     </button>
   </div>
   {{-- Mobile menu drawer --}}
-  <div x-show="mobileOpen" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-end="opacity-0"
-    style="border-top:1px solid #e5e2dc;background:#f7f5f0;padding:16px 24px 24px" class="show-mobile">
+  <div x-show="mobileOpen" x-cloak x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-end="opacity-0"
+    style="border-top:1px solid #e5e2dc;background:#f7f5f0;padding:16px 24px 24px" class="m2b-mobile-drawer">
     <div style="display:flex;flex-direction:column;gap:0">
       <a href="{{ route('home') }}#layanan" @click="mobileOpen=false" style="padding:14px 0;font-size:15px;font-weight:500;color:#333;text-decoration:none;border-bottom:1px solid #e5e2dc">
         <span x-text="$store.lang.t('📦 Layanan', '📦 Services', '📦 服务', '📦 الخدمات')">📦 Layanan</span>
@@ -237,9 +219,33 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
       <a href="{{ route('karir.index') }}" @click="mobileOpen=false" style="padding:14px 0;font-size:15px;font-weight:500;color:#333;text-decoration:none;border-bottom:1px solid #e5e2dc">
         <span x-text="$store.lang.t('💼 Karir', '💼 Careers', '💼 职业生涯', '💼 الوظائف')">💼 Karir</span>
       </a>
-      <button @click="$store.lang.toggle()" style="margin-top:16px;padding:14px;font-size:15px;font-weight:700;color:#1e3a5f;background:#fff;border:1px solid #e5e2dc;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
-        <span x-text="{ id: '🇮🇩 Bahasa Indonesia', en: '🇬🇧 English', zh: '🇨🇳 中文 (Chinese)', ar: '🇸🇦 العربية (Arabic)' }[$store.lang.current]">🇮🇩 Bahasa Indonesia</span>
-      </button>
+      {{-- Label Pilihan Bahasa --}}
+      <div style="margin-top:16px;font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;text-align:center">
+        Pilih Bahasa / Select Language
+      </div>
+      {{-- Grid Pilihan Bahasa --}}
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px">
+        <button @click="$store.lang.current = 'id'; localStorage.setItem('m2b_lang', 'id')"
+          :style="$store.lang.current === 'id' ? 'background:#1e3a5f;color:#fff;border-color:#1e3a5f' : 'background:#fff;color:#555;border-color:#e5e2dc'"
+          style="padding:10px 0;font-size:12px;font-weight:700;border:1px solid;border-radius:8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;transition:all .15s">
+          <span>🇮🇩</span><span>ID</span>
+        </button>
+        <button @click="$store.lang.current = 'en'; localStorage.setItem('m2b_lang', 'en')"
+          :style="$store.lang.current === 'en' ? 'background:#1e3a5f;color:#fff;border-color:#1e3a5f' : 'background:#fff;color:#555;border-color:#e5e2dc'"
+          style="padding:10px 0;font-size:12px;font-weight:700;border:1px solid;border-radius:8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;transition:all .15s">
+          <span>🇬🇧</span><span>EN</span>
+        </button>
+        <button @click="$store.lang.current = 'zh'; localStorage.setItem('m2b_lang', 'zh')"
+          :style="$store.lang.current === 'zh' ? 'background:#1e3a5f;color:#fff;border-color:#1e3a5f' : 'background:#fff;color:#555;border-color:#e5e2dc'"
+          style="padding:10px 0;font-size:12px;font-weight:700;border:1px solid;border-radius:8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;transition:all .15s">
+          <span>🇨🇳</span><span>中文</span>
+        </button>
+        <button @click="$store.lang.current = 'ar'; localStorage.setItem('m2b_lang', 'ar')"
+          :style="$store.lang.current === 'ar' ? 'background:#1e3a5f;color:#fff;border-color:#1e3a5f' : 'background:#fff;color:#555;border-color:#e5e2dc'"
+          style="padding:10px 0;font-size:12px;font-weight:700;border:1px solid;border-radius:8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;transition:all .15s">
+          <span>🇸🇦</span><span>العربية</span>
+        </button>
+      </div>
       <a href="https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20ingin%20konsultasi%20gratis" target="_blank" style="margin-top:10px;display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;border-radius:10px;background:#1e3a5f;color:#fff;text-decoration:none;font-weight:700;font-size:15px">
         <span x-text="$store.lang.t('💬 Konsultasi Gratis via WhatsApp', '💬 Free Consultation via WhatsApp', '💬 免费微信/WhatsApp咨询', '💬 استشارة مجانية عبر الواتساب')">💬 Konsultasi Gratis via WhatsApp</span>
       </a>
@@ -415,57 +421,6 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
 
 {{-- MORA AI Chat Widget --}}
 <x-mora-widget />
-
-{{-- Dynamic News Ticker Script --}}
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  const track = document.querySelector('.ticker-track');
-  if (!track) return;
-  
-  // Base static ebook items (always retained and prioritized)
-  const ebookItems = [
-    { text: '📘 FREE E-Book Ekspor Impor untuk Pemula — Download GRATIS di ebook.m2b.co.id', url: 'https://ebook.m2b.co.id', isEbook: true },
-    { text: '📘 E-Book Ekspor Impor tersedia GRATIS — kunjungi ebook.m2b.co.id sekarang', url: 'https://ebook.m2b.co.id', isEbook: true }
-  ];
-  
-  // Fetch real-time Indonesian logistics and export-import news from Google News feed via RSS-to-JSON API
-  fetch('https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3Dlogistik%2Bekspor%2Bimpor%2BIndonesia%26hl%3Did%26gl%3DID%26ceid%3DID%3Aid')
-    .then(res => res.json())
-    .then(data => {
-      if (data && data.status === 'ok' && data.items && data.items.length > 0) {
-        const newsItems = data.items.slice(0, 10).map(item => {
-          // Clean the title by removing the publisher suffix (e.g., " - ANTARA News")
-          let title = item.title;
-          const lastDash = title.lastIndexOf(' - ');
-          if (lastDash !== -1) {
-            title = title.substring(0, lastDash);
-          }
-          return {
-            text: `📰 ${title}`,
-            url: item.link,
-            isEbook: false
-          };
-        });
-        
-        // Combine E-Book CTA items and real-time news
-        const combined = [...ebookItems, ...newsItems];
-        // Double the list to support seamless marquee loop animation
-        const doubled = [...combined, ...combined];
-        
-        // Render links into the DOM
-        track.innerHTML = doubled.map(item => {
-          const color = item.isEbook ? '#f5b91c' : '#d1d0cf';
-          const hoverColor = item.isEbook ? '#ffd44d' : '#fff';
-          const weight = item.isEbook ? 'font-weight:600;' : '';
-          return `<a href="${item.url}" target="_blank" rel="noopener" style="color:${color};font-size:12px;white-space:nowrap;text-decoration:none;${weight}" onmouseover="this.style.color='${hoverColor}'" onmouseout="this.style.color='${color}'">${item.text} ↗</a>`;
-        }).join('');
-      }
-    })
-    .catch(err => {
-      console.warn('Failed to load dynamic news feed, using static fallback:', err);
-    });
-});
-</script>
 
 </body>
 </html>

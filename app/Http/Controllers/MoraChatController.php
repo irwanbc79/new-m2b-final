@@ -78,7 +78,13 @@ PROMPT;
             ]
         );
 
-        if ($response->failed()) return ['', 'gemini_error'];
+        if ($response->failed()) {
+            Log::warning('MORA Gemini API failed', [
+                'status' => $response->status(),
+                'error'  => $response->body()
+            ]);
+            return ['', 'gemini_error'];
+        }
         return [$response->json('candidates.0.content.parts.0.text', ''), null];
     }
 
@@ -107,8 +113,56 @@ PROMPT;
                 'messages' => $messages,
             ]);
 
-        if ($response->failed()) return ['', 'claude_error'];
+        if ($response->failed()) {
+            Log::warning('MORA Claude API failed', [
+                'status' => $response->status(),
+                'error'  => $response->body()
+            ]);
+            return ['', 'claude_error'];
+        }
         return [$response->json('content.0.text', ''), null];
+    }
+
+    private function callDeepseek(array $history): array
+    {
+        $key = config('services.mora.deepseek_key');
+        if (!$key) {
+            Log::warning('MORA Deepseek API key is missing');
+            return ['', 'deepseek_key_missing'];
+        }
+
+        $messages = [];
+        $messages[] = [
+            'role' => 'system',
+            'content' => self::SYSTEM_PROMPT
+        ];
+        foreach ($history as $m) {
+            $messages[] = [
+                'role' => $m['role'],
+                'content' => $m['content']
+            ];
+        }
+
+        $response = Http::timeout(30)
+            ->withHeaders([
+                'Authorization' => "Bearer {$key}",
+                'Content-Type' => 'application/json',
+            ])
+            ->post('https://api.deepseek.com/chat/completions', [
+                'model'      => 'deepseek-chat',
+                'messages'   => $messages,
+                'max_tokens' => 500,
+                'temperature'=> 0.7,
+            ]);
+
+        if ($response->failed()) {
+            Log::warning('MORA Deepseek API failed', [
+                'status' => $response->status(),
+                'error'  => $response->body()
+            ]);
+            return ['', 'deepseek_error'];
+        }
+        return [$response->json('choices.0.message.content', ''), null];
     }
 
     public function chat(Request $request): JsonResponse
@@ -121,21 +175,51 @@ PROMPT;
 
         $history  = $request->input('history');
         $provider = $this->selectProvider($history);
+        $tried = [];
 
-        [$reply, $error] = $provider === 'gemini'
-            ? $this->callGemini($history)
-            : $this->callClaude($history);
+        $reply = null;
+        $error = null;
+        $currentProvider = $provider;
 
-        // Fallback: if gemini fails, try claude
-        if ($error && $provider === 'gemini') {
+        // Try primary provider
+        $tried[] = $currentProvider;
+        if ($currentProvider === 'gemini') {
+            [$reply, $error] = $this->callGemini($history);
+        } else {
             [$reply, $error] = $this->callClaude($history);
         }
 
+        // 1st Fallback
+        if ($error) {
+            $nextProvider = ($currentProvider === 'gemini') ? 'claude' : 'gemini';
+            $tried[] = $nextProvider;
+            Log::info("MORA Fallback 1: Trying {$nextProvider} because {$currentProvider} failed.");
+            if ($nextProvider === 'gemini') {
+                [$reply, $error] = $this->callGemini($history);
+            } else {
+                [$reply, $error] = $this->callClaude($history);
+            }
+            $currentProvider = $nextProvider;
+        }
+
+        // 2nd Fallback (Deepseek)
+        if ($error) {
+            $nextProvider = 'deepseek';
+            $tried[] = $nextProvider;
+            Log::info("MORA Fallback 2: Trying {$nextProvider} because previous providers failed.");
+            [$reply, $error] = $this->callDeepseek($history);
+            $currentProvider = $nextProvider;
+        }
+
         if (!$reply) {
+            Log::error('MORA Chat failed completely. All providers failed.', [
+                'history' => $history,
+                'tried'   => $tried
+            ]);
             return response()->json(['error' => 'Maaf, layanan sedang tidak tersedia. Silakan hubungi kami via WhatsApp.'], 503);
         }
 
-        return response()->json(['reply' => $reply, 'provider' => $provider]);
+        return response()->json(['reply' => $reply, 'provider' => $currentProvider]);
     }
 
     public function lead(Request $request): JsonResponse

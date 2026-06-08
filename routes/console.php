@@ -10,3 +10,6 @@ Artisan::command('inspire', function () {
 
 // Generate sitemap.xml otomatis setiap hari jam 01:00
 Schedule::command('sitemap:generate')->dailyAt('01:00');
+
+// Refresh exchange rates otomatis setiap jam
+Schedule::command('exchange-rates:refresh')->hourly();

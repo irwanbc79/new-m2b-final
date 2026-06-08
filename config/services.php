@@ -47,6 +47,7 @@ return [
     'mora' => [
         'gemini_key' => env('MORA_GEMINI_KEY'),
         'claude_key' => env('MORA_CLAUDE_KEY'),
+        'deepseek_key' => env('MORA_DEEPSEEK_KEY'),
     ],
 
 ];

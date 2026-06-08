@@ -6,10 +6,11 @@ use App\Models\TeamMember;
 
 class PageController extends Controller
 {
-    public function home()
+    public function home(\App\Services\ExchangeRateService $rateService)
     {
         $latestPosts = Post::published()->limit(3)->get();
-        return view("pages.home", compact("latestPosts"));
+        $rates = $rateService->getRates();
+        return view("pages.home", compact("latestPosts", "rates"));
     }
 
     public function about()

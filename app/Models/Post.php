@@ -73,9 +73,15 @@ class Post extends Model
 
     public function getFeaturedImageUrlAttribute(): string
     {
-        return $this->featured_image
-            ? asset('storage/' . $this->featured_image)
-            : asset('images/og-m2b.jpg');
+        if (!$this->featured_image) {
+            return asset('images/og-m2b.jpg');
+        }
+
+        if (filter_var($this->featured_image, FILTER_VALIDATE_URL)) {
+            return $this->featured_image;
+        }
+
+        return asset('storage/' . $this->featured_image);
     }
 
     public function getReadingTimeAttribute(): int
