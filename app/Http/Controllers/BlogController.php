@@ -14,7 +14,7 @@ class BlogController extends Controller
         $cacheKey = 'blog_index_' . $page . ($category ? '_' . Str::slug($category) : '');
 
         $posts = Cache::remember($cacheKey, 3600, function () use ($category) {
-            $query = Post::published();
+            $query = Post::published()->latest('published_at');
             if ($category) {
                 $query->where('category', $category);
             }
@@ -29,7 +29,21 @@ class BlogController extends Controller
                 ->take(3)->values()->toArray();
         });
 
-        return view("pages.blog.index", compact("posts","categories","hotIds","category"));
+        $featured = Cache::remember('blog_featured_post', 3600, function () {
+            return Post::published()->latest('published_at')->first();
+        });
+
+        $popular = Cache::remember('blog_popular_posts', 3600, function () use ($hotIds) {
+            $pop = Post::published()->whereIn('id', $hotIds)->get()
+                       ->sortByDesc(fn($p) => Cache::get("post_views_{$p->id}", 0))
+                       ->values();
+            if ($pop->isEmpty()) {
+                return Post::published()->latest('published_at')->take(4)->get();
+            }
+            return $pop;
+        });
+
+        return view("pages.blog.index", compact("posts", "categories", "hotIds", "category", "featured", "popular"));
     }
 
     public function show(string $slug)
