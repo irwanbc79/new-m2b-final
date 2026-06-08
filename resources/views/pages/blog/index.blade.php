@@ -138,13 +138,17 @@
       @php
         $featured = $posts->first();
         $fc = $featured->category ?? '';
-        match($fc) {
-          'Ekspor'       => [$fbg, $fem] = ['linear-gradient(135deg,#1e3a5f 0%,#1a6b3a 100%)', '🚢'],
-          'Impor'        => [$fbg, $fem] = ['linear-gradient(135deg,#1e3a5f 0%,#4a2a7f 100%)', '📥'],
-          'UMKM'         => [$fbg, $fem] = ['linear-gradient(135deg,#1e3a5f 0%,#7f5a1e 100%)', '🏪'],
-          'Bea Cukai'    => [$fbg, $fem] = ['linear-gradient(135deg,#5f2a1e 0%,#1e3a5f 100%)', '🛃'],
-          default        => [$fbg, $fem] = ['linear-gradient(135deg,#1e3a5f 0%,#2a5298 100%)', '📦'],
-        };
+        $fbg = 'linear-gradient(135deg,#1e3a5f 0%,#2a5298 100%)';
+        $fem = '📦';
+        if ($fc === 'Ekspor') {
+          [$fbg, $fem] = ['linear-gradient(135deg,#1e3a5f 0%,#1a6b3a 100%)', '🚢'];
+        } elseif ($fc === 'Impor') {
+          [$fbg, $fem] = ['linear-gradient(135deg,#1e3a5f 0%,#4a2a7f 100%)', '📥'];
+        } elseif ($fc === 'UMKM') {
+          [$fbg, $fem] = ['linear-gradient(135deg,#1e3a5f 0%,#7f5a1e 100%)', '🏪'];
+        } elseif ($fc === 'Bea Cukai') {
+          [$fbg, $fem] = ['linear-gradient(135deg,#5f2a1e 0%,#1e3a5f 100%)', '🛃'];
+        }
         $fDaysOld = $featured->published_at ? now()->diffInDays($featured->published_at) : 999;
         $fIsNew = $fDaysOld <= 7;
         $fIsUpdated = $featured->updated_at && $featured->updated_at->diffInDays(now()) < 14
@@ -220,13 +224,17 @@
         
         @php
           $pc = $post->category ?? '';
-          match($pc) {
-            'Ekspor'    => [$bg, $em] = ['linear-gradient(135deg,#1e3a5f 0%,#1a6b3a 100%)', '🚢'],
-            'Impor'     => [$bg, $em] = ['linear-gradient(135deg,#1e3a5f 0%,#4a2a7f 100%)', '📥'],
-            'UMKM'      => [$bg, $em] = ['linear-gradient(135deg,#1e3a5f 0%,#7f5a1e 100%)', '🏪'],
-            'Bea Cukai' => [$bg, $em] = ['linear-gradient(135deg,#5f2a1e 0%,#1e3a5f 100%)', '🛃'],
-            default     => [$bg, $em] = ['linear-gradient(135deg,#1e3a5f 0%,#2a5298 100%)', '📦'],
-          };
+          $bg = 'linear-gradient(135deg,#1e3a5f 0%,#2a5298 100%)';
+          $em = '📦';
+          if ($pc === 'Ekspor') {
+            [$bg, $em] = ['linear-gradient(135deg,#1e3a5f 0%,#1a6b3a 100%)', '🚢'];
+          } elseif ($pc === 'Impor') {
+            [$bg, $em] = ['linear-gradient(135deg,#1e3a5f 0%,#4a2a7f 100%)', '📥'];
+          } elseif ($pc === 'UMKM') {
+            [$bg, $em] = ['linear-gradient(135deg,#1e3a5f 0%,#7f5a1e 100%)', '🏪'];
+          } elseif ($pc === 'Bea Cukai') {
+            [$bg, $em] = ['linear-gradient(135deg,#5f2a1e 0%,#1e3a5f 100%)', '🛃'];
+          }
           $daysOld = $post->published_at ? now()->diffInDays($post->published_at) : 999;
           $isNew     = $daysOld <= 7;
           $isUpdated = $post->updated_at && $post->updated_at->diffInDays(now()) < 14
