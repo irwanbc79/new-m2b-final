@@ -383,7 +383,7 @@
     selectedPreset: 'custom',
     bmRate: 10,
     bmtpRate: 0,
-    ppnRate: 11,
+    ppnRate: 12,
     ppnbmRate: 0,
     pphRate: 7.5,
     dendaRate: 0,
@@ -400,12 +400,12 @@
       }
     },
     presets: {
-      elektronik: { bm: 0, ppn: 11, ppnbm: 0, pphApi: 10, pphNonApi: 10, bmtp: 0, denda: 0 },
-      pakaian: { bm: 25, ppn: 11, ppnbm: 0, pphApi: 7.5, pphNonApi: 7.5, bmtp: 0, denda: 0 },
-      makanan: { bm: 5, ppn: 11, ppnbm: 0, pphApi: 2.5, pphNonApi: 7.5, bmtp: 0, denda: 0 },
-      kosmetik: { bm: 15, ppn: 11, ppnbm: 0, pphApi: 7.5, pphNonApi: 7.5, bmtp: 0, denda: 0 },
-      sepatu: { bm: 30, ppn: 11, ppnbm: 0, pphApi: 7.5, pphNonApi: 7.5, bmtp: 0, denda: 0 },
-      custom: { bm: 10, ppn: 11, ppnbm: 0, pphApi: 7.5, pphNonApi: 7.5, bmtp: 0, denda: 0 }
+      elektronik: { bm: 0, ppn: 12, ppnbm: 0, pphApi: 10, pphNonApi: 10, bmtp: 0, denda: 0 },
+      pakaian: { bm: 25, ppn: 12, ppnbm: 0, pphApi: 7.5, pphNonApi: 7.5, bmtp: 0, denda: 0 },
+      makanan: { bm: 5, ppn: 12, ppnbm: 0, pphApi: 2.5, pphNonApi: 7.5, bmtp: 0, denda: 0 },
+      kosmetik: { bm: 15, ppn: 12, ppnbm: 0, pphApi: 7.5, pphNonApi: 7.5, bmtp: 0, denda: 0 },
+      sepatu: { bm: 30, ppn: 12, ppnbm: 0, pphApi: 7.5, pphNonApi: 7.5, bmtp: 0, denda: 0 },
+      custom: { bm: 10, ppn: 12, ppnbm: 0, pphApi: 7.5, pphNonApi: 7.5, bmtp: 0, denda: 0 }
     },
     applyPreset(name) {
       this.selectedPreset = name;
@@ -536,7 +536,7 @@
       this.selectedPreset = 'custom';
       this.bmRate = 10;
       this.bmtpRate = 0;
-      this.ppnRate = 11;
+      this.ppnRate = 12;
       this.ppnbmRate = 0;
       this.pphRate = 7.5;
       this.dendaRate = 0;
@@ -949,7 +949,7 @@
                     <span class="calc-table-dot" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#38bdf8;margin-right:8px"></span>
                     <span x-text="$store.lang.t('PPN', 'VAT', '进口增值税 (PPN)', 'ضريبة القيمة المضافة')">PPN</span>
                   </td>
-                  <td class="calc-table-formula" style="color:rgba(255,255,255,0.6)" x-text="ppnRate + '% x (' + $store.lang.t('Nilai Pabean + Bea Masuk', 'Customs Value + Duty', '完税价格 + 关税', 'القيمة الجمركية + الرسوم') + ')'">11% x (Nilai Pabean + Bea Masuk)</td>
+                  <td class="calc-table-formula" style="color:rgba(255,255,255,0.6)" x-text="ppnRate + '% x (' + $store.lang.t('Nilai Pabean + Bea Masuk', 'Customs Value + Duty', '完税价格 + 关税', 'القيمة الجمركية + الرسوم') + ')'">12% x (Nilai Pabean + Bea Masuk)</td>
                   <td class="calc-table-value" style="text-align:right;font-weight:800;color:#38bdf8;font-family:monospace" x-text="formatNumber(getPpn(), 2)">10.664.305,00</td>
                 </tr>
                 <!-- Row 4: PPnBM -->
