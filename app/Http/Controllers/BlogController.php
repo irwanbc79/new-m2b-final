@@ -10,6 +10,7 @@ class BlogController extends Controller
     public function index()
     {
         $category = request()->get('category');
+        $search   = request()->get('search');
         $page     = request()->get('page', 1);
         $cacheKey = 'blog_index_' . $page . ($category ? '_' . Str::slug($category) : '');
 
@@ -43,7 +44,7 @@ class BlogController extends Controller
             return $pop;
         });
 
-        return view("pages.blog.index", compact("posts", "categories", "hotIds", "category", "featured", "popular"));
+        return view("pages.blog.index", compact("posts", "categories", "hotIds", "category", "featured", "popular", "search"));
     }
 
     public function show(string $slug)

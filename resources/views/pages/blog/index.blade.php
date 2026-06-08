@@ -26,7 +26,7 @@
 @endsection
 
 @section('content')
-<div x-data="{ search: '' }">
+<div x-data="{ search: '{{ $search ?? '' }}' }">
 
 {{-- ═══ HERO ═══ --}}
 <div style="background:linear-gradient(135deg, #0B1120 0%, #1e3a5f 100%); padding: 80px 20px 60px; position: relative; overflow: hidden;" class="blog-hero">
