@@ -30,16 +30,10 @@
         x-text="$store.lang.t('💰 Minta Penawaran Harga', '💰 Request Quote', '💰 索取价格报价', '💰 طلب عرض سعر')">
         💰 Minta Penawaran Harga
       </a>
-      <a :href="$store.lang.t(
-          'https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20ingin%20konsultasi%20gratis',
-          'https://wa.me/6281263027818?text=Hello%20M2B,%20I%20would%20like%20a%20free%20consultation',
-          'https://wa.me/6281263027818?text=您好M2B，我想进行免费咨询',
-          'https://wa.me/6281263027818?text=مرحباً%20M2B،%20أرغب%20في%20استشارة%20مجانية'
-        )"
-        target="_blank" rel="noopener"
+      <a href="#" @click.prevent="waOpen = false; window.dispatchEvent(new CustomEvent('open-b2b-modal'))"
         style="padding:8px 14px;border-radius:20px;background:#fff;border:1.5px solid #25D366;color:#075e54;font-size:12px;font-weight:700;text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,0.1);white-space:nowrap"
-        x-text="$store.lang.t('🎓 Konsultasi Gratis', '🎓 Free Consultation', '🎓 免费咨询', '🎓 استشارة مجانية')">
-        🎓 Konsultasi Gratis
+        x-text="$store.lang.t('💼 Ajukan Inquiry B2B', '💼 Submit B2B Inquiry', '💼 提交 B2B 询盘', '💼 تقديم استعلام B2B')">
+        💼 Ajukan Inquiry B2B
       </a>
       <a :href="$store.lang.t(
           'https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20ingin%20cek%20status%20shipment%20saya',
@@ -79,16 +73,10 @@
   class="show-mobile"
   x-cloak
   style="position:fixed;bottom:0;left:0;right:0;z-index:9990;background:#fff;border-top:1px solid #e5e2dc;padding:10px 16px;display:flex;gap:8px;box-shadow:0 -4px 20px rgba(0,0,0,0.1)">
-  <a :href="$store.lang.t(
-      'https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20ingin%20konsultasi%20gratis',
-      'https://wa.me/6281263027818?text=Hello%20M2B,%20I%20would%20like%20a%20free%20consultation',
-      'https://wa.me/6281263027818?text=您好M2B，我想进行免费咨询',
-      'https://wa.me/6281263027818?text=مرحباً%20M2B،%20أرغب%20في%20استشارة%20مجانية'
-    )"
-    target="_blank" rel="noopener"
+  <a href="#" @click.prevent="window.dispatchEvent(new CustomEvent('open-b2b-modal'))"
     style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:12px;border-radius:10px;background:#25D366;color:#fff;text-decoration:none;font-weight:700;font-size:13px"
-    x-text="$store.lang.t('💬 Konsultasi Gratis', '💬 Consultation', '💬 免费咨询', '💬 استشارة مجانية')">
-    💬 Konsultasi Gratis
+    x-text="$store.lang.t('💼 Inquiry B2B', '💼 B2B Inquiry', '💼 B2B 询盘', '💼 استفسار B2B')">
+    💼 Inquiry B2B
   </a>
   <a href="https://portal.m2b.co.id" target="_blank" rel="noopener"
     style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:12px;border-radius:10px;background:#1e3a5f;color:#fff;text-decoration:none;font-weight:700;font-size:13px"

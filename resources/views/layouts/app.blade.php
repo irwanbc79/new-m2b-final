@@ -188,9 +188,9 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
       class="hide-mobile">
       <span x-text="{ id: '🇮🇩 ID', en: '🇬🇧 EN', zh: '🇨🇳 中文', ar: '🇸🇦 العربية' }[$store.lang.current]">🇮🇩 ID</span>
     </button>
-    <a href="https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20ingin%20konsultasi%20gratis" target="_blank"
+    <a href="#" @click.prevent="window.dispatchEvent(new CustomEvent('open-b2b-modal'))"
       style="display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:8px;background:#1e3a5f;color:#fff;text-decoration:none;font-weight:600;font-size:13px;white-space:nowrap;flex-shrink:0" class="hide-mobile">
-      <span x-text="$store.lang.t('💬 Konsultasi Gratis', '💬 Free Consultation', '💬 免费咨询', '💬 استشارة مجانية')">💬 Konsultasi Gratis</span>
+      <span x-text="$store.lang.t('💼 Inquiry B2B', '💼 B2B Inquiry', '💼 B2B 询盘', '💼 استعلام B2B')">💼 Inquiry B2B</span>
     </a>
     {{-- Hamburger button — mobile only --}}
     <button @click="mobileOpen = !mobileOpen" class="show-mobile"
@@ -246,8 +246,8 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
           <span>🇸🇦</span><span>العربية</span>
         </button>
       </div>
-      <a href="https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20ingin%20konsultasi%20gratis" target="_blank" style="margin-top:10px;display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;border-radius:10px;background:#1e3a5f;color:#fff;text-decoration:none;font-weight:700;font-size:15px">
-        <span x-text="$store.lang.t('💬 Konsultasi Gratis via WhatsApp', '💬 Free Consultation via WhatsApp', '💬 免费微信/WhatsApp咨询', '💬 استشارة مجانية عبر الواتساب')">💬 Konsultasi Gratis via WhatsApp</span>
+      <a href="#" @click.prevent="mobileOpen = false; window.dispatchEvent(new CustomEvent('open-b2b-modal'))" style="margin-top:10px;display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;border-radius:10px;background:#1e3a5f;color:#fff;text-decoration:none;font-weight:700;font-size:15px">
+        <span x-text="$store.lang.t('💼 Ajukan Inquiry B2B', '💼 Submit B2B Inquiry', '💼 提交 B2B 询盘', '💼 تقديم استعلام B2B')">💼 Ajukan Inquiry B2B</span>
       </a>
     </div>
   </div>

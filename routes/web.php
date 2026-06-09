@@ -4,6 +4,7 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CareerController;
 use App\Http\Controllers\MoraChatController;
+use App\Http\Controllers\B2bInquiryController;
 
 Route::get("/", [PageController::class, "home"])->name("home");
 Route::get("/tentang-kami", [PageController::class, "about"])->name("about");
@@ -23,6 +24,7 @@ Route::get("/ketentuan-layanan", [PageController::class, "terms"])->name("terms"
 Route::middleware('throttle:30,1')->group(function () {
     Route::post("/mora/chat", [MoraChatController::class, "chat"])->name("mora.chat");
     Route::post("/mora/lead", [MoraChatController::class, "lead"])->name("mora.lead");
+    Route::post("/b2b/inquiry", [B2bInquiryController::class, "submit"])->name("b2b.inquiry.submit");
 });
 
 // Fallback: tangkap URL WordPress lama dan redirect 301 ke Laravel
