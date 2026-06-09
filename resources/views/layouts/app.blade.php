@@ -524,8 +524,14 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
     },
 
     submitB2bForm() {
-      if (!this.inquiryName || !this.inquiryCompany || !this.inquiryNpwp || !this.inquiryEmail || !this.inquiryPhone || !this.inquiryVolume) {
+      if (!this.inquiryName || !this.inquiryCompany || !this.inquiryNpwp || !this.inquiryEmail || !this.inquiryPhone) {
         alert(this.$store.lang.t('Mohon lengkapi semua kolom wajib!', 'Please fill in all required fields!', '请填写所有必填字段！', 'يرجى ملء جميع الحقول المطلوبة!'));
+        return;
+      }
+      
+      // Volume is only required for Option B (free with shipping)
+      if (this.inquiryService === 'free_ship' && !this.inquiryVolume) {
+        alert(this.$store.lang.t('Mohon masukkan volume atau berat kargo Anda!', 'Please enter your cargo volume or weight!', '请输入您的货物运输体积或重量！', 'يرجى إدخال حجم أو وزن الشحنة!'));
         return;
       }
       
@@ -653,7 +659,7 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
       <!-- STEP 2: FORM INPUTS -->
       <div x-show="inquiryStep === 'form'" style="padding:24px 32px 32px 32px;display:flex;flex-direction:column;gap:18px">
         <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.05);padding-bottom:10px">
-          <span style="font-size:11px;font-weight:800;text-transform:uppercase;color:rgba(255,255,255,0.5);letter-spacing:0.5px" x-text="$store.lang.t('Isi Detail Kualifikasi & Dokumen', 'Fill Qualification Details & Documents', '填写资格详情与单证信息', 'ملء تفاصيل التأهيل والمستندات')">Isi Detail Kualifikasi & Dokumen</span>
+          <span style="font-size:11px;font-weight:800;text-transform:uppercase;color:#4a9eda;letter-spacing:0.5px" x-text="inquiryService === 'paid' ? $store.lang.t('Opsi A: Detail Riset Mandiri', 'Option A: Independent Advisory Details', '选项 A：独立付费评估详情', 'الخيار أ: تفاصيل الاستشارة المستقلة') : $store.lang.t('Opsi B: Detail Kualifikasi Pengapalan', 'Option B: Shipping Qualification Details', '选项 B：委托运输资格详情', 'الخيار ب: تفاصيل تأهيل الشحن')">Opsi B: Detail Kualifikasi Pengapalan</span>
           <button @click="inquiryStep = 'policy'" style="background:transparent;border:none;color:#4a9eda;font-size:11px;font-weight:700;cursor:pointer" x-text="$store.lang.t('← Kembali', '← Back', '← 返回', '← العودة')">← Kembali</button>
         </div>
 
@@ -691,7 +697,7 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
           <!-- Shipment Type & Volume (1 Row) -->
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
             <div>
-              <label class="calc-label" x-text="$store.lang.t('Mode Pengiriman *', 'Shipment Mode *', '运输方式 *', 'طريقة الشحن *')">Mode Pengiriman *</label>
+              <label class="calc-label" x-text="inquiryService === 'free_ship' ? $store.lang.t('Mode Pengiriman *', 'Shipment Mode *', '运输方式 *', 'طريقة الشحن *') : $store.lang.t('Mode Pengiriman (Opsional)', 'Shipment Mode (Optional)', '运输方式（选填）', 'طريقة الشحن (اختياري)')">Mode Pengiriman *</label>
               <select x-model="inquiryShipmentType" class="calc-select">
                 <option value="Sea FCL">🚢 Sea Freight - FCL (Container)</option>
                 <option value="Sea LCL">🚢 Sea Freight - LCL (Cargo Eceran)</option>
@@ -699,22 +705,22 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
               </select>
             </div>
             <div>
-              <label class="calc-label" x-text="$store.lang.t('Volume / Berat Barang *', 'Volume / Weight *', '货量/毛重 *', 'الحجم / الوزن *')">Volume / Berat Barang *</label>
-              <input type="text" x-model="inquiryVolume" placeholder="Contoh: 1x20 Ft / 5.000 kg" class="calc-input" required />
+              <label class="calc-label" x-text="inquiryService === 'free_ship' ? $store.lang.t('Volume / Berat Barang *', 'Volume / Weight *', '货量/毛重 *', 'الحجم / الوزن *') : $store.lang.t('Volume / Berat Barang (Opsional)', 'Volume / Weight (Optional)', '货量/毛重（选填）', 'الحجم / الوزن (اختياري)')">Volume / Berat Barang *</label>
+              <input type="text" x-model="inquiryVolume" placeholder="Contoh: 1x20 Ft / 5.000 kg" class="calc-input" />
             </div>
           </div>
 
           <!-- Route & Date (1 Row) -->
           <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:12px">
             <div>
-              <label class="calc-label" x-text="$store.lang.t('Rute: Pelabuhan Asal & Tujuan', 'Route: Loading & Discharge Ports', '航线：始发港与目的港', 'خط السير: ميناء الشحن والوصول')">Rute: Pelabuhan Asal & Tujuan</label>
+              <label class="calc-label" x-text="inquiryService === 'free_ship' ? $store.lang.t('Rute: Pelabuhan Asal & Tujuan', 'Route: Loading & Discharge Ports', '航线：始发港与目的港', 'خط السير: ميناء الشحن والوصول') : $store.lang.t('Rute: Pelabuhan Asal & Tujuan (Opsional)', 'Route: Loading & Discharge Ports (Optional)', '航线（选填）', 'خط السير (اختياري)')">Rute: Pelabuhan Asal & Tujuan</label>
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
                 <input type="text" x-model="inquiryOrigin" placeholder="POL (Shanghai)" class="calc-input" style="font-size:12px!important" />
                 <input type="text" x-model="inquiryDestination" placeholder="POD (Belawan)" class="calc-input" style="font-size:12px!important" />
               </div>
             </div>
             <div>
-              <label class="calc-label" x-text="$store.lang.t('Estimasi Tanggal Kirim', 'Est. Shipment Date', '预计出运日期', 'تاريخ الشحن المتوقع')">Estimasi Tanggal Kirim</label>
+              <label class="calc-label" x-text="inquiryService === 'free_ship' ? $store.lang.t('Estimasi Tanggal Kirim', 'Est. Shipment Date', '预计出运日期', 'تاريخ الشحن المتوقع') : $store.lang.t('Estimasi Tanggal Kirim (Opsional)', 'Est. Date (Optional)', '预计出运日期（选填）', 'تاريخ الشحن المتوقع (اختياري)')">Estimasi Tanggal Kirim</label>
               <input type="text" x-model="inquiryEstDate" placeholder="Contoh: Akhir Bulan Ini" class="calc-input" />
             </div>
           </div>
