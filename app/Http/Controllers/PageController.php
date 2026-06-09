@@ -21,12 +21,12 @@ class PageController extends Controller
                 ->where('file_path', '!=', '')
                 ->select('id', 'file_path')
                 ->orderBy('id', 'desc')
-                ->limit(60)
+                ->limit(100)
                 ->get();
 
             if ($photosPool->isNotEmpty()) {
                 $fieldPhotos = $photosPool->shuffle()
-                    ->take(20)
+                    ->take(40)
                     ->map(function ($photo) {
                         $photo->url = 'https://portal.m2b.co.id/storage/' . $photo->file_path;
                         return $photo;

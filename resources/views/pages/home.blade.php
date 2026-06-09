@@ -1669,13 +1669,13 @@
 <style>
 .mosaic-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 16px;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 10px;
 }
 .mosaic-item {
   position: relative;
-  aspect-ratio: 4/3;
-  border-radius: 12px;
+  aspect-ratio: 1/1;
+  border-radius: 8px;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: #111a36;
@@ -1694,39 +1694,39 @@
   opacity: 0.25;
   filter: grayscale(40%) blur(1px);
 }
-/* Smooth scale up on hover */
+/* Smooth scale up on hover (pop out dramatically to a medium size) */
 .mosaic-item:hover {
-  transform: scale(1.35);
+  transform: scale(2.3);
   z-index: 10;
   border-color: rgba(74, 158, 218, 0.6);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
 }
 
 @media (max-width: 991px) {
   .mosaic-grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
   }
   .mosaic-item:hover {
-    transform: scale(1.25);
+    transform: scale(2.0);
   }
 }
 @media (max-width: 767px) {
   .mosaic-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
   }
   .mosaic-item:hover {
-    transform: scale(1.2);
+    transform: scale(1.7);
   }
 }
 @media (max-width: 480px) {
   .mosaic-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
   }
   .mosaic-item:hover {
-    transform: scale(1.15);
+    transform: scale(1.5);
   }
 }
 </style>
