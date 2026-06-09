@@ -24,6 +24,7 @@ class B2bInquiryController extends Controller
             'email'             => 'required|email|max:100',
             'phone'             => 'required|string|max:30',
             'service_type'      => 'required|in:paid,free_ship',
+            'cargo_direction'   => 'required|in:impor,ekspor,domestik',
             'shipment_type'     => 'required_if:service_type,free_ship|nullable|string|max:50',
             'volume'            => 'required_if:service_type,free_ship|nullable|string|max:100',
             'route_origin'      => 'nullable|string|max:100',
@@ -78,6 +79,7 @@ class B2bInquiryController extends Controller
                 'email'             => $request->input('email'),
                 'phone'             => $request->input('phone'),
                 'service_type'      => $request->input('service_type'),
+                'cargo_direction'   => $request->input('cargo_direction'),
                 'shipment_type'     => $request->input('shipment_type'),
                 'volume'            => $request->input('volume'),
                 'route_origin'      => $request->input('route_origin'),
@@ -102,7 +104,7 @@ class B2bInquiryController extends Controller
 
                 // Attach files
                 foreach ($storedFiles as $file) {
-                    $filePath = storage_path('app/' . $file['path']);
+                    $filePath = Storage::path($file['path']);
                     if (file_exists($filePath)) {
                         $message->attach($filePath, [
                             'as'   => $file['original_name'],
@@ -149,10 +151,13 @@ class B2bInquiryController extends Controller
             ? 'Opsi A (Riset Berbayar Rp 150.000)' 
             : 'Opsi B (Bundling Freight - GRATIS)';
 
+        $direction = $inquiry->cargo_direction === 'impor' ? 'Impor (Import)' : ($inquiry->cargo_direction === 'ekspor' ? 'Ekspor (Export)' : 'Domestik (Domestic)');
+
         $msg = "Halo M2B, saya baru saja mengajukan B2B Cargo Inquiry melalui website M2B. Berikut detail data perusahaan kami:\n\n"
              . "· Nama Perusahaan: " . $inquiry->company . "\n"
              . "· NPWP: " . $inquiry->npwp . "\n"
              . "· Nama Kontak: " . $inquiry->name . "\n"
+             . "· Jalur Pengiriman: " . $direction . "\n"
              . "· Rencana Pengiriman: " . $inquiry->shipment_type . " (" . $inquiry->volume . ")\n"
              . "· Rute: " . ($inquiry->route_origin ?? '-') . " ke " . ($inquiry->route_destination ?? '-') . "\n"
              . "· Tipe Layanan: " . $type . "\n";

@@ -12,6 +12,7 @@ class B2bInquiry extends Model
         'email',
         'phone',
         'service_type',
+        'cargo_direction',
         'shipment_type',
         'volume',
         'route_origin',

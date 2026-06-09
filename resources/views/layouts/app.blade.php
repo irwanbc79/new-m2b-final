@@ -488,6 +488,7 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
     inquiryNpwp: '',
     inquiryEmail: '',
     inquiryPhone: '',
+    inquiryCargoDirection: 'impor',
     inquiryShipmentType: 'Sea FCL',
     inquiryVolume: '',
     inquiryOrigin: '',
@@ -507,6 +508,7 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
       this.inquiryNpwp = '';
       this.inquiryEmail = '';
       this.inquiryPhone = '';
+      this.inquiryCargoDirection = 'impor';
       this.inquiryShipmentType = 'Sea FCL';
       this.inquiryVolume = '';
       this.inquiryOrigin = '';
@@ -545,6 +547,7 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
       formData.append('email', this.inquiryEmail);
       formData.append('phone', this.inquiryPhone);
       formData.append('service_type', this.inquiryService);
+      formData.append('cargo_direction', this.inquiryCargoDirection);
       formData.append('shipment_type', this.inquiryShipmentType);
       formData.append('volume', this.inquiryVolume);
       formData.append('route_origin', this.inquiryOrigin);
@@ -692,6 +695,16 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
           <div>
             <label class="calc-label" x-text="$store.lang.t('Email Bisnis *', 'Business Email *', '商业电子邮件 *', 'البريد الإلكتروني للعمل *')">Email Bisnis *</label>
             <input type="email" x-model="inquiryEmail" placeholder="sales@perusahaan.com" class="calc-input" required />
+          </div>
+
+          <!-- Jalur Pengiriman (Impor/Ekspor/Domestik) -->
+          <div>
+            <label class="calc-label" x-text="$store.lang.t('Jalur Pengiriman *', 'Shipment Route / Direction *', '运输航线/方向 *', 'مسار الشحن *')">Jalur Pengiriman *</label>
+            <select x-model="inquiryCargoDirection" class="calc-select">
+              <option value="impor">📥 Impor (Import) — Kargo Masuk ke Indonesia</option>
+              <option value="ekspor">📤 Ekspor (Export) — Kargo Keluar dari Indonesia</option>
+              <option value="domestik">🇮🇩 Domestik (Domestic) — Antar Pulau / Daerah</option>
+            </select>
           </div>
 
           <!-- Shipment Type & Volume (1 Row) -->

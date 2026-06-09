@@ -75,8 +75,20 @@
                 </td>
             </tr>
             <tr>
+                <th>Jalur Pengiriman</th>
+                <td>
+                    @if($inquiry->cargo_direction === 'impor')
+                        Impor (Import)
+                    @elseif($inquiry->cargo_direction === 'ekspor')
+                        Ekspor (Export)
+                    @else
+                        Domestik (Domestic)
+                    @endif
+                </td>
+            </tr>
+            <tr>
                 <th>Jenis Pengiriman</th>
-                <td>{{ $inquiry->shipment_type }}</td>
+                <td>{{ $inquiry->shipment_type ?? '-' }}</td>
             </tr>
             <tr>
                 <th>Estimasi Volume</th>
