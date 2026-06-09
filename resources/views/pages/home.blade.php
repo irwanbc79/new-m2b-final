@@ -1710,8 +1710,8 @@
 .marquee-wrapper {
   overflow: hidden;
   width: 100%;
-  padding: 150px 0;
-  margin: -130px 0;
+  padding: 160px 0;
+  margin: -140px 0;
   position: relative;
 }
 .marquee-fade-left {
@@ -1769,9 +1769,9 @@
 
 .mosaic-item {
   position: relative;
-  width: 38px;
-  height: 38px;
-  border-radius: 6px;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: #111a36;
@@ -1793,9 +1793,10 @@
   opacity: 0.25;
   filter: grayscale(100%) blur(1px);
 }
-/* Smooth scale up on hover (pop out to absolute size of ~315px) */
+/* Smooth scale up on hover (pop out to absolute size of 315px) */
 .mosaic-item:hover {
-  transform: scale(8.3);
+  transform: scale(15.75);
+  border-radius: 1px; /* visually 1 * 15.75 = ~16px border radius at 315px size */
   z-index: 100;
   border-color: rgba(74, 158, 218, 0.8);
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8), 0 0 25px rgba(74, 158, 218, 0.5);
@@ -1806,30 +1807,32 @@
 
 @media (max-width: 991px) {
   .mosaic-item {
-    width: 30px;
-    height: 30px;
-    border-radius: 4px;
+    width: 15px;
+    height: 15px;
+    border-radius: 3px;
   }
   .mosaic-item:hover {
-    transform: scale(7.0); /* 30 * 7.0 = 210px */
+    transform: scale(14.0); /* 15 * 14.0 = 210px */
+    border-radius: 1px; /* visually 1 * 14.0 = ~14px border radius at 210px size */
   }
   .marquee-wrapper {
-    padding: 110px 0;
-    margin: -95px 0;
+    padding: 120px 0;
+    margin: -105px 0;
   }
 }
 @media (max-width: 767px) {
   .mosaic-item {
-    width: 25px;
-    height: 25px;
-    border-radius: 4px;
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
   }
   .mosaic-item:hover {
-    transform: scale(6.0); /* 25 * 6.0 = 150px */
+    transform: scale(12.5); /* 12 * 12.5 = 150px */
+    border-radius: 0.8px; /* visually 0.8 * 12.5 = ~10px border radius at 150px size */
   }
   .marquee-wrapper {
-    padding: 85px 0;
-    margin: -72px 0;
+    padding: 90px 0;
+    margin: -78px 0;
   }
 }
 </style>
