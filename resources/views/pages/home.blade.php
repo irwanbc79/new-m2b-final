@@ -660,7 +660,7 @@
       this.calcStep = 'input';
       this.syncCurrency();
     }
-  }" @open-b2b-modal.window="openB2bInquiry = true; resetB2bForm();" style="position:relative;min-height:640px;display:flex;align-items:center;overflow:hidden">
+  }" style="position:relative;min-height:640px;display:flex;align-items:center;overflow:hidden">
   <div style="position:absolute;inset:0;background-image:url(https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?auto=format&fit=crop&w=1600&q=80);background-size:cover;background-position:center"></div>
   <div style="position:absolute;inset:0;background:linear-gradient(105deg,rgba(11,17,32,0.92) 40%,rgba(11,17,32,0.55) 75%,rgba(11,17,32,0.25) 100%)"></div>
   <div class="home-hero-container" style="display:flex;flex-direction:column;gap:28px;width:100%">
@@ -773,7 +773,7 @@
 
     <!-- Row 2: Buttons -->
     <div class="flex gap-3 flex-wrap" x-data="{ open: false }" style="width:100%;max-width:1080px">
-      <button @click.prevent="openB2bInquiry = true; resetB2bForm();" style="display:inline-flex;align-items:center;gap:8px;padding:13px 28px;border-radius:8px;background:#1e3a5f;color:#fff;border:none;font-weight:600;font-size:15px;transition:all .18s;cursor:pointer"
+      <button @click.prevent="window.dispatchEvent(new CustomEvent('open-b2b-modal'))" style="display:inline-flex;align-items:center;gap:8px;padding:13px 28px;border-radius:8px;background:#1e3a5f;color:#fff;border:none;font-weight:600;font-size:15px;transition:all .18s;cursor:pointer"
         x-text="$store.lang.t('💼 Ajukan Inquiry B2B', '💼 Submit B2B Inquiry', '💼 提交 B2B 询盘', '💼 تقديم استفسار B2B')">💼 Ajukan Inquiry B2B</button>
 
       <button @click="open = true"
@@ -1625,7 +1625,7 @@
         @endforeach
 
         <div style="margin-top:20px;padding-top:20px;border-top:1px solid #e5e2dc;display:flex;flex-direction:column;gap:10px">
-          <a :href="'https://wa.me/6281263027818?text=' + encodeURIComponent($store.lang.t('Halo M2B, saya tertarik layanan ' + '{{ $s['title']['id'] }}', 'Hello M2B, I am interested in ' + '{{ $s['title']['en'] }}', '您好M2B，我对我们的' + '{{ $s['title']['zh'] }}' + '感兴趣', 'مرحباً M2B، أنا مهتم بخدمة ' + '{{ $s['title']['ar'] }}'))" target="_blank" style="background:#25D366;color:#fff;text-align:center;padding:13px;border-radius:10px;text-decoration:none;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;gap:8px" x-text="$store.lang.t('💬 Konsultasi via WhatsApp', '💬 Consult via WhatsApp', '💬 微信/WhatsApp咨询', '💬 استشارة عبر الواتساب')">💬 Konsultasi via WhatsApp</a>
+          <button @click.prevent="openService = null; window.dispatchEvent(new CustomEvent('open-b2b-modal'))" style="background:#1e3a5f;color:#fff;text-align:center;padding:13px;border-radius:10px;border:none;font-weight:800;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px" x-text="$store.lang.t('💼 Mulai Konsultasi B2B', '💼 Start B2B Consultation', '💼 开启 B2B 咨询', '💼 ابدأ استشارة B2B')">💼 Mulai Konsultasi B2B</button>
           <a href="mailto:sales@m2b.co.id" style="background:transparent;color:#0f0f14;text-align:center;padding:12px;border-radius:10px;text-decoration:none;font-weight:700;font-size:13px;border:1.5px solid #d0cdc8" x-text="$store.lang.t('📧 Email sales@m2b.co.id', '📧 Email sales@m2b.co.id', '📧 发送邮件至 sales@m2b.co.id', '📧 البريد الإلكتروني sales@m2b.co.id')">📧 Email sales@m2b.co.id</a>
         </div>
       </div>
@@ -1648,12 +1648,12 @@
       $steps = [
         [
           'icon' => '💬',
-          'title' => ['id' => 'Konsultasi Gratis', 'en' => 'Free Consultation', 'zh' => '免费咨询', 'ar' => 'استشارة مجانية'],
+          'title' => ['id' => 'Konsultasi B2B', 'en' => 'B2B Consultation', 'zh' => 'B2B 咨询', 'ar' => 'استشارة B2B'],
           'desc' => [
-            'id' => 'Hubungi kami via WhatsApp atau form. Ceritakan kebutuhan ekspor/impor kamu.',
-            'en' => 'Contact us via WhatsApp or form. Tell us your export/import needs.',
-            'zh' => '通过微信/WhatsApp或表单联系我们。告诉我们您的进出口需求。',
-            'ar' => 'اتصل بنا عبر الواتساب أو النموذج. أخبرنا باحتياجاتك للاستيراد أو التصدير.'
+            'id' => 'Hubungi kami via form. Ceritakan kebutuhan ekspor/impor komersial kamu.',
+            'en' => 'Contact us via our form. Tell us your commercial export/import needs.',
+            'zh' => '通过表单联系我们。告诉我们您的商业进出口需求。',
+            'ar' => 'اتصل بنا عبر النموذج. أخبرنا باحتياجاتك التجارية للاستيراد أو التصدير.'
           ]
         ],
         [
@@ -1906,9 +1906,9 @@
   }
 }">
   <div style="max-width:700px;margin:0 auto;text-align:center">
-    <span style="display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(30,58,95,0.3);color:#4a9eda;font-size:11px;font-weight:600;letter-spacing:0.3px;text-transform:uppercase" x-text="$store.lang.t('Estimasi Gratis', 'Free Estimator', '免费估算', 'حاسبة تقديرية')">Free Estimator</span>
+    <span style="display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(30,58,95,0.3);color:#4a9eda;font-size:11px;font-weight:600;letter-spacing:0.3px;text-transform:uppercase" x-text="$store.lang.t('Estimasi Biaya', 'Cost Estimator', '费用估算', 'حاسبة تقديرية')">Cost Estimator</span>
     <h2 style="font-family:Syne;font-weight:800;font-size:34px;color:#fff;letter-spacing:-0.8px;margin-top:12px;margin-bottom:8px" x-text="$store.lang.t('Estimasi Biaya Logistik', 'Logistics Cost Estimator', '物流费用估算', 'حاسبة تكاليف اللوجستيات')">Estimasi Biaya Logistik</h2>
-    <p style="color:rgba(255,255,255,0.5);font-size:15px;margin-bottom:40px" x-text="$store.lang.t('Pilih layanan dan kami akan bantu estimasi kebutuhan Anda via WhatsApp — gratis, cepat, tanpa komitmen.', 'Select a service and we\'ll estimate your needs via WhatsApp — free, fast, no commitment.', '选择一项服务，我们将通过微信/WhatsApp帮您估算需求——免费、快速、无约束。', 'اختر خدمة وسنساعدك في تقدير احتياجاتك عبر الواتساب — مجاني، سريع، وبدون التزامات.')">Pilih layanan dan kami akan bantu estimasi kebutuhan Anda via WhatsApp — gratis, cepat, tanpa komitmen.</p>
+    <p style="color:rgba(255,255,255,0.5);font-size:15px;margin-bottom:40px" x-text="$store.lang.t('Pilih layanan dan kami akan bantu estimasi kebutuhan Anda via WhatsApp — cepat, akurat, tanpa komitmen.', 'Select a service and we\'ll estimate your needs via WhatsApp — fast, accurate, no commitment.', '选择一项服务，我们将通过微信/WhatsApp帮您估算需求——快速、准确、无约束。', 'اختر خدمة وسنساعدك في تقدير احتياجاتك عبر الواتساب — سريع، دقيق، وبدون التزامات.')">Pilih layanan dan kami akan bantu estimasi kebutuhan Anda via WhatsApp — cepat, akurat, tanpa komitmen.</p>
 
     {{-- Step 1: Pilih Layanan --}}
     <div x-show="step === 1">
@@ -2012,10 +2012,10 @@
             'ar' => 'ما هي تكلفة التخليص الجمركي في M2B؟'
           ],
           'a' => [
-            'id' => 'Biaya customs clearance bervariasi tergantung HS Code, nilai barang, dan jenis jalur (hijau/merah). M2B memberikan kalkulasi transparan termasuk bea masuk, PPN, PPh 22, dan handling fee — tanpa hidden cost. Hubungi kami untuk quote gratis.',
-            'en' => 'Customs clearance fees vary depending on the HS Code, cargo value, and inspection lane (green/red). M2B provides transparent calculations including import duty, VAT, PPh 22, and handling fees — no hidden costs. Contact us for a free quote.',
-            'zh' => '报关费用取决于海关编码（HS Code）、货物价值以及查验通道（绿道/红道）。M2B 提供透明的计算，包括进口税、增值税、所得税（PPh 22）及操作手续费——绝无隐藏费用。请联系我们获取免费报价。',
-            'ar' => 'تختلف رسوم التخليص الجمركي حسب رمز النظام المنسق (HS Code)، وقيمة البضاعة، ومسار الفحص (أخضر/أحمر). تقدم M2B حسابات شفافة تشمل الرسوم الجمركية، وضريبة القيمة المضافة، وضريبة الدخل 22، ورسوم المناولة — بدون تكاليف خفية. اتصل بنا للحصول على عرض أسعار مجاني.'
+            'id' => 'Biaya customs clearance bervariasi tergantung HS Code, nilai barang, dan jenis jalur (hijau/merah). M2B memberikan kalkulasi transparan termasuk bea masuk, PPN, PPh 22, dan handling fee — tanpa hidden cost. Hubungi kami untuk penawaran resmi.',
+            'en' => 'Customs clearance fees vary depending on the HS Code, cargo value, and inspection lane (green/red). M2B provides transparent calculations including import duty, VAT, PPh 22, and handling fees — no hidden costs. Contact us for a formal quote.',
+            'zh' => '报关费用取决于海关编码（HS Code）、货物价值以及查验通道（绿道/红道）。M2B 提供透明的计算，包括进口税、增值税、所得税（PPh 22）及操作手续费——绝无隐藏费用。请联系我们获取正式报价。',
+            'ar' => 'تختلف رسوم التخليص الجمركي حسب رمز النظام المنسق (HS Code)، وقيمة البضاعة، ومسار الفحص (أخضر/أحمر). تقدم M2B حسابات شفافة تشمل الرسوم الجمركية، وضريبة القيمة المضافة، وضريبة الدخل 22، ورسوم المناولة — بدون تكاليف خفية. اتصل بنا للحصول على عرض أسعار رسمي.'
           ]
         ],
         [
@@ -2217,9 +2217,9 @@
       <span x-text="$store.lang.t('Siap Ekspor atau Impor?', 'Ready to Export or Import?', '准备好进行进出口了吗？', 'هل أنت جاهز للتصدير أو الاستيراد؟')">Siap Ekspor atau Impor?</span><br>
       <span style="color:#4a9eda" x-text="$store.lang.t('Mulai Hari Ini.', 'Start Today.', '今天就联系我们。', 'ابدأ اليوم.')">Mulai Hari Ini.</span>
     </h2>
-    <p style="color:rgba(255,255,255,0.5);font-size:16px;margin-bottom:36px;line-height:1.7" x-text="$store.lang.t('Konsultasi gratis, quote transparan, respon cepat. Tidak ada komitmen sebelum kamu setuju.', 'Free consultation, transparent quote, fast response. No commitment until you agree.', '免费咨询、透明报价、快速响应。在您完全同意前，无需承担任何义务。', 'استشارة مجانية، عرض أسعار شفاف، استجابة سريعة. لا التزام حتى توافق.')">Konsultasi gratis, quote transparan, respon cepat. Tidak ada komitmen sebelum kamu setuju.</p>
+    <p style="color:rgba(255,255,255,0.5);font-size:16px;margin-bottom:36px;line-height:1.7" x-text="$store.lang.t('Konsultasi B2B, quote transparan, respon cepat. Tidak ada komitmen sebelum Anda setuju.', 'B2B consultation, transparent quote, fast response. No commitment until you agree.', 'B2B 咨询、透明报价、快速响应。在您完全同意前，无需承担任何义务。', 'استشارة B2B، عرض أسعار شفاف، استجابة سريعة. لا التزام حتى توافق.')">Konsultasi B2B, quote transparan, respon cepat. Tidak ada komitmen sebelum Anda setuju.</p>
     <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
-      <a :href="'https://wa.me/6281263027818?text=' + encodeURIComponent($store.lang.t('Halo M2B, saya mau konsultasi', 'Hello M2B, I would like a consultation', '您好M2B，我想进行咨询。', 'مرحباً M2B، أرغب في الحصول على استشارة'))" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:8px;background:#1e3a5f;color:#fff;text-decoration:none;font-weight:600;font-size:16px" x-text="$store.lang.t('💬 Chat WhatsApp Sekarang', '💬 Chat on WhatsApp Now', '💬 立即进行微信/WhatsApp咨询', '💬 تحدث معنا عبر الواتساب الآن')">💬 Chat WhatsApp Sekarang</a>
+      <button @click.prevent="window.dispatchEvent(new CustomEvent('open-b2b-modal'))" style="display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:8px;background:#1e3a5f;color:#fff;border:none;font-weight:600;font-size:16px;cursor:pointer" x-text="$store.lang.t('💬 Mulai Konsultasi B2B', '💬 Start B2B Consultation', '💬 开启 B2B 咨询', '💬 ابدأ استشارة B2B')">💬 Mulai Konsultasi B2B</button>
       <a href="mailto:sales@m2b.co.id" style="display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:8px;color:#fff;text-decoration:none;font-weight:600;font-size:16px;border:1.5px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.06)" x-text="$store.lang.t('📧 Email Kami', '📧 Email Us', '📧 给我们发送邮件', '📧 أرسل لنا بريداً إلكترونياً')">📧 Email Kami</a>
     </div>
   </div>

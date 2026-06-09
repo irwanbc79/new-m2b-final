@@ -158,7 +158,7 @@
   <div style="max-width:700px;margin:0 auto;text-align:center">
     <h2 style="font-family:Syne;font-weight:800;font-size:36px;color:#fff;letter-spacing:-1px;margin-bottom:16px" x-text="$store.lang.t('Siap Bekerja Sama?', 'Ready to Work Together?', '准备好合作了吗？', 'جاهز للعمل معنا؟')">Siap Bekerja Sama?</h2>
     <p style="color:rgba(255,255,255,0.5);font-size:16px;margin-bottom:32px" x-text="$store.lang.t('Konsultasikan kebutuhan logistik ekspor-impor Anda dengan tim M2B.', 'Consult your export-import logistics needs with the M2B team.', '向 M2B 团队咨询您的进出口物流需求。', 'استشر فريق M2B بشأن احتياجاتك من الخدمات اللوجستية للاستيراد والتصدير.')">Konsultasikan kebutuhan logistik ekspor-impor Anda dengan tim M2B.</p>
-    <a :href="'https://wa.me/6281263027818?text=' + encodeURIComponent($store.lang.t('Halo M2B, saya mau konsultasi gratis', 'Hello M2B, I would like a free consultation', '您好M2B，我想进行免费咨询。', 'مرحباً M2B، أرغب في استشارة مجانية'))" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:8px;background:#1e3a5f;color:#fff;text-decoration:none;font-weight:600;font-size:16px" x-text="$store.lang.t('💬 Konsultasi Gratis via WhatsApp', '💬 Free Consultation via WhatsApp', '💬 免费微信/WhatsApp咨询', '💬 استشارة مجانية عبر الواتساب')">💬 Konsultasi Gratis via WhatsApp</a>
+    <button @click.prevent="window.dispatchEvent(new CustomEvent('open-b2b-modal'))" style="display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:8px;background:#1e3a5f;color:#fff;border:none;font-weight:600;font-size:16px;cursor:pointer" x-text="$store.lang.t('💬 Mulai Konsultasi B2B', '💬 Start B2B Consultation', '💬 开启 B2B 咨询', '💬 ابدأ استشارة B2B')">💬 Mulai Konsultasi B2B</button>
   </div>
 </section>
 @endsection

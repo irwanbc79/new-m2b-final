@@ -408,12 +408,12 @@
           <div style="width:48px; height:48px; border-radius:14px; background:rgba(255,255,255,0.08); display:flex; align-items:center; justify-content:center; margin:0 auto 16px; border:1px solid rgba(255,255,255,0.15)">
             <span style="font-size:20px">💬</span>
           </div>
-          <h4 style="font-family:Syne; font-weight:800; font-size:16px; color:#fff; margin-bottom:8px;" x-text="$store.lang.t('Konsultasi Logistik Gratis', 'Free Logistics Consultation', '免费物流咨询', 'استشارة لوجستية مجانية')">Konsultasi Logistik Gratis</h4>
+          <h4 style="font-family:Syne; font-weight:800; font-size:16px; color:#fff; margin-bottom:8px;" x-text="$store.lang.t('Konsultasi B2B & Bea Cukai', 'B2B & Customs Consultation', 'B2B 报关物流咨询', 'استشارة B2B والجمارك')">Konsultasi B2B & Bea Cukai</h4>
           <p style="font-size:12px; color:rgba(255,255,255,0.65); line-height:1.6; margin-bottom:20px;" x-text="$store.lang.t('Diskusikan kebutuhan ekspor, impor, atau kepabeanan Anda dengan konsultan expert kami.', 'Discuss your export, import, or customs clearance needs with our expert consultants.', '与我们的专家顾问讨论您的进出口 or 清关需求。', 'ناقش احتياجاتك من الاستيراد أو التصدير أو التخليص الجمركي مع مستشارينا الخبراء.')">Diskusikan kebutuhan ekspor, impor, atau kepabeanan Anda dengan konsultan expert kami.</p>
-          <a href="https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20ingin%20konsultasi%20ekspor-impor" target="_blank"
-             style="display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:12px 20px; border-radius:10px; background:#25D366; color:#fff; text-decoration:none; font-weight:700; font-size:13px; w-full; transition:transform 0.2s;"
+          <button @click.prevent="window.dispatchEvent(new CustomEvent('open-b2b-modal'))"
+             style="display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:12px 20px; border-radius:10px; background:#1e3a5f; color:#fff; border:none; font-weight:700; font-size:13px; cursor:pointer; width:100%; transition:transform 0.2s;"
              onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='none'"
-             x-text="$store.lang.t('💬 Chat WhatsApp', '💬 Chat WhatsApp', '💬 微信/WhatsApp 咨询', '💬 اتصال واتساب')">💬 Chat WhatsApp</a>
+             x-text="$store.lang.t('💬 Mulai Konsultasi B2B', '💬 Start B2B Consultation', '💬 开启 B2B 咨询', '💬 ابدأ استشارة B2B')">💬 Mulai Konsultasi B2B</button>
         </div>
       </div>
 
