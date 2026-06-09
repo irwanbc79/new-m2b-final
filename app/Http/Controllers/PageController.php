@@ -19,14 +19,35 @@ class PageController extends Controller
                 ->where('status', 'approved')
                 ->whereNotNull('file_path')
                 ->where('file_path', '!=', '')
-                ->select('id', 'file_path')
+                ->select('id', 'description', 'file_path')
                 ->orderBy('id', 'desc')
-                ->limit(100)
+                ->limit(200)
                 ->get();
 
             if ($photosPool->isNotEmpty()) {
-                $fieldPhotos = $photosPool->shuffle()
-                    ->take(40)
+                $blacklist = [
+                    'seal', 'segel', 'penyegelan', 'cro', 'dokumen', 'document', 'paper', 'kertas',
+                    'resi', 'surat', 'packing', 'invoice', 'stnk', 'plat', 'dus', 'karton', 'box',
+                    'timbangan', 'timbang', 'antrian', 'pkb', 'pintu', 'label', 'form', 'slip',
+                    'kondisi', 'identitas', 'ktp', 'sim', 'paspor', 'no', 'nomor', 'number',
+                    'manifest', 'detail', 'berat', 'weight', 'plate', 'nopol', 'tally', 'tag', 'marking'
+                ];
+
+                $filteredPhotos = $photosPool->filter(function ($photo) use ($blacklist) {
+                    if (empty($photo->description)) {
+                        return true;
+                    }
+                    $desc = strtolower($photo->description);
+                    foreach ($blacklist as $word) {
+                        if (str_contains($desc, $word)) {
+                            return false;
+                        }
+                    }
+                    return true;
+                });
+
+                $fieldPhotos = $filteredPhotos->shuffle()
+                    ->take(48)
                     ->map(function ($photo) {
                         $photo->url = 'https://portal.m2b.co.id/storage/' . $photo->file_path;
                         return $photo;
@@ -39,7 +60,7 @@ class PageController extends Controller
 
         // Fallback to high quality pre-curated photo assets if database is empty or connection fails
         if ($fieldPhotos->isEmpty()) {
-            $fallbackUrls = [
+            $fallbackUrlsCurated = [
                 'https://portal.m2b.co.id/storage/field-photos/2026/06/111/1780378406_qjvUQslV.jpg',
                 'https://portal.m2b.co.id/storage/field-photos/2026/05/110/1778659396_dkc49m8H.jpg',
                 'https://portal.m2b.co.id/storage/field-photos/2026/04/92/1777022144_0N67z2J0.jpg',
@@ -55,8 +76,17 @@ class PageController extends Controller
                 'https://portal.m2b.co.id/storage/field-photos/2026/05/110/1778659391_dOSjbSVX.jpg',
                 'https://portal.m2b.co.id/storage/field-photos/2026/05/110/1778659390_BgRB1vBa.jpg',
                 'https://portal.m2b.co.id/storage/field-photos/2026/05/110/1778659388_Ne54vUHR.jpg',
-                'https://portal.m2b.co.id/storage/field-photos/2026/05/110/1778659387_Mwjx8MBg.jpg'
+                'https://portal.m2b.co.id/storage/field-photos/2026/05/110/1778659387_Mwjx8MBg.jpg',
+                'https://portal.m2b.co.id/storage/field-photos/2026/04/96/1776865058_f1tMRUsv.jpg',
+                'https://portal.m2b.co.id/storage/field-photos/2026/04/96/1776865058_NhDu6Lbg.jpg',
+                'https://portal.m2b.co.id/storage/field-photos/2026/04/96/1776865058_WS9TnjJy.jpg',
+                'https://portal.m2b.co.id/storage/field-photos/2026/04/104/1776326866_fBmmSuVA.jpg',
+                'https://portal.m2b.co.id/storage/field-photos/2026/04/104/1776326866_ALrYOyh5.jpg',
+                'https://portal.m2b.co.id/storage/field-photos/2026/04/96/1776245628_iWTId1Jl.jpg',
+                'https://portal.m2b.co.id/storage/field-photos/2026/04/96/1776245628_Yb5PszIK.jpg',
+                'https://portal.m2b.co.id/storage/field-photos/2026/04/96/1776245628_NuXmlbL7.jpg'
             ];
+            $fallbackUrls = array_merge($fallbackUrlsCurated, $fallbackUrlsCurated);
             $fieldPhotos = collect($fallbackUrls)->map(fn($url) => (object)['url' => $url]);
         }
 

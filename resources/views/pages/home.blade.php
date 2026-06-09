@@ -1646,87 +1646,190 @@
 </section>
 
 {{-- ═══ DOKUMENTASI LAPANGAN (ANONYMOUS MOSAIC GALLERY) ═══ --}}
-<section class="home-section" style="background:#09090d;color:#fff;padding:100px 20px;border-top:1px solid rgba(255,255,255,0.06);overflow:visible;">
-  <div style="max-width:1200px;margin:0 auto">
+<section class="home-section" style="background:#09090d;color:#fff;padding:100px 0;border-top:1px solid rgba(255,255,255,0.06);overflow:visible;">
+  <div style="max-width:1200px;margin:0 auto;padding:0 20px;">
     <!-- Section Header -->
     <div style="text-align:center;margin-bottom:56px">
       <span style="display:inline-block;padding:4px 12px;border-radius:20px;background:rgba(74,158,218,0.15);color:#4a9eda;font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase" x-text="$store.lang.t('DOKUMENTASI LAPANGAN', 'FIELD DOCUMENTATION', '现场操作记录', 'الوثائق الميدانية')">DOKUMENTASI LAPANGAN</span>
       <h2 style="font-family:Syne;font-size:36px;font-weight:800;margin-top:12px;letter-spacing:-0.8px" x-text="$store.lang.t('Bukti Nyata Operasional M2B', 'Real-Time Operational Showcase', 'M2B 真实的物流操作展示', 'عرض عملياتنا اللوجستية الواقعية')">Bukti Nyata Operasional M2B</h2>
-      <p style="color:rgba(255,255,255,0.5);max-width:750px;margin:12px auto 0;font-size:15px;line-height:1.75" x-text="$store.lang.t('Kami menjaga kerahasiaan data dan hubungan kemitraan pelanggan dengan ketat. Dokumentasi visual operasional kepabeanan dan logistik kami disajikan secara anonim guna melindungi privasi bisnis dan kode etik pelanggan.', 'We strictly protect client confidentiality and business ethics. Our customs and logistics operational documentation is showcased anonymously to respect and safeguard the privacy of our partners.', '我们严格保护客户机密与商业道德。我们的报关与物流操作实景记录均以匿名形式展示，以尊重并维护合作伙伴的商业隐私。', 'نحن نحمي سرية العملاء وأخلاقيات العمل بصرامة. يتم عرض وثائقنا التشغيلية الجمركية واللوجستية بشكل مجهول لاحترام وحماية خصوصية شركائنا.')">Kami menjaga kerahasiaan data dan hubungan kemitraan pelanggan dengan ketat. Dokumentasi visual operasional kepabeanan dan logistik kami disajikan secara anonim guna melindungi privasi bisnis dan kode etik pelanggan.</p>
+      <p style="color:rgba(255,255,255,0.5);max-width:750px;margin:12px auto 0;font-size:15px;line-height:1.75" x-text="$store.lang.t('Kami menjaga kerahasiaan data dan hubungan kemitraan pelanggan dengan ketat. Dokumentasi visual operasional kepabeanan dan logistik kami disajikan secara anonim guna melindungi privasi bisnis dan kode etik pelanggan.', 'We strictly protect client confidentiality and business ethics. Our customs and logistics operational documentation is showcased anonymously to respect and safeguard the privacy of our partners.', '我们严格保护客户机密与商业道德。我们的报关与物流操作实景记录均以匿名形式展示，以尊重并维护合作伙伴的商业隐私。', 'نحن نحمي سرية العملاء وأخلاقيات العمل بصرامة. يتم عرض وثائقنا التشغيلية الجمركية واللوجستية secara anonim لاحترام وحماية خصوصية شركائنا.')">Kami menjaga kerahasiaan data dan hubungan kemitraan pelanggan dengan ketat. Dokumentasi visual operasional kepabeanan dan logistik kami disajikan secara anonim guna melindungi privasi bisnis dan kode etik pelanggan.</p>
     </div>
+  </div>
 
-    <!-- Mosaic Grid Container -->
-    <div class="mosaic-grid">
-      @foreach($fieldPhotos as $photo)
-      <div class="mosaic-item">
-        <img src="{{ $photo->url }}" alt="M2B Field Documentation" loading="lazy" />
+  @php
+    $row1Photos = $fieldPhotos->slice(0, 24);
+    $row2Photos = $fieldPhotos->slice(24, 24);
+  @endphp
+
+  <!-- Row 1 Marquee (scrolls left) -->
+  <div class="marquee-wrapper" style="margin-bottom: 0;">
+    <div class="marquee-fade-left"></div>
+    <div class="marquee-fade-right"></div>
+    <div class="marquee-track marquee-left">
+      <div class="marquee-items">
+        @foreach($row1Photos as $photo)
+        <div class="mosaic-item">
+          <img src="{{ $photo->url }}" alt="M2B Field Documentation" loading="lazy" />
+        </div>
+        @endforeach
       </div>
-      @endforeach
+      <div class="marquee-items" aria-hidden="true">
+        @foreach($row1Photos as $photo)
+        <div class="mosaic-item">
+          <img src="{{ $photo->url }}" alt="M2B Field Documentation" loading="lazy" />
+        </div>
+        @endforeach
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 2 Marquee (scrolls right) -->
+  <div class="marquee-wrapper">
+    <div class="marquee-fade-left"></div>
+    <div class="marquee-fade-right"></div>
+    <div class="marquee-track marquee-right">
+      <div class="marquee-items">
+        @foreach($row2Photos as $photo)
+        <div class="mosaic-item">
+          <img src="{{ $photo->url }}" alt="M2B Field Documentation" loading="lazy" />
+        </div>
+        @endforeach
+      </div>
+      <div class="marquee-items" aria-hidden="true">
+        @foreach($row2Photos as $photo)
+        <div class="mosaic-item">
+          <img src="{{ $photo->url }}" alt="M2B Field Documentation" loading="lazy" />
+        </div>
+        @endforeach
+      </div>
     </div>
   </div>
 </section>
 
 <style>
-.mosaic-grid {
-  display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  gap: 10px;
+.marquee-wrapper {
+  overflow: hidden;
+  width: 100%;
+  padding: 150px 0;
+  margin: -130px 0;
+  position: relative;
 }
+.marquee-fade-left {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 15%;
+  height: 100%;
+  background: linear-gradient(90deg, #09090d 0%, transparent 100%);
+  z-index: 5;
+  pointer-events: none;
+}
+.marquee-fade-right {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 15%;
+  height: 100%;
+  background: linear-gradient(-90deg, #09090d 0%, transparent 100%);
+  z-index: 5;
+  pointer-events: none;
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  gap: 12px;
+  overflow: visible;
+}
+.marquee-items {
+  display: flex;
+  gap: 12px;
+  overflow: visible;
+}
+.marquee-left {
+  animation: scroll-left 60s linear infinite;
+}
+.marquee-right {
+  animation: scroll-right 60s linear infinite;
+}
+
+@keyframes scroll-left {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+@keyframes scroll-right {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
+/* Pause scroll when hovering over the marquee row */
+.marquee-wrapper:hover .marquee-left,
+.marquee-wrapper:hover .marquee-right {
+  animation-play-state: paused;
+}
+
 .mosaic-item {
   position: relative;
-  aspect-ratio: 1/1;
-  border-radius: 8px;
+  width: 38px;
+  height: 38px;
+  border-radius: 6px;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: #111a36;
   cursor: default;
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  flex-shrink: 0;
 }
 .mosaic-item img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+  filter: grayscale(100%);
+  transition: filter 0.4s ease, transform 0.4s ease;
 }
-/* Dim other items when hovering the grid */
-.mosaic-grid:hover .mosaic-item:not(:hover) {
+/* Dim other items when hovering the track */
+.marquee-track:hover .mosaic-item:not(:hover) {
   opacity: 0.25;
-  filter: grayscale(40%) blur(1px);
+  filter: grayscale(100%) blur(1px);
 }
-/* Smooth scale up on hover (pop out dramatically to a medium size) */
+/* Smooth scale up on hover (pop out to absolute size of ~315px) */
 .mosaic-item:hover {
-  transform: scale(2.3);
-  z-index: 10;
-  border-color: rgba(74, 158, 218, 0.6);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+  transform: scale(8.3);
+  z-index: 100;
+  border-color: rgba(74, 158, 218, 0.8);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8), 0 0 25px rgba(74, 158, 218, 0.5);
+}
+.mosaic-item:hover img {
+  filter: grayscale(0%);
 }
 
 @media (max-width: 991px) {
-  .mosaic-grid {
-    grid-template-columns: repeat(6, 1fr);
-    gap: 8px;
+  .mosaic-item {
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;
   }
   .mosaic-item:hover {
-    transform: scale(2.0);
+    transform: scale(7.0); /* 30 * 7.0 = 210px */
+  }
+  .marquee-wrapper {
+    padding: 110px 0;
+    margin: -95px 0;
   }
 }
 @media (max-width: 767px) {
-  .mosaic-grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 6px;
+  .mosaic-item {
+    width: 25px;
+    height: 25px;
+    border-radius: 4px;
   }
   .mosaic-item:hover {
-    transform: scale(1.7);
+    transform: scale(6.0); /* 25 * 6.0 = 150px */
   }
-}
-@media (max-width: 480px) {
-  .mosaic-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 6px;
-  }
-  .mosaic-item:hover {
-    transform: scale(1.5);
+  .marquee-wrapper {
+    padding: 85px 0;
+    margin: -72px 0;
   }
 }
 </style>
