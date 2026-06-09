@@ -1834,6 +1834,43 @@
 }
 </style>
 
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Shuffle array using Fisher-Yates algorithm
+  function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+  }
+
+  // Shuffle DOM items inside the marquee track
+  function shuffleTrack(trackSelector) {
+    const track = document.querySelector(trackSelector);
+    if (!track) return;
+    const itemGroups = track.querySelectorAll('.marquee-items');
+    if (itemGroups.length === 2) {
+      const items = Array.from(itemGroups[0].children);
+      shuffleArray(items);
+      
+      // Clear both duplicated tracks
+      itemGroups[0].innerHTML = '';
+      itemGroups[1].innerHTML = '';
+      
+      // Append shuffled order to both tracks to keep the infinite loop seamless
+      items.forEach(item => {
+        itemGroups[0].appendChild(item.cloneNode(true));
+        itemGroups[1].appendChild(item.cloneNode(true));
+      });
+    }
+  }
+
+  // Randomize tracks on client load to bypass server/page cache
+  shuffleTrack('.marquee-left');
+  shuffleTrack('.marquee-right');
+});
+</script>
+
 {{-- ═══ FAQ ═══ --}}
 <section class="home-section" style="background:#f7f5f0;border-top:1px solid #e5e2dc">
   <div style="max-width:780px;margin:0 auto">
