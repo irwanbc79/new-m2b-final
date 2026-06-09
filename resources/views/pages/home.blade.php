@@ -1645,210 +1645,88 @@
   </div>
 </section>
 
-{{-- ═══ DOKUMENTASI LAPANGAN (BENTO GRID GALLERY) ═══ --}}
-<section class="home-section" style="background:#09090d;color:#fff;padding:100px 20px;border-top:1px solid rgba(255,255,255,0.06);"
-         x-data="{
-           showLightbox: false,
-           activeIdx: 0,
-           photos: {{ json_encode($fieldPhotos->map(fn($p) => [
-             'url' => $p->url,
-             'title' => $p->title,
-             'badge' => $p->badge,
-             'location' => $p->location
-           ])->values()->toArray()) }},
-           openPhoto(idx) {
-             this.activeIdx = idx;
-             this.showLightbox = true;
-             document.body.style.overflow = 'hidden';
-           },
-           closePhoto() {
-             this.showLightbox = false;
-             document.body.style.overflow = '';
-           },
-           nextPhoto() {
-             this.activeIdx = (this.activeIdx + 1) % this.photos.length;
-           },
-           prevPhoto() {
-             this.activeIdx = (this.activeIdx - 1 + this.photos.length) % this.photos.length;
-           }
-         }"
-         @keydown.escape.window="closePhoto()"
-         @keydown.right.window="if(showLightbox) nextPhoto()"
-         @keydown.left.window="if(showLightbox) prevPhoto()">
-  
+{{-- ═══ DOKUMENTASI LAPANGAN (ANONYMOUS MOSAIC GALLERY) ═══ --}}
+<section class="home-section" style="background:#09090d;color:#fff;padding:100px 20px;border-top:1px solid rgba(255,255,255,0.06);overflow:visible;">
   <div style="max-width:1200px;margin:0 auto">
     <!-- Section Header -->
     <div style="text-align:center;margin-bottom:56px">
       <span style="display:inline-block;padding:4px 12px;border-radius:20px;background:rgba(74,158,218,0.15);color:#4a9eda;font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase" x-text="$store.lang.t('DOKUMENTASI LAPANGAN', 'FIELD DOCUMENTATION', '现场操作记录', 'الوثائق الميدانية')">DOKUMENTASI LAPANGAN</span>
       <h2 style="font-family:Syne;font-size:36px;font-weight:800;margin-top:12px;letter-spacing:-0.8px" x-text="$store.lang.t('Bukti Nyata Operasional M2B', 'Real-Time Operational Showcase', 'M2B 真实的物流操作展示', 'عرض عملياتنا اللوجستية الواقعية')">Bukti Nyata Operasional M2B</h2>
-      <p style="color:rgba(255,255,255,0.5);max-width:600px;margin:12px auto 0;font-size:15px;line-height:1.7" x-text="$store.lang.t('Dokumentasi riil proses bongkar muat kontainer, pemeriksaan bea cukai (PPJK), pengapalan, dan pergudangan tim PT Mora Multi Berkah.', 'Live photos of container stuffing, customs clearance (PPJK) physical inspections, vessel loading, and warehouse handling by PT Mora Multi Berkah team.', '由 PT Mora Multi Berkah 团队操作的集装箱装卸、海关清关查验（PPJK）、船舶装载和仓库操作的真实照片记录。', 'صور حية لعمليات شحن الحاويات، والتخليص الجمركي (PPJK)، وشحن السفن، وإدارة المستودعات بواسطة فريق PT Mora Multi Berkah.')">Dokumentasi riil proses bongkar muat kontainer, pemeriksaan bea cukai (PPJK), pengapalan, dan pergudangan tim PT Mora Multi Berkah.</p>
+      <p style="color:rgba(255,255,255,0.5);max-width:750px;margin:12px auto 0;font-size:15px;line-height:1.75" x-text="$store.lang.t('Kami menjaga kerahasiaan data dan hubungan kemitraan pelanggan dengan ketat. Dokumentasi visual operasional kepabeanan dan logistik kami disajikan secara anonim guna melindungi privasi bisnis dan kode etik pelanggan.', 'We strictly protect client confidentiality and business ethics. Our customs and logistics operational documentation is showcased anonymously to respect and safeguard the privacy of our partners.', '我们严格保护客户机密与商业道德。我们的报关与物流操作实景记录均以匿名形式展示，以尊重并维护合作伙伴的商业隐私。', 'نحن نحمي سرية العملاء وأخلاقيات العمل بصرامة. يتم عرض وثائقنا التشغيلية الجمركية واللوجستية بشكل مجهول لاحترام وحماية خصوصية شركائنا.')">Kami menjaga kerahasiaan data dan hubungan kemitraan pelanggan dengan ketat. Dokumentasi visual operasional kepabeanan dan logistik kami disajikan secara anonim guna melindungi privasi bisnis dan kode etik pelanggan.</p>
     </div>
 
-    <!-- Bento Grid Container -->
-    <div class="bento-grid">
-      @foreach($fieldPhotos as $index => $photo)
-      @php
-        $isWide = ($index === 0 || $index === 5);
-      @endphp
-      <div class="bento-item {{ $isWide ? 'bento-wide' : '' }}" @click="openPhoto({{ $index }})">
-        <img src="{{ $photo->url }}" alt="{{ $photo->title }}" loading="lazy" />
-        <div class="bento-overlay">
-          <span style="font-size:10px;font-weight:700;color:#4a9eda;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">{{ $photo->badge }}</span>
-          <h4 style="font-size:15px;font-weight:700;color:#fff;line-height:1.4;margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ $photo->title }}</h4>
-          <span style="font-size:11px;color:rgba(255,255,255,0.5);font-weight:500">{{ $photo->location }}</span>
-        </div>
+    <!-- Mosaic Grid Container -->
+    <div class="mosaic-grid">
+      @foreach($fieldPhotos as $photo)
+      <div class="mosaic-item">
+        <img src="{{ $photo->url }}" alt="M2B Field Documentation" loading="lazy" />
       </div>
       @endforeach
-    </div>
-  </div>
-
-  <!-- Lightbox Modal Overlay -->
-  <div x-show="showLightbox" 
-       x-cloak 
-       style="position:fixed;inset:0;z-index:9999;background:rgba(5,5,8,0.96);backdrop-filter:blur(16px);display:flex;align-items:center;justify-content:center;padding:24px;"
-       x-transition:enter="ease-out duration-300"
-       x-transition:enter-start="opacity-0"
-       x-transition:enter-end="opacity-100"
-       x-transition:leave="ease-in duration-200"
-       x-transition:leave-start="opacity-100"
-       x-transition:leave-end="opacity-0"
-       @click="closePhoto()">
-    
-    <!-- Modal container -->
-    <div style="position:relative;max-width:960px;width:100%;max-height:92vh;display:flex;flex-direction:column;align-items:center" @click.stop class="lightbox-content-wrapper">
-      
-      <!-- Close button -->
-      <button @click="closePhoto()" style="position:absolute;top:-48px;right:0;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;transition:background 0.2s" onmouseover="this.style.background='rgba(255,255,255,0.18)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">
-        <svg style="width:20px;height:20px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
-      </button>
-
-      <!-- Navigation Arrows -->
-      <button @click="prevPhoto()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:50%;width:48px;height:48px;display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;transition:all 0.2s" onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'" class="lightbox-nav-btn-prev">
-        <svg style="width:24px;height:24px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
-      </button>
-      
-      <button @click="nextPhoto()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:50%;width:48px;height:48px;display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;transition:all 0.2s" onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'" class="lightbox-nav-btn-next">
-        <svg style="width:24px;height:24px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-      </button>
-
-      <!-- Main Image Display -->
-      <div style="width:100%;height:auto;max-height:65vh;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,0.12);box-shadow:0 25px 50px -12px rgba(0,0,0,0.6);background:#050508">
-        <img :src="photos[activeIdx].url" style="width:100%;height:100%;max-height:65vh;object-fit:contain;display:block" />
-      </div>
-
-      <!-- Caption and Details -->
-      <div style="width:100%;margin-top:20px;padding:20px 24px;border-radius:16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(8px);text-align:left">
-        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:8px">
-          <span x-text="photos[activeIdx].badge" style="padding:4px 10px;border-radius:20px;background:rgba(74,158,218,0.15);color:#4a9eda;font-size:11px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase"></span>
-          <span x-text="photos[activeIdx].location" style="color:rgba(255,255,255,0.6);font-size:13px;font-weight:600"></span>
-        </div>
-        <h3 x-text="photos[activeIdx].title" style="font-family:Syne;font-size:17px;font-weight:700;color:#fff;line-height:1.45"></h3>
-      </div>
-      
     </div>
   </div>
 </section>
 
 <style>
-.bento-grid {
+.mosaic-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 24px;
-  grid-auto-rows: 280px;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
 }
-.bento-item {
+.mosaic-item {
   position: relative;
-  border-radius: 20px;
+  aspect-ratio: 4/3;
+  border-radius: 12px;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: #111a36;
-  cursor: pointer;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s;
+  cursor: default;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
-.bento-item:hover {
-  transform: translateY(-5px);
-  border-color: rgba(74, 158, 218, 0.4);
-}
-.bento-item img {
+.mosaic-item img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  display: block;
 }
-.bento-item:hover img {
-  transform: scale(1.06);
+/* Dim other items when hovering the grid */
+.mosaic-grid:hover .mosaic-item:not(:hover) {
+  opacity: 0.25;
+  filter: grayscale(40%) blur(1px);
 }
-.bento-wide {
-  grid-column: span 2;
-}
-.bento-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(9, 9, 13, 0.95) 0%, rgba(9, 9, 13, 0.45) 60%, transparent 100%);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 24px;
-  opacity: 0.9;
-  transition: opacity 0.3s;
-}
-.bento-item:hover .bento-overlay {
-  opacity: 1;
-}
-
-/* Lightbox Nav Buttons positioning */
-.lightbox-nav-btn-prev {
-  position: absolute;
-  left: -72px;
-  top: 50%;
-  transform: translateY(-50%);
-}
-.lightbox-nav-btn-next {
-  position: absolute;
-  right: -72px;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-@media (max-width: 1200px) {
-  .lightbox-nav-btn-prev {
-    left: 16px;
-    top: auto;
-    bottom: -64px;
-    transform: none;
-  }
-  .lightbox-nav-btn-next {
-    right: 16px;
-    top: auto;
-    bottom: -64px;
-    transform: none;
-  }
-  .lightbox-content-wrapper {
-    margin-bottom: 80px; /* Space for buttons on small screens */
-  }
+/* Smooth scale up on hover */
+.mosaic-item:hover {
+  transform: scale(1.35);
+  z-index: 10;
+  border-color: rgba(74, 158, 218, 0.6);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
 }
 
 @media (max-width: 991px) {
-  .bento-grid {
-    grid-template-columns: repeat(2, 1fr);
-    grid-auto-rows: 250px;
-    gap: 16px;
+  .mosaic-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
   }
-  .bento-wide {
-    grid-column: span 2;
+  .mosaic-item:hover {
+    transform: scale(1.25);
   }
 }
-@media (max-width: 600px) {
-  .bento-grid {
-    grid-template-columns: 1fr;
-    grid-auto-rows: 240px;
+@media (max-width: 767px) {
+  .mosaic-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
   }
-  .bento-wide {
-    grid-column: span 1;
+  .mosaic-item:hover {
+    transform: scale(1.2);
   }
-  .bento-overlay {
-    padding: 16px;
+}
+@media (max-width: 480px) {
+  .mosaic-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .mosaic-item:hover {
+    transform: scale(1.15);
   }
 }
 </style>
