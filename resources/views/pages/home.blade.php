@@ -1710,8 +1710,8 @@
 .marquee-wrapper {
   overflow: hidden;
   width: 100%;
-  padding: 140px 0;
-  margin: -110px 0;
+  padding: 130px 0;
+  margin: -100px 0;
   position: relative;
 }
 .marquee-fade-left {
@@ -1769,9 +1769,9 @@
 
 .mosaic-item {
   position: relative;
-  width: 57px;
-  height: 57px;
-  border-radius: 6px;
+  width: 85px;
+  height: 85px;
+  border-radius: 8px;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: #111a36;
@@ -1795,8 +1795,8 @@
 }
 /* Smooth scale up on hover (pop out to absolute size of ~315px) */
 .mosaic-item:hover {
-  transform: scale(5.5);
-  border-radius: 2px; /* visually 2 * 5.5 = ~11px border radius at 315px size */
+  transform: scale(3.7);
+  border-radius: 3px; /* visually 3 * 3.7 = ~11px border radius at 315px size */
   z-index: 100;
   border-color: rgba(74, 158, 218, 0.8);
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8), 0 0 25px rgba(74, 158, 218, 0.5);
@@ -1807,13 +1807,13 @@
 
 @media (max-width: 991px) {
   .mosaic-item {
-    width: 45px;
-    height: 45px;
-    border-radius: 5px;
+    width: 68px;
+    height: 68px;
+    border-radius: 6px;
   }
   .mosaic-item:hover {
-    transform: scale(4.67); /* 45 * 4.67 = 210px */
-    border-radius: 2px; /* visually 2 * 4.67 = ~9px border radius at 210px size */
+    transform: scale(3.1); /* 68 * 3.1 = 210px */
+    border-radius: 2px; /* visually 2 * 3.1 = ~6px border radius at 210px size */
   }
   .marquee-wrapper {
     padding: 100px 0;
@@ -1822,13 +1822,13 @@
 }
 @media (max-width: 767px) {
   .mosaic-item {
-    width: 38px;
-    height: 38px;
-    border-radius: 4px;
+    width: 57px;
+    height: 57px;
+    border-radius: 5px;
   }
   .mosaic-item:hover {
-    transform: scale(3.95); /* 38 * 3.95 = 150px */
-    border-radius: 1.5px; /* visually 1.5 * 3.95 = ~6px border radius at 150px size */
+    transform: scale(2.63); /* 57 * 2.63 = 150px */
+    border-radius: 1.5px; /* visually 1.5 * 2.63 = ~4px border radius at 150px size */
   }
   .marquee-wrapper {
     padding: 75px 0;
