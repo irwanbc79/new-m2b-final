@@ -46,7 +46,7 @@ Rumus Perhitungan:
 - Nilai Pabean (CIF) = Cost + Insurance + Freight
 - Bea Masuk (BM) = CIF * % BM
 - Nilai Impor (NI) = CIF + BM
-- PPN Impor = NI * 11%
+- PPN Impor = NI * 12%
 - PPh Impor = NI * (7.5% jika punya API-U, atau 15% jika tidak punya)
 - Total Estimasi Pajak = BM + PPN + PPh
 
