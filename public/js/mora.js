@@ -6,19 +6,72 @@
   const CSRF_TOKEN = () => document.querySelector('meta[name="csrf-token"]')?.content || '';
   const STORAGE_KEY = 'mora_history';
 
-  const QUICK_REPLIES_ID = [
-    'Apa layanan utama M2B?',
-    'Bagaimana proses import barang?',
-    'Apa itu undername import?',
-    'Cara konsultasi dengan tim M2B?',
-  ];
-
-  const QUICK_REPLIES_EN = [
-    'What are M2B\'s main services?',
-    'How is the import process?',
-    'What is undername import?',
-    'How to consult with M2B team?',
-  ];
+  const TRANSLATIONS = {
+    id: {
+      welcome: 'Halo! Saya MORA 🤖, asisten AI dari PT. Mora Multi Berkah (M2B). Saya siap membantu Anda tentang layanan ekspor-impor, bea cukai, dan logistik. Ada yang bisa saya bantu?',
+      error: 'Maaf, terjadi kesalahan. Silakan coba lagi atau hubungi kami via WhatsApp.',
+      connError: 'Koneksi terputus. Silakan coba lagi atau hubungi WhatsApp kami di +62 812-6302-7818.',
+      required: 'Nama dan nomor HP wajib diisi.',
+      sending: 'Mengirim...',
+      submitBtn: 'Kirim',
+      successText: (name, phone) => `Terima kasih ${name}! Tim kami akan segera menghubungi Anda di ${phone}. Apakah ada pertanyaan lain? 😊`,
+      successHist: (name) => `Terima kasih ${name}! Tim kami akan segera menghubungi Anda.`,
+      quickReplies: [
+        'Apa layanan utama M2B?',
+        'Bagaimana proses import barang?',
+        'Apa itu undername import?',
+        'Cara konsultasi dengan tim M2B?',
+      ]
+    },
+    en: {
+      welcome: 'Hello! I am MORA 🤖, AI assistant from PT. Mora Multi Berkah (M2B). I am ready to help you with export-import, customs clearance, and logistics services. How can I help you?',
+      error: 'Sorry, an error occurred. Please try again or contact us via WhatsApp.',
+      connError: 'Connection lost. Please try again or contact our WhatsApp at +62 812-6302-7818.',
+      required: 'Name and phone number are required.',
+      sending: 'Sending...',
+      submitBtn: 'Submit & Get Offer',
+      successText: (name, phone) => `Thank you ${name}! Our team will contact you soon at ${phone}. Do you have any other questions? 😊`,
+      successHist: (name) => `Thank you ${name}! Our team will contact you soon.`,
+      quickReplies: [
+        'What are M2B\'s main services?',
+        'How is the import process?',
+        'What is undername import?',
+        'How to consult with M2B team?',
+      ]
+    },
+    zh: {
+      welcome: '您好！我是 MORA 🤖，PT. Mora Multi Berkah (M2B) 的 AI 助手。我很乐意为您提供进出口、清关和物流服务方面的帮助。请问有什么我可以帮您的？',
+      error: '抱歉，出错了。请重试或通过 WhatsApp 与我们联系。',
+      connError: '连接中断。请重试或联系我们的 WhatsApp：+62 812-6302-7818。',
+      required: '姓名和电话号码是必填项。',
+      sending: '发送中...',
+      submitBtn: '提交并获取报价',
+      successText: (name, phone) => `谢谢您 ${name}！我们的团队很快会通过 ${phone} 与您联系。您还有其他问题吗？😊`,
+      successHist: (name) => `谢谢您 ${name}！我们的团队很快会与您联系。`,
+      quickReplies: [
+        'M2B 的主要服务是什么？',
+        '如何办理进口手续？',
+        '什么是挂靠/借用资质进口？',
+        '如何咨询 M2B 团队？',
+      ]
+    },
+    ar: {
+      welcome: 'مرحباً! أنا مورا 🤖، المساعد الذكي لشركة PT. Mora Multi Berkah (M2B). أنا هنا لمساعدتك في خدمات الاستيراد والتصدير، والتخليص الجمركي، والخدمات اللوجستية. كيف يمكنني مساعدتك اليوم؟',
+      error: 'عذراً، حدث خطأ. يرجى المحاولة مرة أخرى أو الاتصال بنا عبر الواتساب.',
+      connError: 'انقطع الاتصال. يرجى المحاولة مرة أخرى أو الاتصال بنا عبر الواتساب على +62 812-6302-7818.',
+      required: 'الاسم ورقم الهاتف مطلوبان.',
+      sending: 'جاري الإرسال...',
+      submitBtn: 'إرسال والحصول على عرض',
+      successText: (name, phone) => `شكراً لك ${name}! سيتصل بك فريقنا قريباً على الرقم ${phone}. هل لديك أي أسئلة أخرى؟ 😊`,
+      successHist: (name) => `شكراً لك ${name}! سيتصل بك فريقنا قريباً.`,
+      quickReplies: [
+        'ما هي الخدمات الرئيسية لشركة M2B؟',
+        'كيف تتم عملية الاستيراد؟',
+        'ما هو الاستيراد تحت اسم شركة أخرى (Undername)؟',
+        'كيف يمكنني استشارة فريق M2B؟',
+      ]
+    }
+  };
 
   const LEAD_KEYWORDS = [
     'harga','biaya','tarif','penawaran','quote','rate','ongkos',
@@ -58,7 +111,8 @@
 
     // Read language
     const lang = localStorage.getItem('m2b_lang') || 'id';
-    const quickReplies = lang === 'en' ? QUICK_REPLIES_EN : QUICK_REPLIES_ID;
+    const t = TRANSLATIONS[lang] || TRANSLATIONS.id;
+    const quickReplies = t.quickReplies;
 
     // Restore history
     try { history = JSON.parse(sessionStorage.getItem(STORAGE_KEY) || '[]'); } catch {}
@@ -103,9 +157,8 @@
 
   function showWelcome() {
     const lang = localStorage.getItem('m2b_lang') || 'id';
-    const welcome = lang === 'en'
-      ? 'Hello! I am MORA 🤖, AI assistant from PT. Mora Multi Berkah (M2B). I am ready to help you with export-import, customs clearance, and logistics services. How can I help you?'
-      : 'Halo! Saya MORA 🤖, asisten AI dari PT. Mora Multi Berkah (M2B). Saya siap membantu Anda tentang layanan ekspor-impor, bea cukai, dan logistik. Ada yang bisa saya bantu?';
+    const t = TRANSLATIONS[lang] || TRANSLATIONS.id;
+    const welcome = t.welcome;
     appendBubble('assistant', welcome);
     history.push({ role: 'assistant', content: welcome });
     saveHistory();
@@ -122,6 +175,7 @@
 
   async function sendMessage(text) {
     const lang = localStorage.getItem('m2b_lang') || 'id';
+    const t = TRANSLATIONS[lang] || TRANSLATIONS.id;
     // Hide quick replies after first message
     el('mora-quickreplies').style.display = 'none';
 
@@ -146,9 +200,10 @@
       showTyping(false);
 
       if (!res.ok || data.error) {
-        const errText = lang === 'en'
-          ? (data.error || 'Sorry, an error occurred. Please try again or contact us via WhatsApp.')
-          : (data.error || 'Maaf, terjadi kesalahan. Silakan coba lagi atau hubungi kami via WhatsApp.');
+        let errText = data.error || t.error;
+        if (data.error === 'Maaf, layanan sedang tidak tersedia. Silakan hubungi kami via WhatsApp.') {
+          errText = t.error;
+        }
         appendBubble('assistant', errText);
         return;
       }
@@ -164,10 +219,7 @@
 
     } catch (err) {
       showTyping(false);
-      const connError = lang === 'en'
-        ? 'Connection lost. Please try again or contact our WhatsApp at +62 812-6302-7818.'
-        : 'Koneksi terputus. Silakan coba lagi atau hubungi WhatsApp kami di +62 812-6302-7818.';
-      appendBubble('assistant', connError);
+      appendBubble('assistant', t.connError);
     }
   }
 
@@ -190,14 +242,15 @@
     const email   = el('mora-lead-email')?.value.trim();
     const phone   = el('mora-lead-phone')?.value.trim();
     const lang    = localStorage.getItem('m2b_lang') || 'id';
+    const t       = TRANSLATIONS[lang] || TRANSLATIONS.id;
 
     if (!name || !phone) {
-      alert(lang === 'en' ? 'Name and phone number are required.' : 'Nama dan nomor HP wajib diisi.');
+      alert(t.required);
       return;
     }
 
     const submitBtn = el('mora-lead-submit');
-    submitBtn.textContent = lang === 'en' ? 'Sending...' : 'Mengirim...';
+    submitBtn.textContent = t.sending;
     submitBtn.disabled = true;
 
     try {
@@ -213,19 +266,15 @@
 
       el('mora-lead-form').classList.remove('show');
       leadDone = true;
-      const successText = lang === 'en'
-        ? `Thank you ${name}! Our team will contact you soon at ${phone}. Do you have any other questions? 😊`
-        : `Terima kasih ${name}! Tim kami akan segera menghubungi Anda di ${phone}. Apakah ada pertanyaan lain? 😊`;
-      const successHist = lang === 'en'
-        ? `Thank you ${name}! Our team will contact you soon.`
-        : `Terima kasih ${name}! Tim kami akan segera menghubungi Anda.`;
+      const successText = t.successText(name, phone);
+      const successHist = t.successHist(name);
 
       appendBubble('assistant', successText);
       history.push({ role: 'assistant', content: successHist });
       saveHistory();
 
     } catch {
-      submitBtn.textContent = lang === 'en' ? 'Submit & Get Offer' : 'Kirim';
+      submitBtn.textContent = t.submitBtn;
       submitBtn.disabled = false;
     }
   }

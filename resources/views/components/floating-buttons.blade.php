@@ -1,5 +1,77 @@
 {{-- ═══ Floating Buttons — kanan: eBook + WhatsApp ═══ --}}
-<div style="position:fixed;bottom:28px;right:20px;z-index:9991;display:flex;flex-direction:column;gap:12px;align-items:flex-end">
+<div x-data="{
+  waOpen: false,
+  csModalOpen: false,
+  csName: '',
+  csPhone: '',
+  csEmail: '',
+  csCompany: '',
+  loading: false,
+  submitCSLead() {
+    if (!this.csName.trim() || !this.csPhone.trim()) {
+      alert(this.$store.lang.t(
+        'Nama dan Nomor WhatsApp wajib diisi.',
+        'Name and WhatsApp number are required.',
+        '姓名和 WhatsApp 号码为必填项。',
+        'الاسم ورقم الواتساب مطلوبان.'
+      ));
+      return;
+    }
+    this.loading = true;
+    fetch('/mora/lead', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+      },
+      body: JSON.stringify({
+        name: this.csName,
+        phone: this.csPhone,
+        email: this.csEmail,
+        company: this.csCompany
+      })
+    })
+    .then(res => {
+      this.loading = false;
+      this.csModalOpen = false;
+
+      // Build pre-filled message based on selected language
+      let waText = '';
+      const lang = localStorage.getItem('m2b_lang') || 'id';
+      if (lang === 'en') {
+        waText = `Hello CS M2B, I would like to consult regarding shipping/logistics.\n\nMy Details:\n- Name: ${this.csName}\n- WhatsApp: ${this.csPhone}\n- Email: ${this.csEmail || '-'}\n- Company: ${this.csCompany || '-'}`;
+      } else if (lang === 'zh') {
+        waText = `您好 M2B 客服，我想咨询货运/物流相关事宜。\n\n我的信息：\n- 姓名: ${this.csName}\n- WhatsApp/电话: ${this.csPhone}\n- 电子邮件: ${this.csEmail || '-'}\n- 公司名称: ${this.csCompany || '-'}`;
+      } else if (lang === 'ar') {
+        waText = `مرحباً خدمة عملاء M2B، أود الاستفسار بخصوص الشحن والخدمات اللوجستية.\n\nبياناتي:\n- الاسم: ${this.csName}\n- الواتساب: ${this.csPhone}\n- البريد الإلكتروني: ${this.csEmail || '-'}\n- الشركة: ${this.csCompany || '-'}`;
+      } else {
+        // default to Indonesian 'id'
+        waText = `Halo CS M2B, saya ingin berkonsultasi mengenai pengiriman/logistik.\n\nBerikut data saya:\n- Nama: ${this.csName}\n- WhatsApp: ${this.csPhone}\n- Email: ${this.csEmail || '-'}\n- Perusahaan: ${this.csCompany || '-'}`;
+      }
+
+      const encodedText = encodeURIComponent(waText);
+      const waUrl = `https://wa.me/6281263027818?text=${encodedText}`;
+      window.open(waUrl, '_blank');
+
+      // Clear fields
+      this.csName = '';
+      this.csPhone = '';
+      this.csEmail = '';
+      this.csCompany = '';
+    })
+    .catch(err => {
+      this.loading = false;
+      console.error(err);
+      alert(this.$store.lang.t(
+        'Terjadi kesalahan. Silakan coba lagi atau hubungi kami secara manual.',
+        'An error occurred. Please try again or contact us manually.',
+        '发生错误。请重试或手动联系我们。',
+        'حدث خطأ. يرجى المحاولة مرة أخرى أو الاتصال بنا يدوياً.'
+      ));
+    });
+  }
+}" style="position:fixed;bottom:28px;right:20px;z-index:9991;display:flex;flex-direction:column;gap:12px;align-items:flex-end">
   <a href="https://ebook.m2b.co.id" target="_blank" rel="noopener"
     style="display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:24px;background:#f5b91c;color:#0f0f14;text-decoration:none;font-weight:700;font-size:12px;box-shadow:0 4px 14px rgba(245,185,28,0.4);transition:transform .2s,box-shadow .2s;white-space:nowrap"
     onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(245,185,28,0.5)'"
@@ -8,7 +80,7 @@
   </a>
 
   {{-- WhatsApp dengan quick reply chips --}}
-  <div x-data="{ waOpen: false }" style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
 
     {{-- Quick reply chips --}}
     <div x-show="waOpen"
@@ -19,36 +91,30 @@
       x-transition:leave-end="opacity-0"
       style="display:flex;flex-direction:column;gap:6px;align-items:flex-end"
       x-cloak>
-      <a :href="$store.lang.t(
-          'https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20mau%20minta%20penawaran%20harga',
-          'https://wa.me/6281263027818?text=Hello%20M2B,%20I%20would%20like%20to%20request%20a%20price%20quote',
-          'https://wa.me/6281263027818?text=您好M2B，我想索取价格报价',
-          'https://wa.me/6281263027818?text=مرحباً%20M2B،%20أرغب%20في%20طلب%20عرض%20سعر'
-        )"
-        target="_blank" rel="noopener"
-        style="padding:8px 14px;border-radius:20px;background:#fff;border:1.5px solid #25D366;color:#075e54;font-size:12px;font-weight:700;text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,0.1);white-space:nowrap"
-        x-text="$store.lang.t('💰 Minta Penawaran Harga', '💰 Request Quote', '💰 索取价格报价', '💰 طلب عرض سعر')">
-        💰 Minta Penawaran Harga
-      </a>
+      
+      {{-- 1. Ajukan B2B / Minta Penawaran --}}
       <a href="#" @click.prevent="waOpen = false; window.dispatchEvent(new CustomEvent('open-b2b-modal'))"
-        style="padding:8px 14px;border-radius:20px;background:#fff;border:1.5px solid #25D366;color:#075e54;font-size:12px;font-weight:700;text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,0.1);white-space:nowrap"
-        x-text="$store.lang.t('💼 Ajukan Inquiry B2B', '💼 Submit B2B Inquiry', '💼 提交 B2B 询盘', '💼 تقديم استعلام B2B')">
-        💼 Ajukan Inquiry B2B
+        class="wa-chip wa-chip-b2b"
+        x-text="$store.lang.t('💼 Minta Penawaran (B2B)', '💼 Request Quote (B2B)', '💼 索取报价 (B2B)', '💼 طلب عرض سعر (B2B)')">
+        💼 Minta Penawaran (B2B)
       </a>
-      <a :href="$store.lang.t(
-          'https://wa.me/6281263027818?text=Halo%20M2B,%20saya%20ingin%20cek%20status%20shipment%20saya',
-          'https://wa.me/6281263027818?text=Hello%20M2B,%20I%20would%20like%20to%20check%20my%20shipment%20status',
-          'https://wa.me/6281263027818?text=您好M2B，我想查询我的货物运输状态',
-          'https://wa.me/6281263027818?text=مرحباً%20M2B،%20أرغب%20في%20التحقق%20من%20حالة%20شحنتي'
-        )"
-        target="_blank" rel="noopener"
-        style="padding:8px 14px;border-radius:20px;background:#fff;border:1.5px solid #25D366;color:#075e54;font-size:12px;font-weight:700;text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,0.1);white-space:nowrap"
-        x-text="$store.lang.t('📦 Cek Status Shipment', '📦 Check Status', '📦 查询运输状态', '📦 التحقق من حالة الشحنة')">
+
+      {{-- 2. Chat dengan CS (Opens Lead Form) --}}
+      <a href="#" @click.prevent="waOpen = false; csModalOpen = true"
+        class="wa-chip"
+        x-text="$store.lang.t('💬 Chat dengan CS', '💬 Chat with CS', '💬 与客服联系', '💬 التحدث مع خدمة العملاء')">
+        💬 Chat dengan CS
+      </a>
+
+      {{-- 3. Cek Status Shipment (Direct link to portal) --}}
+      <a href="https://portal.m2b.co.id" target="_blank" rel="noopener" @click="waOpen = false"
+        class="wa-chip wa-chip-portal"
+        x-text="$store.lang.t('📦 Cek Status Shipment', '📦 Check Shipment Status', '📦 查询运输状态', '📦 التحقق من حالة الشحنة')">
         📦 Cek Status Shipment
       </a>
     </div>
 
-    {{-- WA Button utama (diperbesar dari 56px ke 68px menggunakan kelas wa-btn-main) --}}
+    {{-- WA Button utama --}}
     <button @click="waOpen = !waOpen" class="wa-btn wa-btn-main"
       aria-label="WhatsApp M2B">
       <span x-show="!waOpen" style="display:flex;align-items:center;justify-content:center">
@@ -58,6 +124,56 @@
       </span>
       <span x-show="waOpen" x-cloak style="font-size:26px;line-height:1;color:#fff;font-weight:700;display:inline-block;transition:transform 0.25s;transform:rotate(90deg)">✕</span>
     </button>
+  </div>
+
+  {{-- ═══ Modal Popup: Chat dengan CS ═══ --}}
+  <div x-show="csModalOpen" class="cs-overlay" x-cloak>
+    <div class="cs-modal-card" @click.away="csModalOpen = false">
+      <button @click="csModalOpen = false" class="cs-close-btn" aria-label="Close">✕</button>
+      
+      <div>
+        <div class="cs-avatar">
+          💬
+          <div class="cs-avatar-dot"></div>
+        </div>
+        <h3 x-text="$store.lang.t('Hubungi Customer Service M2B', 'Contact M2B Customer Service', '联系 M2B 客服', 'اتصل بخدمة عملاء M2B')" style="text-align:center; font-size:18px; font-weight:700; color:#1e3a5f; margin:10px 0 6px 0;">
+          Hubungi Customer Service M2B
+        </h3>
+        <p x-text="$store.lang.t('Silakan isi data Anda untuk memulai percakapan langsung via WhatsApp.', 'Please fill in your details to start a direct chat via WhatsApp.', '请填写您的信息以开始微信/WhatsApp直接聊天。', 'يرjى ملء بياناتك لبدء دردشة مباشرة عبر الواتساب.')" style="text-align:center; font-size:12.5px; color:#5c6c7f; line-height:1.5; margin:0 0 10px 0;">
+          Silakan isi data Anda untuk memulai percakapan langsung via WhatsApp.
+        </p>
+      </div>
+
+      {{-- Form Inputs --}}
+      <div class="cs-input-group">
+        <label class="cs-input-label" x-text="$store.lang.t('Nama Lengkap *', 'Full Name *', '姓名 *', 'الاسم الكامل *')">Nama Lengkap *</label>
+        <input type="text" x-model="csName" class="cs-input" :placeholder="$store.lang.t('Masukkan nama Anda', 'Enter your name', '请输入姓名', 'أدخل اسمك')">
+      </div>
+
+      <div class="cs-input-group">
+        <label class="cs-input-label" x-text="$store.lang.t('Nomor WhatsApp *', 'WhatsApp Number *', 'WhatsApp Number *', 'رقم الواتساب *')">Nomor WhatsApp *</label>
+        <input type="tel" x-model="csPhone" class="cs-input" :placeholder="$store.lang.t('Contoh: 08123456789', 'Example: 08123456789', '例如: 08123456789', 'مثال: 08123456789')">
+      </div>
+
+      <div class="cs-input-group">
+        <label class="cs-input-label" x-text="$store.lang.t('Alamat Email', 'Email Address', '电子邮箱', 'البريد الإلكتروني')">Alamat Email</label>
+        <input type="email" x-model="csEmail" class="cs-input" :placeholder="$store.lang.t('Masukkan email Anda', 'Enter your email', '请输入电子邮箱', 'أدخل بريدك الإلكتروني')">
+      </div>
+
+      <div class="cs-input-group">
+        <label class="cs-input-label" x-text="$store.lang.t('Nama Perusahaan', 'Company Name', '公司名称', 'اسم الشركة')">Nama Perusahaan</label>
+        <input type="text" x-model="csCompany" class="cs-input" :placeholder="$store.lang.t('Masukkan nama perusahaan', 'Enter company name', '请输入公司名称', 'أدخل اسم الشركة')">
+      </div>
+
+      <button @click="submitCSLead()" :disabled="loading" class="cs-submit-btn">
+        <svg x-show="loading" class="animate-spin" style="width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" stroke-dasharray="32" stroke-linecap="round"></circle>
+        </svg>
+        <span x-text="loading ? $store.lang.t('Mengirim...', 'Sending...', '发送中...', 'جاري الإرسال...') : $store.lang.t('Mulai Obrolan WhatsApp', 'Start WhatsApp Chat', '开始 WhatsApp 聊天', 'بدء محادثة الواتساب')">
+          Mulai Obrolan WhatsApp
+        </span>
+      </button>
+    </div>
   </div>
 </div>
 
@@ -84,3 +200,194 @@
     🔐 Login Portal
   </a>
 </div>
+
+{{-- Styling CSS tambahan untuk WA Menu & CS Modal Card --}}
+<style>
+  .wa-chip {
+    padding: 9px 15px;
+    border-radius: 20px;
+    background: #fff;
+    border: 1.5px solid #25D366;
+    color: #075e54;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .wa-chip:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(37,211,102,0.25);
+    background: #fcfdfc;
+  }
+  .wa-chip-portal {
+    border-color: #1e3a5f;
+    color: #1e3a5f;
+  }
+  .wa-chip-portal:hover {
+    box-shadow: 0 6px 16px rgba(30,58,95,0.2);
+    background: #f7f9fc;
+  }
+  .wa-chip-b2b {
+    border-color: #f5b91c;
+    color: #b0820a;
+  }
+  .wa-chip-b2b:hover {
+    box-shadow: 0 6px 16px rgba(245,185,28,0.25);
+    background: #fffdf7;
+  }
+
+  /* CS Modal Animations */
+  @keyframes csFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes csPopIn {
+    from { transform: scale(0.9) translateY(20px); opacity: 0; }
+    to { transform: scale(1) translateY(0); opacity: 1; }
+  }
+  .cs-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(15, 15, 20, 0.5);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 10005;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: csFadeIn 0.3s ease-out;
+  }
+  .cs-modal-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.18);
+    border-radius: 24px;
+    max-width: 420px;
+    width: 90%;
+    padding: 30px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    position: relative;
+    animation: csPopIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+  .cs-close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0, 0, 0, 0.05);
+    color: #4a5568;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .cs-close-btn:hover {
+    background: rgba(0, 0, 0, 0.1);
+    transform: scale(1.05);
+  }
+  .cs-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #25D366, #128C7E);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    margin: 0 auto 4px auto;
+    box-shadow: 0 8px 20px rgba(37, 211, 102, 0.25);
+    position: relative;
+  }
+  .cs-avatar-dot {
+    width: 12px;
+    height: 12px;
+    background: #00e676;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+  }
+  .cs-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-align: left;
+  }
+  .cs-input-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #4a5568;
+  }
+  .cs-input {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1.5px solid rgba(229, 226, 220, 0.8);
+    background: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    color: #1a202c;
+  }
+  .cs-input:focus {
+    border-color: #25D366;
+    box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.15);
+  }
+  .cs-submit-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #25D366, #128C7E);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(37, 211, 102, 0.3);
+    transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .cs-submit-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 28px rgba(37, 211, 102, 0.4);
+  }
+  .cs-submit-btn:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+  .cs-submit-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  .animate-spin {
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+</style>
