@@ -53,6 +53,22 @@ class MoraLeadResource extends Resource
                     ->maxLength(20),
                 Forms\Components\Toggle::make('emailed')
                     ->required(),
+                Forms\Components\Textarea::make('chat_history_display')
+                    ->label('Riwayat Percakapan')
+                    ->disabled()
+                    ->rows(12)
+                    ->dehydrated(false)
+                    ->afterStateHydrated(function ($component, $record) {
+                        if (!$record || empty($record->chat_history)) {
+                            $component->state('(tidak ada riwayat percakapan)');
+                            return;
+                        }
+                        $lines = collect($record->chat_history)->map(function ($msg) {
+                            $prefix = $msg['role'] === 'user' ? 'Pengunjung' : 'MORA';
+                            return "[{$prefix}] {$msg['content']}";
+                        })->implode("\n\n");
+                        $component->state($lines);
+                    }),
             ]);
     }
 

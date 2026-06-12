@@ -261,7 +261,7 @@
           'Accept'       : 'application/json',
           'X-CSRF-TOKEN' : CSRF_TOKEN(),
         },
-        body: JSON.stringify({ name, company, email, phone }),
+        body: JSON.stringify({ name, company, email, phone, history }),
       });
 
       el('mora-lead-form').classList.remove('show');

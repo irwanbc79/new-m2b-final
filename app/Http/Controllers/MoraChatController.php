@@ -251,23 +251,37 @@ PROMPT;
     public function lead(Request $request): JsonResponse
     {
         $request->validate([
-            'name'    => 'required|string|max:100',
-            'company' => 'nullable|string|max:100',
-            'email'   => 'nullable|email|max:100',
-            'phone'   => 'required|string|max:20',
+            'name'              => 'required|string|max:100',
+            'company'           => 'nullable|string|max:100',
+            'email'             => 'nullable|email|max:100',
+            'phone'             => 'required|string|max:20',
+            'history'           => 'nullable|array|max:40',
+            'history.*.role'    => 'required_with:history|in:user,assistant',
+            'history.*.content' => 'required_with:history|string|max:2000',
         ]);
 
-        $data = $request->only(['name', 'company', 'email', 'phone']);
+        $data    = $request->only(['name', 'company', 'email', 'phone']);
+        $history = $request->input('history', []);
 
         // Persist first so a lead is never lost — even if the email step fails.
-        $lead = MoraLead::create($data + ['emailed' => false]);
+        $lead = MoraLead::create($data + ['emailed' => false, 'chat_history' => $history ?: null]);
+
+        $chatLines = '';
+        if (!empty($history)) {
+            $chatLines = "\n\n--- Riwayat Percakapan ---\n";
+            foreach ($history as $msg) {
+                $prefix     = $msg['role'] === 'user' ? 'Pengunjung' : 'MORA';
+                $chatLines .= "[{$prefix}] {$msg['content']}\n";
+            }
+        }
 
         $body = "Lead baru dari MORA Chat\n\n"
               . "Nama    : {$data['name']}\n"
               . "Perusahaan: " . ($data['company'] ?: '-') . "\n"
               . "Email   : " . ($data['email'] ?: '-') . "\n"
               . "HP/WA   : {$data['phone']}\n\n"
-              . "Waktu   : " . now()->format('d M Y H:i') . " WIB";
+              . "Waktu   : " . now()->format('d M Y H:i') . " WIB"
+              . $chatLines;
 
         try {
             Mail::raw($body, fn($m) => $m

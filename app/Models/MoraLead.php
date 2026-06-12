@@ -5,7 +5,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class MoraLead extends Model
 {
-    protected $fillable = ['name', 'company', 'email', 'phone', 'emailed'];
+    protected $fillable = ['name', 'company', 'email', 'phone', 'emailed', 'chat_history'];
 
-    protected $casts = ['emailed' => 'boolean'];
+    protected $casts = [
+        'emailed'      => 'boolean',
+        'chat_history' => 'array',
+    ];
 }
