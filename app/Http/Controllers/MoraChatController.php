@@ -249,6 +249,24 @@ PROMPT;
         return response()->json(['reply' => $reply, 'provider' => $currentProvider]);
     }
 
+    private function scoreChat(array $history): string
+    {
+        if (empty($history)) return 'cold';
+
+        $text = strtolower(implode(' ', array_column($history, 'content')));
+
+        $hotKeywords  = ['harga','biaya','tarif','penawaran','quote','rate','ongkos','berapa','segera','urgent','cepat','besok','minggu ini','sekarang','cost','fee'];
+        $warmKeywords = ['ekspor','impor','undername','bea cukai','dokumen','pengiriman','door to door','layanan','service','clearance','pib','peb','customs'];
+
+        foreach ($hotKeywords as $kw) {
+            if (str_contains($text, $kw)) return 'hot';
+        }
+        foreach ($warmKeywords as $kw) {
+            if (str_contains($text, $kw)) return 'warm';
+        }
+        return 'cold';
+    }
+
     private function generateSummary(array $history): ?string
     {
         if (empty($history)) return null;
@@ -279,6 +297,7 @@ PROMPT;
             'company'           => 'nullable|string|max:100',
             'email'             => 'nullable|email|max:100',
             'phone'             => 'required|string|max:20',
+            'source'            => 'nullable|string|in:mora_chat,cs_form',
             'history'           => 'nullable|array|max:40',
             'history.*.role'    => 'required_with:history|in:user,assistant',
             'history.*.content' => 'required_with:history|string|max:2000',
@@ -286,8 +305,9 @@ PROMPT;
 
         $data    = $request->only(['name', 'company', 'email', 'phone']);
         $history = $request->input('history', []);
+        $source  = $request->input('source', 'mora_chat');
 
-        // Generate AI summary before saving so it's included in the email.
+        $score   = $this->scoreChat($history);
         $summary = $this->generateSummary($history);
 
         // Persist first — lead is never lost even if email fails.
@@ -295,6 +315,8 @@ PROMPT;
             'emailed'      => false,
             'chat_history' => $history ?: null,
             'status'       => 'new',
+            'score'        => $score,
+            'source'       => $source,
             'summary'      => $summary,
         ]);
 

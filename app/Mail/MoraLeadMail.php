@@ -17,9 +17,14 @@ class MoraLeadMail extends Mailable
 
     public function envelope(): Envelope
     {
-        $score = $this->lead->summary ? '🔥' : '📩';
+        $emoji = match($this->lead->score) {
+            'hot'  => '🔥',
+            'warm' => '⚡',
+            default => '📩',
+        };
+        $source = $this->lead->source === 'cs_form' ? '[CS Form]' : '[MORA Chat]';
         return new Envelope(
-            subject: "{$score} Lead MORA Chat — {$this->lead->name} · " . now()->format('d M Y H:i') . ' WIB',
+            subject: "{$emoji} Lead {$source} — {$this->lead->name} · " . now()->format('d M Y H:i') . ' WIB',
         );
     }
 

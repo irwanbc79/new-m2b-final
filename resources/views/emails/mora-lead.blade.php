@@ -43,7 +43,19 @@
   </div>
 
   <div class="body">
-    <div class="badge-new">📩 Lead Baru Masuk</div>
+    @php
+        $scoreEmoji = match($lead->score) { 'hot' => '🔥', 'warm' => '⚡', default => '📩' };
+        $scoreLabel = match($lead->score) { 'hot' => 'Hot Lead', 'warm' => 'Warm Lead', default => 'Cold Lead' };
+        $scoreBg    = match($lead->score) { 'hot' => '#fee2e2', 'warm' => '#fef3c7', default => '#dbeafe' };
+        $scoreColor = match($lead->score) { 'hot' => '#991b1b', 'warm' => '#92400e', default => '#1d4ed8' };
+        $sourceLabel = $lead->source === 'cs_form' ? 'CS Form' : 'MORA Chat';
+        $phone = preg_replace('/[^0-9]/', '', $lead->phone);
+        $phone = preg_replace('/^0/', '62', $phone);
+    @endphp
+    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
+        <span style="display:inline-block;background:{{ $scoreBg }};color:{{ $scoreColor }};font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;">{{ $scoreEmoji }} {{ $scoreLabel }}</span>
+        <span style="display:inline-block;background:#f0fdf4;color:#166534;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;">📩 Lead Baru · {{ $sourceLabel }}</span>
+    </div>
 
     {{-- Data Kontak --}}
     <p class="section-title">Data Kontak</p>
@@ -80,7 +92,7 @@
 
     {{-- Tombol WA --}}
     <p style="margin-bottom:16px;">
-      <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $lead->phone) }}" class="action-btn">
+      <a href="https://wa.me/{{ $phone }}" class="action-btn">
         💬 Hubungi via WhatsApp
       </a>
     </p>

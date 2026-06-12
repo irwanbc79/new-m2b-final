@@ -22,7 +22,13 @@ class MoraLeadResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return (string) static::getModel()::count();
+        $count = static::getModel()::where('status', 'new')->count();
+        return $count > 0 ? (string) $count : null;
+    }
+
+    public static function getNavigationBadgeColor(): string
+    {
+        return 'danger';
     }
 
     public static function canCreate(): bool
@@ -107,6 +113,14 @@ class MoraLeadResource extends Resource
                     ->label('Masuk')
                     ->dateTime('d M Y H:i')
                     ->sortable(),
+                Tables\Columns\BadgeColumn::make('score')
+                    ->label('')
+                    ->formatStateUsing(fn($state) => MoraLead::SCORES[$state] ?? $state)
+                    ->color(fn($state) => match($state) {
+                        'hot'  => 'danger',
+                        'warm' => 'warning',
+                        default => 'gray',
+                    }),
                 Tables\Columns\BadgeColumn::make('status')
                     ->label('Status')
                     ->formatStateUsing(fn($state) => MoraLead::STATUSES[$state] ?? $state)
@@ -134,9 +148,15 @@ class MoraLeadResource extends Resource
                     ->boolean(),
             ])
             ->filters([
+                Tables\Filters\SelectFilter::make('score')
+                    ->label('Score')
+                    ->options(MoraLead::SCORES),
                 Tables\Filters\SelectFilter::make('status')
                     ->label('Status')
                     ->options(MoraLead::STATUSES),
+                Tables\Filters\SelectFilter::make('source')
+                    ->label('Sumber')
+                    ->options(MoraLead::SOURCES),
                 Tables\Filters\TernaryFilter::make('emailed')
                     ->label('Email terkirim'),
             ])

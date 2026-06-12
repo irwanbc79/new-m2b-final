@@ -13,7 +13,21 @@ class MoraLead extends Model
         'lost'        => 'Gagal',
     ];
 
-    protected $fillable = ['name', 'company', 'email', 'phone', 'emailed', 'chat_history', 'status', 'summary'];
+    const SCORES = [
+        'hot'  => '🔥 Hot',
+        'warm' => '⚡ Warm',
+        'cold' => '📩 Cold',
+    ];
+
+    const SOURCES = [
+        'mora_chat' => 'MORA Chat',
+        'cs_form'   => 'CS Form',
+    ];
+
+    protected $fillable = [
+        'name', 'company', 'email', 'phone',
+        'emailed', 'chat_history', 'status', 'summary', 'score', 'source',
+    ];
 
     protected $casts = [
         'emailed'      => 'boolean',
