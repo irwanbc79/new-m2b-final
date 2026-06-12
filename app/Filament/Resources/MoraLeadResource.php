@@ -3,15 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\MoraLeadResource\Pages;
-use App\Filament\Resources\MoraLeadResource\RelationManagers;
 use App\Models\MoraLead;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class MoraLeadResource extends Resource
 {
@@ -37,39 +34,68 @@ class MoraLeadResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(100),
-                Forms\Components\TextInput::make('company')
-                    ->maxLength(100)
-                    ->default(null),
-                Forms\Components\TextInput::make('email')
-                    ->email()
-                    ->maxLength(100)
-                    ->default(null),
-                Forms\Components\TextInput::make('phone')
-                    ->tel()
-                    ->required()
-                    ->maxLength(20),
-                Forms\Components\Toggle::make('emailed')
-                    ->required(),
-                Forms\Components\Textarea::make('chat_history_display')
-                    ->label('Riwayat Percakapan')
-                    ->disabled()
-                    ->rows(12)
-                    ->dehydrated(false)
-                    ->afterStateHydrated(function ($component, $record) {
-                        if (!$record || empty($record->chat_history)) {
-                            $component->state('(tidak ada riwayat percakapan)');
-                            return;
-                        }
-                        $lines = collect($record->chat_history)->map(function ($msg) {
-                            $prefix = $msg['role'] === 'user' ? 'Pengunjung' : 'MORA';
-                            return "[{$prefix}] {$msg['content']}";
-                        })->implode("\n\n");
-                        $component->state($lines);
-                    }),
+                Forms\Components\Section::make('Data Kontak')
+                    ->columns(2)
+                    ->schema([
+                        Forms\Components\TextInput::make('name')->label('Nama')->required()->maxLength(100),
+                        Forms\Components\TextInput::make('phone')->label('HP / WA')->tel()->required()->maxLength(20),
+                        Forms\Components\TextInput::make('company')->label('Perusahaan')->maxLength(100)->default(null),
+                        Forms\Components\TextInput::make('email')->label('Email')->email()->maxLength(100)->default(null),
+                    ]),
+
+                Forms\Components\Section::make('Status & Tindak Lanjut')
+                    ->columns(2)
+                    ->schema([
+                        Forms\Components\Select::make('status')
+                            ->label('Status')
+                            ->options(MoraLead::STATUSES)
+                            ->required(),
+                        Forms\Components\Toggle::make('emailed')
+                            ->label('Email terkirim')
+                            ->inline(false),
+                    ]),
+
+                Forms\Components\Section::make('Ringkasan AI')
+                    ->schema([
+                        Forms\Components\Textarea::make('summary')
+                            ->label('Ringkasan Percakapan (AI)')
+                            ->rows(3)
+                            ->placeholder('(belum ada ringkasan)')
+                            ->columnSpanFull(),
+                    ]),
+
+                Forms\Components\Section::make('Riwayat Percakapan')
+                    ->schema([
+                        Forms\Components\Textarea::make('chat_history_display')
+                            ->label('')
+                            ->disabled()
+                            ->rows(14)
+                            ->dehydrated(false)
+                            ->columnSpanFull()
+                            ->afterStateHydrated(function ($component, $record) {
+                                if (!$record || empty($record->chat_history)) {
+                                    $component->state('(tidak ada riwayat percakapan)');
+                                    return;
+                                }
+                                $lines = collect($record->chat_history)->map(function ($msg) {
+                                    $prefix = $msg['role'] === 'user' ? 'Pengunjung' : 'MORA';
+                                    return "[{$prefix}]\n{$msg['content']}";
+                                })->implode("\n\n──────────────────────\n\n");
+                                $component->state($lines);
+                            }),
+                    ]),
             ]);
+    }
+
+    private static function statusColor(string $status): string
+    {
+        return match($status) {
+            'contacted'   => 'warning',
+            'negotiating' => 'info',
+            'converted'   => 'success',
+            'lost'        => 'danger',
+            default       => 'gray',
+        };
     }
 
     public static function table(Table $table): Table
@@ -81,9 +107,16 @@ class MoraLeadResource extends Resource
                     ->label('Masuk')
                     ->dateTime('d M Y H:i')
                     ->sortable(),
+                Tables\Columns\BadgeColumn::make('status')
+                    ->label('Status')
+                    ->formatStateUsing(fn($state) => MoraLead::STATUSES[$state] ?? $state)
+                    ->color(fn($state) => static::statusColor($state)),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nama')
-                    ->searchable(),
+                    ->searchable()
+                    ->description(fn($record) => $record->summary
+                        ? \Illuminate\Support\Str::limit($record->summary, 80)
+                        : null),
                 Tables\Columns\TextColumn::make('company')
                     ->label('Perusahaan')
                     ->placeholder('-')
@@ -97,12 +130,15 @@ class MoraLeadResource extends Resource
                     ->searchable()
                     ->copyable(),
                 Tables\Columns\IconColumn::make('emailed')
-                    ->label('Email terkirim')
+                    ->label('Email')
                     ->boolean(),
             ])
             ->filters([
+                Tables\Filters\SelectFilter::make('status')
+                    ->label('Status')
+                    ->options(MoraLead::STATUSES),
                 Tables\Filters\TernaryFilter::make('emailed')
-                    ->label('Status email'),
+                    ->label('Email terkirim'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\JsonResponse;
 use App\Models\MoraLead;
+use App\Mail\MoraLeadMail;
 
 class MoraChatController extends Controller
 {
@@ -248,6 +249,29 @@ PROMPT;
         return response()->json(['reply' => $reply, 'provider' => $currentProvider]);
     }
 
+    private function generateSummary(array $history): ?string
+    {
+        if (empty($history)) return null;
+
+        $transcript = collect($history)
+            ->map(fn($m) => ($m['role'] === 'user' ? 'Pengunjung' : 'MORA') . ': ' . $m['content'])
+            ->implode("\n");
+
+        $prompt = "Berikut adalah transkrip percakapan antara pengunjung website dan MORA (AI asisten M2B freight forwarder):\n\n{$transcript}\n\nBuat ringkasan singkat 2-3 kalimat dalam Bahasa Indonesia yang menjelaskan: apa kebutuhan/pertanyaan utama pengunjung, layanan apa yang relevan, dan seberapa serius minat mereka. Langsung tulis ringkasannya tanpa pembuka.";
+
+        $key      = config('services.mora.gemini_key');
+        $response = Http::timeout(15)->post(
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={$key}",
+            [
+                'contents'         => [['role' => 'user', 'parts' => [['text' => $prompt]]]],
+                'generationConfig' => ['temperature' => 0.4, 'maxOutputTokens' => 150],
+            ]
+        );
+
+        if ($response->failed()) return null;
+        return $response->json('candidates.0.content.parts.0.text') ?: null;
+    }
+
     public function lead(Request $request): JsonResponse
     {
         $request->validate([
@@ -263,41 +287,27 @@ PROMPT;
         $data    = $request->only(['name', 'company', 'email', 'phone']);
         $history = $request->input('history', []);
 
-        // Persist first so a lead is never lost — even if the email step fails.
-        $lead = MoraLead::create($data + ['emailed' => false, 'chat_history' => $history ?: null]);
+        // Generate AI summary before saving so it's included in the email.
+        $summary = $this->generateSummary($history);
 
-        $chatLines = '';
-        if (!empty($history)) {
-            $chatLines = "\n\n--- Riwayat Percakapan ---\n";
-            foreach ($history as $msg) {
-                $prefix     = $msg['role'] === 'user' ? 'Pengunjung' : 'MORA';
-                $chatLines .= "[{$prefix}] {$msg['content']}\n";
-            }
-        }
-
-        $body = "Lead baru dari MORA Chat\n\n"
-              . "Nama    : {$data['name']}\n"
-              . "Perusahaan: " . ($data['company'] ?: '-') . "\n"
-              . "Email   : " . ($data['email'] ?: '-') . "\n"
-              . "HP/WA   : {$data['phone']}\n\n"
-              . "Waktu   : " . now()->format('d M Y H:i') . " WIB"
-              . $chatLines;
+        // Persist first — lead is never lost even if email fails.
+        $lead = MoraLead::create($data + [
+            'emailed'      => false,
+            'chat_history' => $history ?: null,
+            'status'       => 'new',
+            'summary'      => $summary,
+        ]);
 
         try {
-            Mail::raw($body, fn($m) => $m
-                ->to('mora.multiberkah@gmail.com')
-                ->subject('Lead MORA Chat — ' . now()->format('d M Y'))
-            );
+            Mail::to('mora.multiberkah@gmail.com')->send(new MoraLeadMail($lead));
             $lead->update(['emailed' => true]);
         } catch (\Throwable $e) {
-            // Lead sudah aman tersimpan di DB; cukup log kegagalan email untuk follow-up manual.
             Log::error('MORA lead email gagal (lead tetap tersimpan di DB)', [
                 'lead_id' => $lead->id,
                 'error'   => $e->getMessage(),
             ]);
         }
 
-        // Lead tercatat apa pun hasil emailnya, jadi selalu sukses dari sisi pengunjung.
         return response()->json(['success' => true]);
     }
 }
