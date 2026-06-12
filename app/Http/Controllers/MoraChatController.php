@@ -249,6 +249,29 @@ PROMPT;
         return response()->json(['reply' => $reply, 'provider' => $currentProvider]);
     }
 
+    private function detectServiceInterest(array $history): ?string
+    {
+        if (empty($history)) return null;
+
+        $text = strtolower(implode(' ', array_column($history, 'content')));
+
+        $map = [
+            'undername'    => ['undername', 'under name', 'pinjam nama'],
+            'customs'      => ['bea cukai', 'customs', 'clearance', 'pib', 'peb', 'kepabeanan'],
+            'door_to_door' => ['door to door', 'pintu ke pintu', 'd2d', 'dtd'],
+            'export'       => ['ekspor', 'export', 'peb', 'bea keluar'],
+            'import'       => ['impor', 'import', 'pib', 'bea masuk'],
+            'consultation' => ['konsultasi', 'tanya', 'info', 'informasi'],
+        ];
+
+        foreach ($map as $service => $keywords) {
+            foreach ($keywords as $kw) {
+                if (str_contains($text, $kw)) return $service;
+            }
+        }
+        return null;
+    }
+
     private function scoreChat(array $history): string
     {
         if (empty($history)) return 'cold';
@@ -307,17 +330,19 @@ PROMPT;
         $history = $request->input('history', []);
         $source  = $request->input('source', 'mora_chat');
 
-        $score   = $this->scoreChat($history);
-        $summary = $this->generateSummary($history);
+        $score           = $this->scoreChat($history);
+        $summary         = $this->generateSummary($history);
+        $serviceInterest = $this->detectServiceInterest($history);
 
         // Persist first — lead is never lost even if email fails.
         $lead = MoraLead::create($data + [
-            'emailed'      => false,
-            'chat_history' => $history ?: null,
-            'status'       => 'new',
-            'score'        => $score,
-            'source'       => $source,
-            'summary'      => $summary,
+            'emailed'          => false,
+            'chat_history'     => $history ?: null,
+            'status'           => 'new',
+            'score'            => $score,
+            'source'           => $source,
+            'summary'          => $summary,
+            'service_interest' => $serviceInterest,
         ]);
 
         try {

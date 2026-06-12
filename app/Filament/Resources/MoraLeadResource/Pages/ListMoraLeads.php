@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\MoraLeadResource\Pages;
 
 use App\Filament\Resources\MoraLeadResource;
-use Filament\Actions;
+use App\Filament\Widgets\MoraLeadStatsWidget;
 use Filament\Resources\Pages\ListRecords;
 
 class ListMoraLeads extends ListRecords
@@ -12,8 +12,11 @@ class ListMoraLeads extends ListRecords
 
     protected function getHeaderActions(): array
     {
-        return [
-            Actions\CreateAction::make(),
-        ];
+        return [];
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [MoraLeadStatsWidget::class];
     }
 }
