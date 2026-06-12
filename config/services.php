@@ -45,9 +45,11 @@ return [
     ],
 
     'mora' => [
-        'gemini_key' => env('MORA_GEMINI_KEY'),
-        'claude_key' => env('MORA_CLAUDE_KEY'),
-        'deepseek_key' => env('MORA_DEEPSEEK_KEY'),
+        'gemini_key'     => env('MORA_GEMINI_KEY'),
+        'claude_key'     => env('MORA_CLAUDE_KEY'),
+        'deepseek_key'   => env('MORA_DEEPSEEK_KEY'),
+        'portal_webhook' => env('MORA_PORTAL_WEBHOOK_URL', 'https://portal.m2b.co.id/api/mora-lead-incoming'),
+        'portal_secret'  => env('MORA_PORTAL_WEBHOOK_SECRET'),
     ],
 
 ];

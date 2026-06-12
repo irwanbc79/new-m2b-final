@@ -313,6 +313,36 @@ PROMPT;
         return $response->json('candidates.0.content.parts.0.text') ?: null;
     }
 
+    private function notifyPortal(MoraLead $lead): void
+    {
+        $url    = config('services.mora.portal_webhook');
+        $secret = config('services.mora.portal_secret');
+
+        if (!$url) return;
+
+        try {
+            Http::timeout(5)
+                ->withHeaders(['X-Mora-Secret' => $secret])
+                ->post($url, [
+                    'remote_lead_id'   => $lead->id,
+                    'name'             => $lead->name,
+                    'company'          => $lead->company,
+                    'phone'            => $lead->phone,
+                    'email'            => $lead->email,
+                    'score'            => $lead->score,
+                    'source'           => $lead->source,
+                    'service_interest' => $lead->service_interest,
+                    'summary'          => $lead->summary,
+                    'chat_history'     => $lead->chat_history,
+                ]);
+        } catch (\Throwable $e) {
+            Log::warning('MORA portal webhook gagal (lead aman di DB)', [
+                'lead_id' => $lead->id,
+                'error'   => $e->getMessage(),
+            ]);
+        }
+    }
+
     public function lead(Request $request): JsonResponse
     {
         $request->validate([
@@ -354,6 +384,9 @@ PROMPT;
                 'error'   => $e->getMessage(),
             ]);
         }
+
+        // Kirim ke portal.m2b.co.id agar tim sales bisa pantau dari satu tempat.
+        $this->notifyPortal($lead->refresh());
 
         return response()->json(['success' => true]);
     }
