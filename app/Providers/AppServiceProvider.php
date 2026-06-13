@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -30,16 +31,13 @@ class AppServiceProvider extends ServiceProvider
 
                 $newsItems = [];
                 try {
-                    $url = 'https://news.google.com/rss/search?q=ekspor+impor+bea+cukai+UMKM+logistik+pajak&hl=id&gl=ID&ceid=ID:id';
-                    $options = [
-                        'http' => [
-                            'header' => "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.0.0 Safari/537.36\r\n"
-                        ]
-                    ];
-                    $context = stream_context_create($options);
-                    $xmlString = @file_get_contents($url, false, $context);
-                    if ($xmlString) {
-                        $xml = simplexml_load_string($xmlString);
+                    $url = 'https://news.google.com/rss/search?q=' . urlencode('ekspor OR impor OR "bea cukai" OR UMKM OR logistik OR pajak when:7d') . '&hl=id&gl=ID&ceid=ID:id';
+                    $response = Http::withHeaders([
+                        'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.0.0 Safari/537.36'
+                    ])->timeout(10)->get($url);
+
+                    if ($response->successful()) {
+                        $xml = simplexml_load_string($response->body());
                         if ($xml && isset($xml->channel->item)) {
                             $count = 0;
                             foreach ($xml->channel->item as $item) {
