@@ -7,13 +7,13 @@
   csEmail: '',
   csCompany: '',
   loading: false,
-  submitCSLead() {
+  submitCSLead(platform) {
     if (!this.csName.trim() || !this.csPhone.trim()) {
       alert(this.$store.lang.t(
-        'Nama dan Nomor WhatsApp wajib diisi.',
-        'Name and WhatsApp number are required.',
-        '姓名和 WhatsApp 号码为必填项。',
-        'الاسم ورقم الواتساب مطلوبان.'
+        'Nama dan Nomor WhatsApp/Telegram wajib diisi.',
+        'Name and WhatsApp/Telegram number are required.',
+        '姓名和 微信/WhatsApp/Telegram 号码为必填项。',
+        'الاسم ورقم الواتساب/تيليجرام مطلوبan.'
       ));
       return;
     }
@@ -30,30 +30,35 @@
         phone: this.csPhone,
         email: this.csEmail,
         company: this.csCompany,
-        source: 'cs_form'
+        source: 'cs_form_' + platform
       })
     })
     .then(res => {
       this.loading = false;
       this.csModalOpen = false;
 
-      // Build pre-filled message based on selected language
-      let waText = '';
-      const lang = localStorage.getItem('m2b_lang') || 'id';
-      if (lang === 'en') {
-        waText = `Hello CS M2B, I would like to consult regarding shipping/logistics.\n\nMy Details:\n- Name: ${this.csName}\n- WhatsApp: ${this.csPhone}\n- Email: ${this.csEmail || '-'}\n- Company: ${this.csCompany || '-'}`;
-      } else if (lang === 'zh') {
-        waText = `您好 M2B 客服，我想咨询货运/物流相关事宜。\n\n我的信息：\n- 姓名: ${this.csName}\n- WhatsApp/电话: ${this.csPhone}\n- 电子邮件: ${this.csEmail || '-'}\n- 公司名称: ${this.csCompany || '-'}`;
-      } else if (lang === 'ar') {
-        waText = `مرحباً خدمة عملاء M2B، أود الاستفسار بخصوص الشحن والخدمات اللوجستية.\n\nبياناتي:\n- الاسم: ${this.csName}\n- الواتساب: ${this.csPhone}\n- البريد الإلكتروني: ${this.csEmail || '-'}\n- الشركة: ${this.csCompany || '-'}`;
+      if (platform === 'telegram') {
+        const tgUrl = `https://t.me/6281263027818`;
+        window.open(tgUrl, '_blank');
       } else {
-        // default to Indonesian 'id'
-        waText = `Halo CS M2B, saya ingin berkonsultasi mengenai pengiriman/logistik.\n\nBerikut data saya:\n- Nama: ${this.csName}\n- WhatsApp: ${this.csPhone}\n- Email: ${this.csEmail || '-'}\n- Perusahaan: ${this.csCompany || '-'}`;
-      }
+        // Build pre-filled message based on selected language
+        let waText = '';
+        const lang = localStorage.getItem('m2b_lang') || 'id';
+        if (lang === 'en') {
+          waText = `Hello CS M2B, I would like to consult regarding shipping/logistics.\n\nMy Details:\n- Name: ${this.csName}\n- WhatsApp: ${this.csPhone}\n- Email: ${this.csEmail || '-'}\n- Company: ${this.csCompany || '-'}`;
+        } else if (lang === 'zh') {
+          waText = `您好 M2B 客服，我想咨询货运/物流相关事宜。\n\n我的信息：\n- 姓名: ${this.csName}\n- WhatsApp/电话: ${this.csPhone}\n- 电子邮件: ${this.csEmail || '-'}\n- 公司名称: ${this.csCompany || '-'}`;
+        } else if (lang === 'ar') {
+          waText = `مرحباً خدمة عملاء M2B، أود الاستفسار بخصوص الشحن والخدمات اللوجستية.\n\nبياناتي:\n- الاسم: ${this.csName}\n- الواتساب: ${this.csPhone}\n- البريد الإلكتروني: ${this.csEmail || '-'}\n- الشركة: ${this.csCompany || '-'}`;
+        } else {
+          // default to Indonesian 'id'
+          waText = `Halo CS M2B, saya ingin berkonsultasi mengenai pengiriman/logistik.\n\nBerikut data saya:\n- Nama: ${this.csName}\n- WhatsApp: ${this.csPhone}\n- Email: ${this.csEmail || '-'}\n- Perusahaan: ${this.csCompany || '-'}`;
+        }
 
-      const encodedText = encodeURIComponent(waText);
-      const waUrl = `https://wa.me/6281263027818?text=${encodedText}`;
-      window.open(waUrl, '_blank');
+        const encodedText = encodeURIComponent(waText);
+        const waUrl = `https://wa.me/6281263027818?text=${encodedText}`;
+        window.open(waUrl, '_blank');
+      }
 
       // Clear fields
       this.csName = '';
@@ -72,7 +77,7 @@
       ));
     });
   }
-}" style="position:fixed;bottom:28px;right:20px;z-index:9991;display:flex;flex-direction:column;gap:12px;align-items:flex-end">
+}" class="floating-buttons-container">
   <a href="https://ebook.m2b.co.id" target="_blank" rel="noopener"
     style="display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:24px;background:#f5b91c;color:#0f0f14;text-decoration:none;font-weight:700;font-size:12px;box-shadow:0 4px 14px rgba(245,185,28,0.4);transition:transform .2s,box-shadow .2s;white-space:nowrap"
     onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(245,185,28,0.5)'"
@@ -127,6 +132,16 @@
     </button>
   </div>
 
+  {{-- Telegram Button --}}
+  <a href="https://t.me/6281263027818" target="_blank" rel="noopener" class="tg-btn-main"
+    aria-label="Telegram M2B" title="Telegram M2B">
+    <span style="display:flex;align-items:center;justify-content:center">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" style="width:34px;height:34px;fill:#fff;display:block">
+        <path d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm121.8 169.9l-40.7 191.8c-3 13.6-11.1 16.9-22.4 10.5l-62-45.7-29.9 28.8c-3.3 3.3-6.1 6.1-12.5 6.1l4.4-63.1 114.9-103.8c5-4.4-1.1-6.9-7.7-2.5l-142 89.4-61.2-19.1c-13.3-4.2-13.6-13.3 2.8-19.7l239.1-92.2c11.1-4.1 20.7 2.5 16.8 20.3z"/>
+      </svg>
+    </span>
+  </a>
+
   {{-- ═══ Modal Popup: Chat dengan CS ═══ --}}
   <div x-show="csModalOpen" class="cs-overlay" x-cloak>
     <div class="cs-modal-card" @click.away="csModalOpen = false">
@@ -140,8 +155,8 @@
         <h3 x-text="$store.lang.t('Hubungi Customer Service M2B', 'Contact M2B Customer Service', '联系 M2B 客服', 'اتصل بخدمة عملاء M2B')" style="text-align:center; font-size:18px; font-weight:700; color:#1e3a5f; margin:10px 0 6px 0;">
           Hubungi Customer Service M2B
         </h3>
-        <p x-text="$store.lang.t('Silakan isi data Anda untuk memulai percakapan langsung via WhatsApp.', 'Please fill in your details to start a direct chat via WhatsApp.', '请填写您的信息以开始微信/WhatsApp直接聊天。', 'يرjى ملء بياناتك لبدء دردشة مباشرة عبر الواتساب.')" style="text-align:center; font-size:12.5px; color:#5c6c7f; line-height:1.5; margin:0 0 10px 0;">
-          Silakan isi data Anda untuk memulai percakapan langsung via WhatsApp.
+        <p x-text="$store.lang.t('Silakan isi data Anda untuk memulai percakapan langsung via WhatsApp atau Telegram.', 'Please fill in your details to start a direct chat via WhatsApp or Telegram.', '请填写您的信息以开始微信/WhatsApp 或 Telegram 直接聊天。', 'يرجى ملء بياناتك لبدء دردشة مباشرة عبر الواتساب أو تيليجرام.')" style="text-align:center; font-size:12.5px; color:#5c6c7f; line-height:1.5; margin:0 0 10px 0;">
+          Silakan isi data Anda untuk memulai percakapan langsung via WhatsApp atau Telegram.
         </p>
       </div>
 
@@ -152,7 +167,7 @@
       </div>
 
       <div class="cs-input-group">
-        <label class="cs-input-label" x-text="$store.lang.t('Nomor WhatsApp *', 'WhatsApp Number *', 'WhatsApp Number *', 'رقم الواتساب *')">Nomor WhatsApp *</label>
+        <label class="cs-input-label" x-text="$store.lang.t('Nomor WA / Telegram *', 'WhatsApp / Telegram Number *', 'WhatsApp / Telegram Number *', 'رقم الواتساب / تيليجرام *')">Nomor WA / Telegram *</label>
         <input type="tel" x-model="csPhone" class="cs-input" :placeholder="$store.lang.t('Contoh: 08123456789', 'Example: 08123456789', '例如: 08123456789', 'مثال: 08123456789')">
       </div>
 
@@ -165,15 +180,25 @@
         <label class="cs-input-label" x-text="$store.lang.t('Nama Perusahaan', 'Company Name', '公司名称', 'اسم الشركة')">Nama Perusahaan</label>
         <input type="text" x-model="csCompany" class="cs-input" :placeholder="$store.lang.t('Masukkan nama perusahaan', 'Enter company name', '请输入公司名称', 'أدخل اسم الشركة')">
       </div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px">
+        <button @click="submitCSLead('whatsapp')" :disabled="loading" class="cs-submit-btn" style="margin-top:0">
+          <svg x-show="loading" class="animate-spin" style="width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" stroke-dasharray="32" stroke-linecap="round"></circle>
+          </svg>
+          <span x-text="loading ? $store.lang.t('Mengirim...', 'Sending...', '发送中...', 'جاري الإرسال...') : $store.lang.t('💬 Chat via WhatsApp', '💬 Chat via WhatsApp', '💬 微信/WhatsApp 咨询', '💬 دردشة عبر الواتساب')">
+            💬 Chat via WhatsApp
+          </span>
+        </button>
 
-      <button @click="submitCSLead()" :disabled="loading" class="cs-submit-btn">
-        <svg x-show="loading" class="animate-spin" style="width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2" viewBox="0 0 24 24">
-          <circle cx="12" cy="12" r="10" stroke-dasharray="32" stroke-linecap="round"></circle>
-        </svg>
-        <span x-text="loading ? $store.lang.t('Mengirim...', 'Sending...', '发送中...', 'جاري الإرسال...') : $store.lang.t('Mulai Obrolan WhatsApp', 'Start WhatsApp Chat', '开始 WhatsApp 聊天', 'بدء محادثة الواتساب')">
-          Mulai Obrolan WhatsApp
-        </span>
-      </button>
+        <button @click="submitCSLead('telegram')" :disabled="loading" class="cs-submit-btn cs-submit-btn-tg" style="margin-top:0">
+          <svg x-show="loading" class="animate-spin" style="width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" stroke-dasharray="32" stroke-linecap="round"></circle>
+          </svg>
+          <span x-text="loading ? $store.lang.t('Mengirim...', 'Sending...', '发送中...', 'جاري الإرسال...') : $store.lang.t('✈️ Chat via Telegram', '✈️ Chat via Telegram', '✈️ Telegram 咨询', '✈️ دردشة عبر تيليجرام')">
+            ✈️ Chat via Telegram
+          </span>
+        </button>
+      </div>
     </div>
   </div>
 </div>
@@ -390,5 +415,53 @@
   @keyframes spin {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
+  }
+
+  .tg-btn-main {
+    width: 68px !important;
+    height: 68px !important;
+    border-radius: 50% !important;
+    background: #0088cc !important;
+    border: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 8px 24px rgba(0,136,204,0.4) !important;
+    cursor: pointer !important;
+    transition: transform .2s, box-shadow .2s !important;
+    animation: tgpulse 2s ease-in-out infinite;
+    text-decoration: none !important;
+  }
+  .tg-btn-main:hover {
+    transform: scale(1.05) !important;
+    box-shadow: 0 10px 28px rgba(0,136,204,0.55) !important;
+  }
+  @keyframes tgpulse {
+    0%,100%{transform:scale(1);box-shadow:0 8px 24px rgba(0,136,204,0.4)}
+    50%{transform:scale(1.05);box-shadow:0 12px 36px rgba(0,136,204,0.55)}
+  }
+
+  .cs-submit-btn-tg {
+    background: linear-gradient(135deg, #0088cc, #0077b5) !important;
+    box-shadow: 0 8px 24px rgba(0, 136, 204, 0.3) !important;
+  }
+  .cs-submit-btn-tg:hover:not(:disabled) {
+    box-shadow: 0 10px 28px rgba(0, 136, 204, 0.4) !important;
+  }
+
+  .floating-buttons-container {
+    position: fixed;
+    bottom: 28px;
+    right: 20px;
+    z-index: 9991;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-end;
+  }
+  @media (max-width: 768px) {
+    .floating-buttons-container {
+      bottom: 76px !important;
+    }
   }
 </style>

@@ -529,6 +529,42 @@
       navigator.clipboard.writeText(text);
       alert('Hasil perhitungan berhasil disalin ke clipboard!');
     },
+    copyEstimationToTelegram(event) {
+      const fob = parseFloat(this.fobVal) || 0;
+      const cur = this.selectedCurrency;
+      const kurs = this.manualKurs;
+      const pabean = this.getNilaiPabean();
+      const bm = this.getBeaMasuk();
+      const bmtp = this.getBmtp();
+      const ppn = this.getPpn();
+      const ppnbm = this.getPpnbm();
+      const pph = this.getPph();
+      const denda = this.getDenda();
+      const total = this.getTotalPungutan();
+      
+      let text = 'Halo M2B, saya ingin berkonsultasi mengenai pengapalan impor dengan estimasi pungutan berikut:\n\n';
+      text += `- FOB: ${cur} ${this.formatNumber(fob, 2)}\n`;
+      text += `- Kurs Pajak: Rp ${this.formatNumber(kurs, 2)}\n`;
+      text += `- Nilai Pabean: ${this.formatIDR(pabean)}\n\n`;
+      text += `Detail Estimasi Pungutan:\n`;
+      text += `1. Bea Masuk (${this.bmRate}%): ${this.formatIDR(bm)}\n`;
+      if (bmtp > 0) text += `2. BMTP (${this.bmtpRate}%): ${this.formatIDR(bmtp)}\n`;
+      text += `3. PPN (${this.ppnRate}%): ${this.formatIDR(ppn)}\n`;
+      if (ppnbm > 0) text += `4. PPnBM (${this.ppnbmRate}%): ${this.formatIDR(ppnbm)}\n`;
+      text += `5. PPh (${this.pphRate}%): ${this.formatIDR(pph)}\n`;
+      if (denda > 0) text += `6. Denda (${this.dendaRate}%): ${this.formatIDR(denda)}\n`;
+      text += `-------------------------------------------\n`;
+      text += `Jumlah Pungutan: ${this.formatIDR(total)}\n\n`;
+      text += 'Mohon dibantu info kelayakan impor dan quotation pengirimannya. Terima kasih.';
+
+      navigator.clipboard.writeText(text);
+      alert(this.$store.lang.t(
+        'Detail estimasi telah disalin! Silakan tempel (paste) pesan tersebut di obrolan Telegram M2B.',
+        'Estimation details copied! Please paste the message in the M2B Telegram chat.',
+        '估算详情已复制！请在 M2B Telegram 聊天中粘贴该消息。',
+        'تم نسخ تفاصيل التقدير! يرجى لصق الرسالة في دردشة تيليجرام M2B.'
+      ));
+    },
     printResults() {
       window.print();
     },
@@ -1005,10 +1041,16 @@
               ← Hitung Ulang / Ubah Data
             </button>
             <a :href="'https://wa.me/6281263027818?text=' + getWaMessage()" target="_blank"
-               style="flex:1.5;background:#25D366;color:#fff;text-align:center;padding:14px;border-radius:10px;text-decoration:none;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 8px 20px rgba(37,211,102,0.3);transition:transform 0.2s"
-               onmouseover="this.style.transform='scale(1.01)'" onmouseout="this.style.transform='none'">
+               style="flex:1.2;background:#25D366;color:#fff;text-align:center;padding:14px;border-radius:10px;text-decoration:none;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 8px 20px rgba(37,211,102,0.25);transition:all 0.2s"
+               onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
               <span>💬</span>
-              <span x-text="$store.lang.t('Konsultasi Logistik & Pengapalan via WhatsApp', 'WhatsApp Logistics & Shipping Consultation', '微信/WhatsApp 咨询进口物流与出运', 'استشارة اللوجستيات والشحن عبر الواتساب')">Konsultasi Logistik & Pengapalan via WhatsApp</span>
+              <span x-text="$store.lang.t('WhatsApp', 'WhatsApp', 'WhatsApp', 'واتساب')">WhatsApp</span>
+            </a>
+            <a href="https://t.me/6281263027818" @click="copyEstimationToTelegram($event)" target="_blank"
+               style="flex:1.2;background:#0088cc;color:#fff;text-align:center;padding:14px;border-radius:10px;text-decoration:none;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 8px 20px rgba(0,136,204,0.25);transition:all 0.2s"
+               onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+              <span>✈️</span>
+              <span x-text="$store.lang.t('Telegram', 'Telegram', 'Telegram', 'تيليجرام')">Telegram</span>
             </a>
           </div>
 
@@ -1555,6 +1597,21 @@
       'door': { id: '🚚 Door-to-Door', en: '🚚 Door-to-Door', zh: '🚚 双清门到门', ar: '🚚 من الباب إلى الباب' }
     };
     return (labels[s] ? labels[s][l] : s);
+  },
+  copyInquiryToTelegram() {
+    const text = this.$store.lang.t(
+      'Halo M2B, saya ingin estimasi biaya untuk:\n- Layanan: ' + this.getLabel(this.service) + '\n- Rute: ' + this.origin + ' → ' + this.dest + (this.weight ? '\n- Muatan: ' + this.weight : '') + '\n\nMohon bantu estimasi dan quote-nya ya. Terima kasih.',
+      'Hello M2B, I would like a cost estimate for:\n- Service: ' + this.getLabel(this.service) + '\n- Route: ' + this.origin + ' → ' + this.dest + (this.weight ? '\n- Cargo: ' + this.weight : '') + '\n\nPlease help with the estimation and quote. Thank you.',
+      '您好M2B，我想获取以下服务的费用估算：\n- 服务类型：' + this.getLabel(this.service) + '\n- 运输路线：' + this.origin + ' → ' + this.dest + (this.weight ? '\n- 货物规格：' + this.weight : '') + '\n\n请协助提供估算和报价。谢谢！',
+      'مرحباً M2B، أرغب في الحصول على تقدير تكلفة لـ:\n- الخدمة: ' + this.getLabel(this.service) + '\n- المسار: ' + this.origin + ' → ' + this.dest + (this.weight ? '\n- الشحنة: ' + this.weight : '') + '\n\nيرجى المساعدة في التقدير وعرض الأسعار. شكراً لك.'
+    );
+    navigator.clipboard.writeText(text);
+    alert(this.$store.lang.t(
+      'Detail inquiry telah disalin! Silakan tempel (paste) pesan tersebut di obrolan Telegram M2B.',
+      'Inquiry details copied! Please paste the message in the M2B Telegram chat.',
+      '询盘详情已复制！请在 M2B Telegram 聊天中粘贴该消息。',
+      'تم نسخ تفاصيل الاستعلام! يرجى لصق الرسالة في دردشة تيليجرام M2B.'
+    ));
   }
 }">
   <div style="max-width:700px;margin:0 auto;text-align:center">
@@ -1620,18 +1677,28 @@
           <div style="font-size:14px;color:#fff;margin-top:4px"><span x-text="$store.lang.t('🗺️ Rute: ', '🗺️ Route: ', '🗺️ 路线：', '🗺️ المسار: ')">🗺️ Rute: </span><strong x-text="origin + ' → ' + dest"></strong></div>
           <div x-show="weight" style="font-size:14px;color:#fff;margin-top:4px"><span x-text="$store.lang.t('⚖️ Muatan: ', '⚖️ Cargo: ', '⚖️ 货物信息：', '⚖️ الشحنة: ')">⚖️ Muatan: </span><strong x-text="weight"></strong></div>
         </div>
-        <a :href="'https://wa.me/6281263027818?text=' + encodeURIComponent(
-          $store.lang.t(
-            'Halo M2B, saya ingin estimasi biaya untuk:\n- Layanan: ' + getLabel(service) + '\n- Rute: ' + origin + ' → ' + dest + (weight ? '\n- Muatan: ' + weight : '') + '\n\nMohon bantu estimasi dan quote-nya ya. Terima kasih.',
-            'Hello M2B, I would like a cost estimate for:\n- Service: ' + getLabel(service) + '\n- Route: ' + origin + ' → ' + dest + (weight ? '\n- Cargo: ' + weight : '') + '\n\nPlease help with the estimation and quote. Thank you.',
-            '您好M2B，我想获取以下服务的费用估算：\n- 服务类型：' + getLabel(service) + '\n- 运输路线：' + origin + ' → ' + dest + (weight ? '\n- 货物规格：' + weight : '') + '\n\n请协助提供估算和报价。谢谢！',
-            'مرحباً M2B، أرغب في الحصول على تقدير تكلفة لـ:\n- الخدمة: ' + getLabel(service) + '\n- المسار: ' + origin + ' → ' + dest + (weight ? '\n- الشحنة: ' + weight : '') + '\n\nيرجى المساعدة في التقدير وعرض الأسعار. شكراً لك.'
-          )
-        )"
-          target="_blank"
-          style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px;border-radius:10px;background:#25D366;color:#fff;text-decoration:none;font-weight:700;font-size:16px;margin-bottom:12px">
-          <span x-text="$store.lang.t('💬 Kirim ke WhatsApp & Minta Quote', '💬 Send to WhatsApp & Request Quote', '💬 发送至微信/WhatsApp并获取报价', '💬 الإرسال إلى الواتساب وطلب عرض أسعار')">💬 Kirim ke WhatsApp & Minta Quote</span>
-        </a>
+        <div style="display:flex;gap:10px;margin-bottom:12px">
+          <a :href="'https://wa.me/6281263027818?text=' + encodeURIComponent(
+            $store.lang.t(
+              'Halo M2B, saya ingin estimasi biaya untuk:\n- Layanan: ' + getLabel(service) + '\n- Rute: ' + origin + ' → ' + dest + (weight ? '\n- Muatan: ' + weight : '') + '\n\nMohon bantu estimasi dan quote-nya ya. Terima kasih.',
+              'Hello M2B, I would like a cost estimate for:\n- Service: ' + getLabel(service) + '\n- Route: ' + origin + ' → ' + dest + (weight ? '\n- Cargo: ' + weight : '') + '\n\nPlease help with the estimation and quote. Thank you.',
+              '您好M2B，我想获取以下服务的费用估算：\n- 服务类型：' + getLabel(service) + '\n- 运输路线：' + origin + ' → ' + dest + (weight ? '\n- 货物规格：' + weight : '') + '\n\n请协助提供估算和报价。谢谢！',
+              'مرحباً M2B، أرغب في الحصول على تقدير تكلفة لـ:\n- الخدمة: ' + getLabel(service) + '\n- المسار: ' + origin + ' → ' + dest + (weight ? '\n- الشحنة: ' + weight : '') + '\n\nيرجى المساعدة في التقدير وعرض الأسعار. شكراً لك.'
+            )
+          )"
+            target="_blank"
+            style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:14px;border-radius:10px;background:#25D366;color:#fff;text-decoration:none;font-weight:700;font-size:14px;box-shadow:0 4px 14px rgba(37,211,102,0.25);transition:all 0.2s"
+            onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+            <span>💬</span>
+            <span x-text="$store.lang.t('WhatsApp', 'WhatsApp', 'WhatsApp', 'واتساب')">WhatsApp</span>
+          </a>
+          <a href="https://t.me/6281263027818" @click="copyInquiryToTelegram()" target="_blank"
+            style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:14px;border-radius:10px;background:#0088cc;color:#fff;text-decoration:none;font-weight:700;font-size:14px;box-shadow:0 4px 14px rgba(0,136,204,0.25);transition:all 0.2s"
+            onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+            <span>✈️</span>
+            <span x-text="$store.lang.t('Telegram', 'Telegram', 'Telegram', 'تيليجرام')">Telegram</span>
+          </a>
+        </div>
         <button @click="step = 2" style="width:100%;padding:12px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.2);background:transparent;color:rgba(255,255,255,0.6);cursor:pointer;font-family:\'DM Sans\';font-size:14px" x-text="$store.lang.t('← Edit Rute', '← Edit Route', '← 修改路线', '← تعديل المسار')">← Edit Rute</button>
       </div>
     </div>

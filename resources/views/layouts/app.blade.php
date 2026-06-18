@@ -88,6 +88,33 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
   cursor: pointer !important;
   transition: transform .2s !important;
 }
+.scroll-to-top-btn {
+  position: fixed !important;
+  bottom: 240px !important;
+  right: 20px !important;
+  z-index: 998 !important;
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 50% !important;
+  background: #1e3a5f !important;
+  border: none !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #fff !important;
+  font-size: 18px !important;
+  box-shadow: 0 4px 14px rgba(30,58,95,0.35) !important;
+  transition: background .2s, bottom .2s !important;
+}
+.scroll-to-top-btn:hover {
+  background: #162d4a !important;
+}
+@media (max-width: 768px) {
+  .scroll-to-top-btn {
+    bottom: 290px !important;
+  }
+}
 .m2b-navbar {
   position: sticky !important;
   top: 0 !important;
@@ -409,6 +436,7 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
       $footerContacts = [
         ['📧','Email','sales@m2b.co.id','mailto:sales@m2b.co.id', 'Email'],
         ['📱','WhatsApp','+62 812-6302-7818','https://wa.me/6281263027818', 'WhatsApp'],
+        ['✈️','Telegram','+62 812-6302-7818','https://t.me/6281263027818', 'Telegram'],
         ['🕒','Jam Buka','Senin–Sabtu · 08–17 WIB',null, 'Jam Buka'],
       ];
       @endphp
@@ -417,16 +445,19 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
           $fcLabelEn = [
             'Email' => 'Email',
             'WhatsApp' => 'WhatsApp',
+            'Telegram' => 'Telegram',
             'Jam Buka' => 'Opening Hours'
           ][$fc[4]] ?? $fc[4];
           $fcLabelZh = [
             'Email' => '电子邮件',
             'WhatsApp' => '微信/WhatsApp',
+            'Telegram' => 'Telegram',
             'Jam Buka' => '营业时间'
           ][$fc[4]] ?? $fc[4];
           $fcLabelAr = [
             'Email' => 'البريد الإلكتروني',
             'WhatsApp' => 'الواتساب',
+            'Telegram' => 'تيليجرام',
             'Jam Buka' => 'ساعات العمل'
           ][$fc[4]] ?? $fc[4];
           
@@ -466,7 +497,7 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
 </footer>
 
 {{-- Scroll to Top --}}
-<button class="print-hide" x-data="{ show: false }" x-init="window.addEventListener('scroll', () => show = window.scrollY > 300)" x-show="show" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click="window.scrollTo({top:0,behavior:'smooth'})" style="position:fixed;bottom:155px;right:20px;z-index:998;width:44px;height:44px;border-radius:50%;background:#1e3a5f;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;box-shadow:0 4px 14px rgba(30,58,95,0.35);transition:background .2s" onmouseover="this.style.background='#162d4a'" onmouseout="this.style.background='#1e3a5f'">↑</button>
+<button class="print-hide scroll-to-top-btn" x-data="{ show: false }" x-init="window.addEventListener('scroll', () => show = window.scrollY > 300)" x-show="show" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 
 {{-- Floating Buttons (eBook, WhatsApp right; Language switcher left) --}}
 <div class="print-hide">

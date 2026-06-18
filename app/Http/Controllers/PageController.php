@@ -90,7 +90,95 @@ class PageController extends Controller
             $fieldPhotos = collect($fallbackUrls)->map(fn($url) => (object)['url' => $url]);
         }
 
-        return view("pages.home", compact("latestPosts", "rates", "fieldPhotos"));
+        // Fetch approved testimonials dynamically from portal database
+        $testimonials = [];
+        try {
+            $dbTestimonials = \Illuminate\Support\Facades\DB::connection('portal')
+                ->table('testimonials')
+                ->where('status', 'approved')
+                ->select('display_name', 'company_name', 'position', 'rating', 'content')
+                ->orderBy('approved_at', 'desc')
+                ->get();
+
+            if ($dbTestimonials->isNotEmpty()) {
+                foreach ($dbTestimonials as $item) {
+                    $testimonials[] = [
+                        'name' => $item->display_name ?: 'Mitra M2B',
+                        'title' => [
+                            'id' => ($item->position ? $item->position . ' — ' : '') . ($item->company_name ?: 'PT. Mora Multi Berkah Client'),
+                            'en' => ($item->position ? $item->position . ' — ' : '') . ($item->company_name ?: 'PT. Mora Multi Berkah Client'),
+                            'zh' => ($item->position ? $item->position . ' — ' : '') . ($item->company_name ?: 'PT. Mora Multi Berkah Client'),
+                            'ar' => ($item->position ? $item->position . ' — ' : '') . ($item->company_name ?: 'PT. Mora Multi Berkah Client'),
+                        ],
+                        'quote' => [
+                            'id' => '"' . trim($item->content, '" ') . '"',
+                            'en' => '"' . trim($item->content, '" ') . '"',
+                            'zh' => '"' . trim($item->content, '" ') . '"',
+                            'ar' => '"' . trim($item->content, '" ') . '"',
+                        ],
+                        'rating' => $item->rating ?? 5,
+                    ];
+                }
+            }
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::warning('Failed to load testimonials from portal: ' . $e->getMessage());
+        }
+
+        // Fallback to high quality existing pre-curated testimonials if portal database is empty or connection fails
+        if (empty($testimonials)) {
+            $testimonials = [
+                [
+                    'name' => 'Edy Serdawanto',
+                    'title' => [
+                        'id' => 'Direktur — PT. Dira Baraka Mulia',
+                        'en' => 'Director — PT. Dira Baraka Mulia',
+                        'zh' => '董事长 — PT. Dira Baraka Mulia',
+                        'ar' => 'مدير — PT. Dira Baraka Mulia'
+                    ],
+                    'quote' => [
+                        'id' => '"Penanganan impor dengan biaya yang jelas dan terukur, tepat waktu. Sangat layak menjadi rekan bisnis Anda."',
+                        'en' => '"Import handling with clear, measurable costs and on-time delivery. Very worthy of being your business partner."',
+                        'zh' => '"进口操作费用清晰透明、交货准时，非常值得信赖的商业合作伙伴。"',
+                        'ar' => '"مناولة واردات بتكاليف واضحة ومدروسة، وفي الوقت المحدد. تستحق بجدارة أن تكون شريكك التجاري."'
+                    ],
+                    'rating' => 5,
+                ],
+                [
+                    'name' => 'Mr. Jhonson',
+                    'title' => [
+                        'id' => 'GM — Anhui Imp & Export Co., Ltd',
+                        'en' => 'GM — Anhui Imp & Export Co., Ltd',
+                        'zh' => '总经理 — 安徽进出口有限公司',
+                        'ar' => 'المدير العام — شركة آنهوي للاستيراد والتصدير المحدودة'
+                    ],
+                    'quote' => [
+                        'id' => '"Game-changer bagi bisnis kami! Tim di M2B sangat andal, efisien, dan selalu responsif."',
+                        'en' => '"Game-changer for our business! The team at M2B is reliable, efficient, and always responsive."',
+                        'zh' => '"这是我们业务的变革者！M2B 的团队非常可靠、高效，且始终能快速响应。"',
+                        'ar' => '"نقلة نوعية لعملنا! الفريق in M2B موثوق وفعال ومتجاوب دائماً."'
+                    ],
+                    'rating' => 5,
+                ],
+                [
+                    'name' => 'Sarah Aulia',
+                    'title' => [
+                        'id' => 'Online Business Owner — Medan',
+                        'en' => 'Online Business Owner — Medan',
+                        'zh' => '电商主 — 棉兰',
+                        'ar' => 'صاحبة عمل تجari عبر الإنترنت — ميدان'
+                    ],
+                    'quote' => [
+                        'id' => '"Tim M2B sangat suportif dan transparan. Tidak ada biaya tersembunyi — ini yang kami cari."',
+                        'en' => '"M2B team is very supportive and transparent. No hidden fees — exactly what we were looking for."',
+                        'zh' => '"M2B 团队非常给予支持且高度透明。没有任何隐藏费用——这正是我们所寻找ของ。"',
+                        'ar' => '"فريق M2B متعاون وشفاف للغاية. لا توجد رسوم خفية — هذا بالضبط ما كنا نبحث عنه."'
+                    ],
+                    'rating' => 5,
+                ]
+            ];
+        }
+
+        return view("pages.home", compact("latestPosts", "rates", "fieldPhotos", "testimonials"));
     }
 
     public function about()

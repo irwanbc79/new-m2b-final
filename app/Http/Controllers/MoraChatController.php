@@ -350,7 +350,7 @@ PROMPT;
             'company'           => 'nullable|string|max:100',
             'email'             => 'nullable|email|max:100',
             'phone'             => 'required|string|max:20',
-            'source'            => 'nullable|string|in:mora_chat,cs_form',
+            'source'            => 'nullable|string|in:mora_chat,cs_form,cs_form_whatsapp,cs_form_telegram',
             'history'           => 'nullable|array|max:40',
             'history.*.role'    => 'required_with:history|in:user,assistant',
             'history.*.content' => 'required_with:history|string|max:2000',

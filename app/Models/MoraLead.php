@@ -22,6 +22,8 @@ class MoraLead extends Model
     const SOURCES = [
         'mora_chat' => 'MORA Chat',
         'cs_form'   => 'CS Form',
+        'cs_form_whatsapp' => 'CS Form (WhatsApp)',
+        'cs_form_telegram' => 'CS Form (Telegram)',
     ];
 
     const SERVICES = [
