@@ -50,8 +50,18 @@ class BlogController extends Controller
     public function show(string $slug)
     {
         $post = Cache::remember("blog_post_{$slug}", 3600, function () use ($slug) {
-            return Post::where("slug",$slug)->where("status","published")->firstOrFail();
+            return Post::where("slug",$slug)->where("status","published")->first();
         });
+
+        if (!$post) {
+            // Slug lama dari migrasi WP bisa berisi emoji / sisa percent-encoding.
+            // Coba versi bersihnya; kalau ada, redirect permanen ke URL kanonis.
+            $clean = preg_replace('/-{2,}/', '-', trim(preg_replace('/[^A-Za-z0-9\-]+/', '', $slug), '-'));
+            if ($clean !== '' && $clean !== $slug && Post::where('slug', $clean)->where('status', 'published')->exists()) {
+                return redirect("/blog/{$clean}", 301);
+            }
+            abort(404);
+        }
 
         Cache::increment("post_views_{$post->id}");
         // Note: blog_hot_ids is intentionally NOT forgotten here. View counts change on
