@@ -486,7 +486,10 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
       </iframe>
     </div>
     <div style="border-top:1px solid #e5e2dc;padding-top:24px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:12px;color:#888">
-      <span>© {{ date('Y') }} PT. Mora Multi Berkah. All rights reserved.</span>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <span>© {{ date('Y') }} PT. Mora Multi Berkah. All rights reserved.</span>
+        <span>Powered by: <a href="https://morabangun.com" target="_blank" style="color:#888;text-decoration:none" onmouseover="this.style.color='#1e3a5f'" onmouseout="this.style.color='#888'">morabangun.com</a></span>
+      </div>
       <div style="display:flex;gap:16px;flex-wrap:wrap">
         <a href="{{ route('privacy') }}" style="color:#888;text-decoration:none" onmouseover="this.style.color='#1e3a5f'" onmouseout="this.style.color='#888'">Privacy Policy</a>
         <a href="{{ route('disclaimer') }}" style="color:#888;text-decoration:none" onmouseover="this.style.color='#1e3a5f'" onmouseout="this.style.color='#888'">Disclaimer</a>
