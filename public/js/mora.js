@@ -77,6 +77,7 @@
     'harga','biaya','tarif','penawaran','quote','rate','ongkos',
     'ekspor','impor','bea cukai','undername','door-to-door','layanan',
     'price','cost','fee','offer','export','import','customs',
+    'http', 'https', 'alibaba', '1688', 'taobao', 'amazon', 'aliexpress', 'link', 'tautan', 'supplier'
   ];
 
   const CONTACT_MAP = {
@@ -90,22 +91,27 @@
     quote    : 'sales@m2b.co.id',
   };
 
-  let history    = [];
-  let leadShown  = false;
-  let leadDone   = false;
+  let history      = [];
+  let leadShown    = false;
+  let leadDone     = false;
+  let attachedFile = null;
 
   // ── DOM refs ─────────────────────────────────────────────────────────
   const el = id => document.getElementById(id);
 
   function init() {
-    const trigger  = el('mora-trigger');
-    const panel    = el('mora-panel');
-    const closeBtn = el('mora-close');
-    const input    = el('mora-input');
-    const sendBtn  = el('mora-send');
-    const qrWrap   = el('mora-quickreplies');
-    const leadForm = el('mora-lead-form');
-    const badge    = el('mora-badge');
+    const trigger        = el('mora-trigger');
+    const panel          = el('mora-panel');
+    const closeBtn       = el('mora-close');
+    const input          = el('mora-input');
+    const sendBtn        = el('mora-send');
+    const qrWrap         = el('mora-quickreplies');
+    const leadForm       = el('mora-lead-form');
+    const badge          = el('mora-badge');
+    const attachBtn      = el('mora-attach-btn');
+    const fileInput      = el('mora-file-input');
+    const previewWrap    = el('mora-image-preview');
+    const previewRemove  = el('mora-preview-remove');
 
     if (!trigger) return;
 
@@ -142,6 +148,11 @@
       if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submit(); }
     });
 
+    // Attachment events
+    attachBtn?.addEventListener('click', () => fileInput?.click());
+    fileInput?.addEventListener('change', handleFileSelect);
+    previewRemove?.addEventListener('click', clearAttachment);
+
     // Lead form
     el('mora-lead-submit')?.addEventListener('click', submitLead);
     el('mora-lead-skip')?.addEventListener('click', () => {
@@ -151,8 +162,56 @@
 
     // Re-render existing history
     if (history.length > 0) {
-      history.forEach(m => appendBubble(m.role, m.content, false));
+      history.forEach(m => appendBubble(m.role, m.content, false, m.image_url));
     }
+  }
+
+  function handleFileSelect(e) {
+    const fileInput = el('mora-file-input');
+    const previewWrap = el('mora-image-preview');
+    const previewImg = el('mora-preview-img');
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      alert('Hanya file gambar (foto produk) yang diperbolehkan.');
+      fileInput.value = '';
+      return;
+    }
+
+    // Limit to 4MB
+    if (file.size > 4 * 1024 * 1024) {
+      alert('Ukuran file maksimal adalah 4MB.');
+      fileInput.value = '';
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function (evt) {
+      const base64Data = evt.target.result.split(',')[1];
+      attachedFile = {
+        data: base64Data,
+        mimeType: file.type,
+        name: file.name
+      };
+      
+      // Update preview DOM
+      if (previewImg) previewImg.src = evt.target.result;
+      if (previewWrap) previewWrap.style.display = 'flex';
+      scrollMessages();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function clearAttachment() {
+    const fileInput = el('mora-file-input');
+    const previewWrap = el('mora-image-preview');
+    const previewImg = el('mora-preview-img');
+
+    attachedFile = null;
+    if (fileInput) fileInput.value = '';
+    if (previewImg) previewImg.src = '';
+    if (previewWrap) previewWrap.style.display = 'none';
   }
 
   function showWelcome() {
@@ -167,7 +226,7 @@
   function submit() {
     const input = el('mora-input');
     const text  = input.value.trim();
-    if (!text) return;
+    if (!text && !attachedFile) return; // Allow sending just image
     input.value = '';
     input.style.height = 'auto';
     sendMessage(text);
@@ -176,16 +235,45 @@
   async function sendMessage(text) {
     const lang = localStorage.getItem('m2b_lang') || 'id';
     const t = TRANSLATIONS[lang] || TRANSLATIONS.id;
+    
     // Hide quick replies after first message
     el('mora-quickreplies').style.display = 'none';
 
-    appendBubble('user', text);
-    history.push({ role: 'user', content: text });
+    // Prepare image payload
+    let imgData = null;
+    let tempImgUrl = null;
+    const previewImg = el('mora-preview-img');
+
+    if (attachedFile) {
+      imgData = {
+        data: attachedFile.data,
+        mimeType: attachedFile.mimeType
+      };
+      tempImgUrl = previewImg ? previewImg.src : null;
+      clearAttachment();
+    }
+
+    // Default text if user sent image without text
+    const displayChatText = text || (lang === 'en' ? '[Photo Uploaded]' : '[Mengunggah Foto]');
+
+    appendBubble('user', displayChatText, true, tempImgUrl);
+    
+    // We send standard history containing text, but pass the image parameter alongside
+    const historyPayload = history.map(h => ({ role: h.role, content: h.content }));
+    historyPayload.push({ role: 'user', content: displayChatText });
+
+    // Store in local session history with local image preview URL for rendering on refresh
+    history.push({ role: 'user', content: displayChatText, image_url: tempImgUrl });
     saveHistory();
 
     showTyping(true);
 
     try {
+      const payload = { history: historyPayload };
+      if (imgData) {
+        payload.image = imgData;
+      }
+
       const res = await fetch(CHAT_URL, {
         method  : 'POST',
         headers : {
@@ -193,7 +281,7 @@
           'Accept'       : 'application/json',
           'X-CSRF-TOKEN' : CSRF_TOKEN(),
         },
-        body: JSON.stringify({ history }),
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json();
@@ -213,8 +301,8 @@
       saveHistory();
 
       // Check if should show lead form
-      if (!leadDone && !leadShown && shouldShowLead(text)) {
-        setTimeout(() => showLeadForm(), 800);
+      if (!leadDone && !leadShown && (shouldShowLead(displayChatText) || imgData !== null)) {
+        setTimeout(() => showLeadForm(), 1200);
       }
 
     } catch (err) {
@@ -253,6 +341,9 @@
     submitBtn.textContent = t.sending;
     submitBtn.disabled = true;
 
+    // Filter out image_url from history payload before sending to backend lead endpoint
+    const historyPayload = history.map(h => ({ role: h.role, content: h.content }));
+
     try {
       await fetch(LEAD_URL, {
         method  : 'POST',
@@ -261,7 +352,7 @@
           'Accept'       : 'application/json',
           'X-CSRF-TOKEN' : CSRF_TOKEN(),
         },
-        body: JSON.stringify({ name, company, email, phone, history, source: 'mora_chat' }),
+        body: JSON.stringify({ name, company, email, phone, history: historyPayload, source: 'mora_chat' }),
       });
 
       el('mora-lead-form').classList.remove('show');
@@ -279,7 +370,7 @@
     }
   }
 
-  function appendBubble(role, text, animate = true) {
+  function appendBubble(role, text, animate = true, imageUrl = null) {
     const messages = el('mora-messages');
     const div  = document.createElement('div');
     div.className = `mora-msg ${role === 'user' ? 'user' : 'bot'}`;
@@ -288,7 +379,16 @@
 
     const bubble = document.createElement('div');
     bubble.className = 'mora-bubble';
-    bubble.innerHTML = escapeHtml(text).replace(/\n/g, '<br>');
+    
+    let htmlContent = escapeHtml(text).replace(/\n/g, '<br>');
+    if (imageUrl) {
+      htmlContent = `<img src="${imageUrl}" style="max-width: 100%; max-height: 120px; border-radius: 8px; margin-bottom: 8px; display: block; object-fit: contain;">` + htmlContent;
+    }
+    
+    // Render markdown bold and basic links safely for better UI layout in response
+    htmlContent = htmlContent.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    
+    bubble.innerHTML = htmlContent;
 
     if (role !== 'user') {
       const av = document.createElement('div');

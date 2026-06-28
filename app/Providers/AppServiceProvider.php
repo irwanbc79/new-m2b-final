@@ -25,8 +25,8 @@ class AppServiceProvider extends ServiceProvider
         view()->composer('layouts.app', function ($view) {
             $tickerItems = Cache::remember('running_ticker_news', 1800, function () {
                 $ebookItems = [
-                    ['📘 E-Book Ekspor Impor Premium & Download TOOLKIT GRATIS di ebook.m2b.co.id', 'https://ebook.m2b.co.id', true],
-                    ['📘 Download Toolkit Ekspor Impor GRATIS & Panduan Lengkap E-Book di ebook.m2b.co.id', 'https://ebook.m2b.co.id', true]
+                    ['📘 E-Book Panduan Ekspor Impor Premium di ebook.m2b.co.id', 'https://ebook.m2b.co.id', true],
+                    ['🧰 Download Toolkit Ekspor Impor GRATIS di ebook.m2b.co.id/toolkit.html', 'https://ebook.m2b.co.id/toolkit.html', true]
                 ];
 
                 $newsItems = [];

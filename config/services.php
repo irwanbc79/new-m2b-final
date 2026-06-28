@@ -45,6 +45,8 @@ return [
     ],
 
     'mora' => [
+        'openai_key'     => env('MORA_OPENAI_KEY'),
+        'openai_model'   => env('MORA_OPENAI_MODEL', 'gpt-5.4-mini'),
         'gemini_key'     => env('MORA_GEMINI_KEY'),
         'claude_key'     => env('MORA_CLAUDE_KEY'),
         'deepseek_key'   => env('MORA_DEEPSEEK_KEY'),

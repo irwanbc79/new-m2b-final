@@ -12,60 +12,63 @@ use App\Mail\MoraLeadMail;
 class MoraChatController extends Controller
 {
     private const SYSTEM_PROMPT = <<<'PROMPT'
-Kamu adalah MORA — AI asisten resmi PT. Mora Multi Berkah (M2B), perusahaan freight forwarder dan customs broker terpercaya di Indonesia, berbasis di Medan, Sumatera Utara.
+Kamu adalah MORA 2.0 (Mora Operations & Routing Assistant) — AI asisten dan konsultan kepabeanan resmi dari PT. Mora Multi Berkah (M2B), perusahaan freight forwarder dan customs broker terpercaya di Indonesia yang berbasis di Medan.
 
-## Identitas MORA
-- Nama: MORA (Mora Operations & Routing Assistant)
-- Kepribadian: Profesional, ramah, helpful, dan berpengetahuan luas di bidang logistik ekspor-impor
-- Bahasa: Bahasa Indonesia (utama), bisa Inggris jika diminta
-- Tujuan: Membantu calon klien mendapatkan informasi, konsultasi awal, dan diarahkan ke tim yang tepat
+## Identitas & Gaya Komunikasi
+- **Gaya:** Profesional, ramah, persuasif, taktis, dan sangat berpengetahuan tentang aturan ekspor-impor Bea Cukai Indonesia.
+- **Tugas Utama:** Memberikan analisis awal (prediksi HS Code, Lartas, kalkulasi bea masuk) berdasarkan foto produk atau deskripsi singkat yang diberikan pengunjung, lalu mengarahkan mereka untuk menggunakan jasa M2B.
 
-## Layanan M2B
-1. Export Handling — Pengurusan dokumen ekspor, koordinasi pengiriman ke seluruh dunia
-2. Import Handling — Pengurusan dokumen impor, customs clearance, hingga pengiriman ke gudang
-3. Customs Clearance — Keahlian pengurusan PIB, PEB, dan dokumen kepabeanan
-4. Door-to-Door — Layanan pengiriman dari pintu ke pintu, domestik dan internasional
-5. Undername Import — Layanan impor menggunakan nama perusahaan M2B
-6. Konsultasi Ekspor-Impor — Konsultasi gratis untuk UMKM dan pelaku usaha baru
+## Layanan Utama M2B
+1. **Customs Clearance:** PIB (Pemberitahuan Impor Barang) & PEB (Pemberitahuan Ekspor Barang).
+2. **Freight Forwarding:** Layanan Door-to-Door & Port-to-Port (LCL / FCL) udara dan laut.
+3. **Undername Import (Izin Impor Konsinyasi):** Pinjam bendera perusahaan M2B bagi importir tanpa NIB/API-U.
+4. **Asistensi Lartas:** Penanganan dokumen pembatasan secara legal.
 
-## Kontak & Routing
-- WhatsApp umum: +62 812-6302-7818
-- Email ekspor: export@m2b.co.id
-- Email impor: import@m2b.co.id
-- Email sales: sales@m2b.co.id
-- Alamat: Komplek Graha Metropolitan Blok G No. 24, Jl. Kapten Sumarsono, Medan 20114
+## Fitur Unggulan: Impor Praktis via Link / Tautan Produk (All-in-One)
+Jika pengunjung menyebutkan, menyalin, atau bertanya tentang proses impor menggunakan **link / tautan produk dari supplier luar negeri** (misalnya dari Alibaba, 1688, Taobao, Amazon, AliExpress, dll.):
+- Katakan dengan antusias bahwa mereka **CUKUP memberikan link produk tersebut** kepada M2B.
+- Jelaskan bahwa PT. Mora Multi Berkah (M2B) akan mengurus seluruh proses impor dari hulu ke hilir (End-to-End):
+  1. **Komunikasi Supplier & Incoterms:** M2B berkomunikasi langsung dengan supplier luar negeri Anda mengenai term penyerahan kargo (apakah EXW / Ex Works atau FOB / Free on Board).
+  2. **Customs Clearance:** M2B mengurus seluruh dokumen kepabeanan impor (PIB) dan proses kepabeanan Bea Cukai di Indonesia.
+  3. **Estimasi Pajak:** M2B menghitung estimasi seluruh bea masuk dan pajak impor resmi.
+  4. **Last-Mile Delivery:** Kargo dikirim langsung dari bandara/pelabuhan masuk ke pintu alamat gudang Anda (Door-to-Door).
+- **Pengikatan Leads (Lead Locking):** Jelaskan bahwa agar tim impor M2B dapat langsung menganalisis link produk tersebut, bernegosiasi dengan supplier Anda, dan membuatkan penawaran harga resmi, pengunjung **wajib mengisi data kontak mereka** (Nama & No WA) pada form yang muncul di bawah chat.
 
-## Panduan Perhitungan Pajak Impor & Bea Keluar RI
-Jika calon klien bertanya tentang estimasi pajak/tarif impor, pandu mereka dengan ramah untuk mengumpulkan data berikut:
-1. Harga Barang (FOB / Cost)
-2. Ongkos Kirim (Freight)
-3. Premi Asuransi (Insurance)
-4. Persentase Bea Masuk (BM) sesuai HS Code (jika tidak tahu, tanyakan jenis barangnya)
-5. Apakah memiliki API-U/NIB? (untuk menentukan PPh Impor: 7.5% jika punya API-U, 15% jika tidak punya)
+## Alur Analisis Kepabeanan & Prediksi MORA 2.0 (Jika Mengunggah Gambar / Deskripsi)
+Jika pengunjung mengunggah foto produk atau mendeskripsikan produknya:
+1. **Prediksi HS Code (AHTN/BTKI):**
+   - Lakukan analisis jenis barang. Prediksikan HS Code 8-digit yang paling mendekati (misal: "Mainan plastik berbentuk hewan kemungkinan masuk HS Code 9503.00.99").
+   - Sertakan tingkat keyakinan (Confidence Level) AI (misal: "Tingkat Keyakinan AI: 85%").
+   - Berikan alasan klasifikasi singkat mengapa barang tersebut dimasukkan ke pos tarif tersebut.
+2. **Deteksi Lartas (Larangan & Pembatasan):**
+   - Berikan informasi mengenai lartas produk tersebut di Bea Cukai RI.
+   - Sebutkan instansi terkait yang menerbitkan izinnya (contoh: BPOM untuk kosmetik/makanan/suplemen, SNI untuk helm/mainan anak/elektronik rumah tangga, Kementerian Kesehatan untuk Alkes, Persetujuan Impor (PI) dari Kemendag untuk tekstil/besi baja, Laporan Surveyor (LS) untuk garmen).
+   - **Batas Jualan (Sales Gate):** JANGAN memberikan detail panduan langkah demi langkah cara mengurus izin lartas tersebut. Sebaliknya, katakan bahwa M2B memiliki layanan pengurusan Lartas resmi agar impor berjalan legal tanpa hambatan di pelabuhan.
+3. **Estimasi Perhitungan Bea Masuk & Pajak Impor:**
+   - Gunakan data nilai barang (FOB), Freight, dan Insurance jika disebutkan pengguna.
+   - Jika pengguna tidak menyebutkan nilai barang, berikan simulasi kalkulasi pajak menggunakan contoh nilai barang **USD 1,000** (freight USD 100, insurance USD 10) dengan asumsi Bea Masuk 10% (sesuaikan jika produknya punya BM spesifik).
+   - Hitung dengan rumus berikut:
+     * **Nilai Pabean (CIF)** = FOB + Insurance + Freight
+     * **Bea Masuk (BM)** = CIF * % BM (gunakan persentase BM standar produk terkait)
+     * **Nilai Impor (NI)** = CIF + BM
+     * **PPN Impor** = NI * 12% (PPN Indonesia terbaru)
+     * **PPh Impor (Pasal 22):** Berikan 2 skema: 7.5% jika importir memiliki API-U (NIB Impor), atau 15% jika tidak memiliki API-U (atau 0.5% jika menggunakan undername M2B yang punya fasilitas khusus).
+     * Tampilkan hasil perhitungan dalam **Tabel Markdown** yang bersih.
 
-Rumus Perhitungan:
-- Nilai Pabean (CIF) = Cost + Insurance + Freight
-- Bea Masuk (BM) = CIF * % BM
-- Nilai Impor (NI) = CIF + BM
-- PPN Impor = NI * 12%
-- PPh Impor = NI * (7.5% jika punya API-U, atau 15% jika tidak punya)
-- Total Estimasi Pajak = BM + PPN + PPh
+## Batasan Jualan & Disclaimer Wajib (Non-Negotiable)
+Setiap kali selesai memberikan prediksi HS Code, Lartas, atau kalkulasi pajak, kamu **wajib** menutup jawabanmu dengan dua bagian berikut:
 
-Wawasan Pajak Ekspor (Bea Keluar):
-- Sebagian besar komoditas ekspor dari Indonesia dikenakan PPN 0% (bebas pajak ekspor) untuk merangsang perekonomian lokal.
-- Namun, ada komoditas tertentu yang dikenakan Bea Keluar (Export Duty) oleh pemerintah RI:
-  1. Kelapa Sawit (CPO) & produk turunannya (mengikuti harga patokan ekspor / HPE bulanan Kemendag)
-  2. Biji Kakao
-  3. Kayu & produk olahan kayu
-  4. Kulit mentah/jangat
-  5. Produk mineral & konsentrat logam tertentu
-- Berikan wawasan ini jika klien bertanya tentang ekspor barang-barang tersebut agar mereka paham M2B siap mengasistensi pengurusannya.
+> ⚠️ **Disclaimer Penting:** Hasil klasifikasi HS Code, Lartas, dan kalkulasi di atas adalah prediksi awal berbasis AI. Salah klasifikasi HS Code di Bea Cukai berisiko terkena sanksi administratif/denda (Notul). Untuk kepastian hukum dan validasi tarif resmi, Anda disarankan menggunakan jasa verifikasi resmi kami.
 
-## Aturan
-- Jangan berikan tarif/harga pasti — arahkan ke tim sales untuk penawaran resmi
-- Jawab pertanyaan teknis dokumen secara umum, sarankan konsultasi langsung
-- Selalu ramah dan profesional
-- Jika tidak tahu, jujur dan arahkan ke tim yang tepat
+> 💼 **Penawaran Solusi M2B:**
+> - **GRATIS 100%:** Layanan analisis klasifikasi HS Code & Lartas resmi Bea Cukai tidak dikenakan biaya apa pun jika Anda mempercayakan pengapalan barang (Freight Forwarding, Clearance, atau Undername) Anda melalui M2B.
+> - **Layanan Studi Kelayakan (Rp 150.000,-):** Jika Anda hanya memerlukan riset mendalam klasifikasi HS & regulasi Lartas Bea Cukai untuk riset pasar tanpa pengiriman barang.
+> 
+> *Arahkan pengguna: "Silakan kirim detail kontak Anda (Nama & No WA) di form di bawah ini agar tim Customs Broker M2B dapat memvalidasi dokumen Anda sekarang!"*
+
+## Kontak & Alamat Resmi
+- WhatsApp Hubungi: +62 812-6302-7818
+- Alamat Kantor: Komplek Graha Metropolitan Blok G No. 24, Jl. Kapten Sumarsono, Medan 20114.
 PROMPT;
 
     private const HIGH_INTENT_KEYWORDS = [
@@ -82,26 +85,92 @@ PROMPT;
         return false;
     }
 
-    private function selectProvider(array $history): string
+    private function selectProvider(array $history, ?array $image = null): string
     {
-        $userTurns = count(array_filter($history, fn($m) => $m['role'] === 'user'));
-        return ($userTurns <= 3 && !$this->hasHighIntent($history)) ? 'gemini' : 'claude';
+        // Images need a vision model — Gemini handles inline image data here.
+        if ($image) return 'gemini';
+        // Text conversations are handled by OpenAI gpt-5.4-mini as the primary model.
+        return 'openai';
     }
 
-    private function callGemini(array $history): array
+    /** Dispatch a chat turn to the given provider. Returns [reply, error]. */
+    private function callProvider(string $provider, array $history, ?array $image = null): array
+    {
+        return match ($provider) {
+            'openai'   => $this->callOpenAI($history),
+            'gemini'   => $this->callGemini($history, $image),
+            'claude'   => $this->callClaude($history),
+            'deepseek' => $this->callDeepseek($history),
+            default    => ['', 'unknown_provider'],
+        };
+    }
+
+    private function callOpenAI(array $history): array
+    {
+        $key = config('services.mora.openai_key');
+        if (!$key) {
+            Log::warning('MORA OpenAI API key is missing');
+            return ['', 'openai_key_missing'];
+        }
+        $model = config('services.mora.openai_model', 'gpt-5.4-mini');
+
+        $messages = [['role' => 'system', 'content' => self::SYSTEM_PROMPT]];
+        foreach ($history as $m) {
+            $messages[] = ['role' => $m['role'], 'content' => $m['content']];
+        }
+
+        $response = Http::timeout(30)
+            ->withHeaders([
+                'Authorization' => "Bearer {$key}",
+                'Content-Type'  => 'application/json',
+            ])
+            ->post('https://api.openai.com/v1/chat/completions', [
+                'model'                 => $model,
+                'messages'              => $messages,
+                // gpt-5.x family requires max_completion_tokens (max_tokens rejected).
+                'max_completion_tokens' => 800,
+            ]);
+
+        if ($response->failed()) {
+            Log::warning('MORA OpenAI API failed', [
+                'status' => $response->status(),
+                'error'  => $response->body(),
+            ]);
+            return ['', 'openai_error'];
+        }
+        return [$response->json('choices.0.message.content', ''), null];
+    }
+
+    private function callGemini(array $history, ?array $image = null): array
     {
         $key = config('services.mora.gemini_key');
-        $contents = array_map(fn($m) => [
-            'role'  => $m['role'] === 'assistant' ? 'model' : 'user',
-            'parts' => [['text' => $m['content']]],
-        ], $history);
+        
+        $contents = [];
+        foreach ($history as $index => $m) {
+            $role = $m['role'] === 'assistant' ? 'model' : 'user';
+            $parts = [['text' => $m['content']]];
+            
+            if ($role === 'user' && $index === count($history) - 1 && $image) {
+                $parts[] = [
+                    'inlineData' => [
+                        'mimeType' => $image['mimeType'],
+                        'data'     => $image['data'],
+                    ]
+                ];
+            }
+            
+            $contents[] = [
+                'role'  => $role,
+                'parts' => $parts,
+            ];
+        }
 
-        $response = Http::timeout(20)->post(
+        $response = Http::timeout(25)->post(
             "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={$key}",
             [
                 'system_instruction' => ['parts' => [['text' => self::SYSTEM_PROMPT]]],
                 'contents'           => $contents,
-                'generationConfig'   => ['temperature' => 0.7, 'maxOutputTokens' => 500],
+                'generationConfig'   => ['temperature' => 0.7, 'maxOutputTokens' => 800],
             ]
         );
 
@@ -198,44 +267,34 @@ PROMPT;
             'history'           => 'required|array|min:1|max:30',
             'history.*.role'    => 'required|in:user,assistant',
             'history.*.content' => 'required|string|max:2000',
+            'image'             => 'nullable|array',
+            'image.data'        => 'required_with:image|string',
+            'image.mimeType'    => 'required_with:image|string|in:image/jpeg,image/png,image/webp,image/gif',
         ]);
 
         $history  = $request->input('history');
-        $provider = $this->selectProvider($history);
-        $tried = [];
+        $image    = $request->input('image');
+        $primary  = $this->selectProvider($history, $image);
+
+        // Fallback order. Images: only Gemini does vision here, so lead with it.
+        // Text: OpenAI gpt-5.4-mini primary, then graceful fallback to the rest.
+        $order = $image
+            ? ['gemini', 'claude', 'deepseek']
+            : array_values(array_unique([$primary, 'openai', 'gemini', 'claude', 'deepseek']));
 
         $reply = null;
         $error = null;
-        $currentProvider = $provider;
+        $tried = [];
+        $currentProvider = null;
 
-        // Try primary provider
-        $tried[] = $currentProvider;
-        if ($currentProvider === 'gemini') {
-            [$reply, $error] = $this->callGemini($history);
-        } else {
-            [$reply, $error] = $this->callClaude($history);
-        }
-
-        // 1st Fallback
-        if ($error) {
-            $nextProvider = ($currentProvider === 'gemini') ? 'claude' : 'gemini';
-            $tried[] = $nextProvider;
-            Log::info("MORA Fallback 1: Trying {$nextProvider} because {$currentProvider} failed.");
-            if ($nextProvider === 'gemini') {
-                [$reply, $error] = $this->callGemini($history);
-            } else {
-                [$reply, $error] = $this->callClaude($history);
+        foreach ($order as $p) {
+            $tried[] = $p;
+            $currentProvider = $p;
+            [$reply, $error] = $this->callProvider($p, $history, $image);
+            if (!$error && $reply) {
+                break;
             }
-            $currentProvider = $nextProvider;
-        }
-
-        // 2nd Fallback (Deepseek)
-        if ($error) {
-            $nextProvider = 'deepseek';
-            $tried[] = $nextProvider;
-            Log::info("MORA Fallback 2: Trying {$nextProvider} because previous providers failed.");
-            [$reply, $error] = $this->callDeepseek($history);
-            $currentProvider = $nextProvider;
+            Log::info("MORA provider '{$p}' failed ({$error}); trying next.");
         }
 
         if (!$reply) {
@@ -332,6 +391,7 @@ PROMPT;
                     'score'            => $lead->score,
                     'source'           => $lead->source,
                     'service_interest' => $lead->service_interest,
+                    'product_links'    => $lead->product_links,
                     'summary'          => $lead->summary,
                     'chat_history'     => $lead->chat_history,
                 ]);
@@ -341,6 +401,45 @@ PROMPT;
                 'error'   => $e->getMessage(),
             ]);
         }
+    }
+
+    private function extractProductLinks(array $history): ?string
+    {
+        if (empty($history)) return null;
+
+        $links = [];
+        foreach ($history as $msg) {
+            if (($msg['role'] ?? '') !== 'user') continue;
+            
+            $content = $msg['content'] ?? '';
+            
+            // 1. Match absolute URLs with http/https
+            if (preg_match_all('/\bhttps?:\/\/[^\s<>"\']+/i', $content, $matches)) {
+                foreach ($matches[0] as $url) {
+                    $links[] = $url;
+                }
+            }
+            
+            // 2. Match common supplier domains without protocol (e.g. 1688.com/item/123, alibaba.com/...)
+            $domainPattern = '/\b(?:1688|taobao|alibaba|aliexpress|amazon|ebay|made-in-china)\.[a-z]{2,}(?:\/[^\s<>"\']*)?/i';
+            if (preg_match_all($domainPattern, $content, $matches)) {
+                foreach ($matches[0] as $url) {
+                    // Check if it's already captured with protocol
+                    $alreadyCaptured = false;
+                    foreach ($links as $existing) {
+                        if (str_contains($existing, $url)) {
+                            $alreadyCaptured = true;
+                            break;
+                        }
+                    }
+                    if (!$alreadyCaptured) {
+                        $links[] = 'https://' . $url;
+                    }
+                }
+            }
+        }
+        
+        return !empty($links) ? implode(', ', array_unique($links)) : null;
     }
 
     public function lead(Request $request): JsonResponse
@@ -363,6 +462,7 @@ PROMPT;
         $score           = $this->scoreChat($history);
         $summary         = $this->generateSummary($history);
         $serviceInterest = $this->detectServiceInterest($history);
+        $productLinks    = $this->extractProductLinks($history);
 
         // Persist first — lead is never lost even if email fails.
         $lead = MoraLead::create($data + [
@@ -373,6 +473,7 @@ PROMPT;
             'source'           => $source,
             'summary'          => $summary,
             'service_interest' => $serviceInterest,
+            'product_links'    => $productLinks,
         ]);
 
         try {

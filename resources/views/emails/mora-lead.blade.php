@@ -76,6 +76,18 @@
         <span class="info-label">Email</span>
         <span class="info-value">{{ $lead->email ?: '—' }}</span>
       </div>
+      @if($lead->product_links)
+      <div class="info-row">
+        <span class="info-label">Link Produk</span>
+        <span class="info-value">
+          @foreach(explode(', ', $lead->product_links) as $index => $url)
+            <a href="{{ $url }}" target="_blank" style="color:#2563eb;text-decoration:underline;word-break:break-all;display:block;margin-bottom:4px;">
+              🔗 Link #{{ $index + 1 }}
+            </a>
+          @endforeach
+        </span>
+      </div>
+      @endif
       <div class="info-row">
         <span class="info-label">Waktu</span>
         <span class="info-value">{{ $lead->created_at->format('d M Y, H:i') }} WIB</span>

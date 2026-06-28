@@ -39,7 +39,7 @@ class MoraLead extends Model
     protected $fillable = [
         'name', 'company', 'email', 'phone',
         'emailed', 'chat_history', 'status', 'summary',
-        'score', 'source', 'service_interest',
+        'score', 'source', 'service_interest', 'product_links',
         'estimated_value', 'notes', 'follow_up_at', 'followed_up_at',
     ];
 

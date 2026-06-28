@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="{{ asset('css/mora.css') }}">
+<link rel="stylesheet" href="{{ asset('css/mora.css') }}?v=2.0">
 
 {{-- MORA Chat Widget --}}
 <div id="mora-widget">
@@ -48,8 +48,20 @@
       <p id="mora-lead-skip" x-text="lang==='en' ? 'Skip' : 'Lewati saja'">Lewati saja</p>
     </div>
 
+    {{-- Image preview area --}}
+    <div id="mora-image-preview" style="display: none;">
+      <img id="mora-preview-img" src="" alt="Upload Preview">
+      <button id="mora-preview-remove" title="Hapus foto">✕</button>
+    </div>
+
     {{-- Input area --}}
     <div id="mora-inputarea">
+      <input type="file" id="mora-file-input" accept="image/*" style="display: none;">
+      <button id="mora-attach-btn" type="button" :aria-label="lang==='en' ? 'Attach photo' : 'Lampirkan foto'">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5c0-3.31 2.69-6 6-6s6 2.69 6 6v10.5c0 1.38-1.12 2.5-2.5 2.5s-2.5-1.12-2.5-2.5V6H10v9.5c0 2.48 2.02 4.5 4.5 4.5s4.5-2.02 4.5-4.5V5c0-4.42-3.58-8-8-8s-8 3.58-8 8v12c0 3.87 3.13 7 7 7s7-3.13 7-7V6h-1.5z"/>
+        </svg>
+      </button>
       <textarea id="mora-input" rows="1" :placeholder="lang==='en' ? 'Type a message...' : 'Ketik pesan...'" :aria-label="lang==='en' ? 'Message to MORA' : 'Pesan ke MORA'"></textarea>
       <button id="mora-send" :aria-label="lang==='en' ? 'Send' : 'Kirim'">
         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -60,4 +72,4 @@
   </div>
 </div>
 
-<script src="{{ asset('js/mora.js') }}?v=1.2" defer></script>
+<script src="{{ asset('js/mora.js') }}?v=2.0" defer></script>

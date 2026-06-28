@@ -124,6 +124,24 @@ class MoraLeadResource extends Resource
                         ->columnSpanFull(),
                 ]),
 
+            Forms\Components\Section::make('Tautan Produk Terdeteksi')
+                ->icon('heroicon-o-link')
+                ->visible(fn($record) => $record && $record->product_links)
+                ->schema([
+                    Forms\Components\Placeholder::make('product_links_placeholder')
+                        ->label('Link dari Supplier')
+                        ->content(function ($record) {
+                            if (!$record || !$record->product_links) return '—';
+                            $urls = explode(', ', $record->product_links);
+                            $html = '<ul class="list-disc pl-5 space-y-1">';
+                            foreach ($urls as $url) {
+                                $html .= "<li><a href=\"{$url}\" target=\"_blank\" class=\"text-primary-600 hover:underline break-all\">{$url}</a></li>";
+                            }
+                            $html .= '</ul>';
+                            return new \Illuminate\Support\HtmlString($html);
+                        }),
+                ]),
+
             Forms\Components\Section::make('Riwayat Percakapan MORA Chat')
                 ->icon('heroicon-o-chat-bubble-left-right')
                 ->collapsible()
@@ -198,6 +216,21 @@ class MoraLeadResource extends Resource
                     ->label('Layanan')
                     ->formatStateUsing(fn($state) => $state ? (MoraLead::SERVICES[$state] ?? $state) : '—')
                     ->color('success'),
+
+                Tables\Columns\TextColumn::make('product_links')
+                    ->label('Link Produk')
+                    ->placeholder('—')
+                    ->formatStateUsing(function ($state) {
+                        if (!$state) return null;
+                        $urls = explode(', ', $state);
+                        $linksHtml = [];
+                        foreach ($urls as $index => $url) {
+                            $num = $index + 1;
+                            $linksHtml[] = "<a href=\"{$url}\" target=\"_blank\" class=\"text-primary-600 hover:underline\">🔗 Link #{$num}</a>";
+                        }
+                        return implode('<br>', $linksHtml);
+                    })
+                    ->html(),
 
                 Tables\Columns\TextColumn::make('follow_up_at')
                     ->label('Follow-up')
