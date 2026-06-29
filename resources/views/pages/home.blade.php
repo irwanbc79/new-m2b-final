@@ -761,7 +761,7 @@
         <div style="font-family:Syne;font-weight:800;font-size:28px;color:#4a9eda;line-height:1">
           <span x-text="count + '{{ $stat['suffix'] }}'">{{ $stat['target'] }}{{ $stat['suffix'] }}</span>
         </div>
-        <div style="font-size:12px;color:rgba(255,255,255,0.55);margin-top:6px" x-text="$store.lang.t('{{ $stat['label_id'] }}', '{{ $stat['label_en'] }}', '{{ $stat['label_zh'] }}', '{{ $stat['label_ar'] }}')">{{ $stat['label_id'] }}</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.55);margin-top:6px" x-text="$store.lang.t('{{ addslashes($stat['label_id']) }}', '{{ addslashes($stat['label_en']) }}', '{{ addslashes($stat['label_zh']) }}', '{{ addslashes($stat['label_ar']) }}')">{{ $stat['label_id'] }}</div>
       </div>
       @endforeach
       <div>
@@ -1272,11 +1272,11 @@
         onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 12px 36px rgba(0,0,0,0.12)';this.style.borderColor='#1e3a5f'"
         onmouseout="this.style.transform='none';this.style.boxShadow='0 1px 4px rgba(0,0,0,0.04)';this.style.borderColor='{{ $i === 0 ? '#0f0f14' : '#e5e2dc' }}'">
         @if($s['badge'])
-        <div style="position:absolute;top:20px;right:20px;background:#1e3a5f;color:#fff;font-size:10px;padding:3px 10px;border-radius:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase" x-text="$store.lang.t('{{ $s['badge']['id'] }}', '{{ $s['badge']['en'] }}', '{{ $s['badge']['zh'] }}', '{{ $s['badge']['ar'] }}')">{{ $s['badge']['id'] }}</div>
+        <div style="position:absolute;top:20px;right:20px;background:#1e3a5f;color:#fff;font-size:10px;padding:3px 10px;border-radius:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase" x-text="$store.lang.t('{{ addslashes($s['badge']['id']) }}', '{{ addslashes($s['badge']['en']) }}', '{{ addslashes($s['badge']['zh']) }}', '{{ addslashes($s['badge']['ar']) }}')">{{ $s['badge']['id'] }}</div>
         @endif
         <div style="font-size:28px;margin-bottom:14px">{{ $s['icon'] }}</div>
-        <div style="font-family:Syne;font-weight:700;font-size:17px;margin-bottom:8px;color:{{ $i === 0 ? '#fff' : '#0f0f14' }}" x-text="$store.lang.t('{{ $s['title']['id'] }}', '{{ $s['title']['en'] }}', '{{ $s['title']['zh'] }}', '{{ $s['title']['ar'] }}')">{{ $s['title']['id'] }}</div>
-        <div style="font-size:13px;color:{{ $i === 0 ? 'rgba(255,255,255,0.55)' : '#777' }};line-height:1.7;margin-bottom:14px" x-text="$store.lang.t('{{ $s['desc']['id'] }}', '{{ $s['desc']['en'] }}', '{{ $s['desc']['zh'] }}', '{{ $s['desc']['ar'] }}')">{{ $s['desc']['id'] }}</div>
+        <div style="font-family:Syne;font-weight:700;font-size:17px;margin-bottom:8px;color:{{ $i === 0 ? '#fff' : '#0f0f14' }}" x-text="$store.lang.t('{{ addslashes($s['title']['id']) }}', '{{ addslashes($s['title']['en']) }}', '{{ addslashes($s['title']['zh']) }}', '{{ addslashes($s['title']['ar']) }}')">{{ $s['title']['id'] }}</div>
+        <div style="font-size:13px;color:{{ $i === 0 ? 'rgba(255,255,255,0.55)' : '#777' }};line-height:1.7;margin-bottom:14px" x-text="$store.lang.t('{{ addslashes($s['desc']['id']) }}', '{{ addslashes($s['desc']['en']) }}', '{{ addslashes($s['desc']['zh']) }}', '{{ addslashes($s['desc']['ar']) }}')">{{ $s['desc']['id'] }}</div>
         <div style="font-size:12px;color:#4a9eda;font-weight:700;display:flex;align-items:center;gap:6px" x-text="$store.lang.t('Pelajari lebih lanjut →', 'Learn more →', '查看详情 →', 'معرفة المزيد ←')">Pelajari lebih lanjut →</div>
       </div>
       @endforeach
@@ -1291,8 +1291,8 @@
       <div class="home-modal-left" style="position:relative;background:#0B1120;display:flex;flex-direction:column;justify-content:space-between;padding:36px">
         <div>
           <div style="font-size:40px;margin-bottom:16px">{{ $s['icon'] }}</div>
-          @if($s['badge'])<span style="display:inline-block;padding:4px 12px;border-radius:20px;background:#1e3a5f;color:#fff;font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:18px" x-text="$store.lang.t('{{ $s['badge']['id'] }}', '{{ $s['badge']['en'] }}', '{{ $s['badge']['zh'] }}', '{{ $s['badge']['ar'] }}')">{{ $s['badge']['id'] }}</span>@endif
-          <h2 style="font-family:Syne;font-weight:800;font-size:28px;color:#fff;letter-spacing:-1px;line-height:1.1;margin-bottom:14px" x-text="$store.lang.t('{{ $s['modalTitle']['id'] }}', '{{ $s['modalTitle']['en'] }}', '{{ $s['modalTitle']['zh'] }}', '{{ $s['modalTitle']['ar'] }}')">{{ $s['modalTitle']['id'] }}</h2>
+          @if($s['badge'])<span style="display:inline-block;padding:4px 12px;border-radius:20px;background:#1e3a5f;color:#fff;font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:18px" x-text="$store.lang.t('{{ addslashes($s['badge']['id']) }}', '{{ addslashes($s['badge']['en']) }}', '{{ addslashes($s['badge']['zh']) }}', '{{ addslashes($s['badge']['ar']) }}')">{{ $s['badge']['id'] }}</span>@endif
+          <h2 style="font-family:Syne;font-weight:800;font-size:28px;color:#fff;letter-spacing:-1px;line-height:1.1;margin-bottom:14px" x-text="$store.lang.t('{{ addslashes($s['modalTitle']['id']) }}', '{{ addslashes($s['modalTitle']['en']) }}', '{{ addslashes($s['modalTitle']['zh']) }}', '{{ addslashes($s['modalTitle']['ar']) }}')">{{ $s['modalTitle']['id'] }}</h2>
           <p style="font-style:italic;font-size:17px;color:#f5b91c;line-height:1.45">"{{ $s['tagline']['id'] }}"</p>
           <p x-show="lang === 'en'" style="font-style:italic;font-size:17px;color:#f5b91c;line-height:1.45" x-cloak>"{{ $s['tagline']['en'] }}"</p>
           <p x-show="lang === 'zh'" style="font-style:italic;font-size:17px;color:#f5b91c;line-height:1.45" x-cloak>"{{ $s['tagline']['zh'] }}"</p>
@@ -1300,7 +1300,7 @@
         </div>
         <div style="padding:20px 24px;background:rgba(245,185,28,0.12);border:1px solid rgba(245,185,28,0.35);border-radius:14px">
           <div style="font-family:Syne;font-weight:800;font-size:32px;color:#f5b91c;line-height:1">{{ $s['statNum'] }}</div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.75);margin-top:4px" x-text="$store.lang.t('{{ $s['statLabel']['id'] }}', '{{ $s['statLabel']['en'] }}', '{{ $s['statLabel']['zh'] }}', '{{ $s['statLabel']['ar'] }}')">{{ $s['statLabel']['id'] }}</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.75);margin-top:4px" x-text="$store.lang.t('{{ addslashes($s['statLabel']['id']) }}', '{{ addslashes($s['statLabel']['en']) }}', '{{ addslashes($s['statLabel']['zh']) }}', '{{ addslashes($s['statLabel']['ar']) }}')">{{ $s['statLabel']['id'] }}</div>
         </div>
       </div>
       <div class="home-modal-right" style="padding:36px;position:relative">
@@ -1386,8 +1386,8 @@
       <div style="text-align:center;padding:0 20px;position:relative;z-index:1">
         <div style="width:56px;height:56px;border-radius:50%;background:#fff;border:3px solid #1e3a5f;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:22px;box-shadow:0 0 0 6px #f7f5f0">{{ $step['icon'] }}</div>
         <div style="font-family:Syne;font-weight:800;font-size:48px;color:rgba(30,58,95,0.1);position:absolute;top:-8px;left:50%;transform:translateX(-50%);line-height:1">0{{ $k+1 }}</div>
-        <div style="font-family:Syne;font-weight:700;font-size:15px;margin-bottom:8px" x-text="$store.lang.t('{{ $step['title']['id'] }}', '{{ $step['title']['en'] }}', '{{ $step['title']['zh'] }}', '{{ $step['title']['ar'] }}')">{{ $step['title']['id'] }}</div>
-        <div style="font-size:13px;color:#777;line-height:1.7" x-text="$store.lang.t('{{ $step['desc']['id'] }}', '{{ $step['desc']['en'] }}', '{{ $step['desc']['zh'] }}', '{{ $step['desc']['ar'] }}')">{{ $step['desc']['id'] }}</div>
+        <div style="font-family:Syne;font-weight:700;font-size:15px;margin-bottom:8px" x-text="$store.lang.t('{{ addslashes($step['title']['id']) }}', '{{ addslashes($step['title']['en']) }}', '{{ addslashes($step['title']['zh']) }}', '{{ addslashes($step['title']['ar']) }}')">{{ $step['title']['id'] }}</div>
+        <div style="font-size:13px;color:#777;line-height:1.7" x-text="$store.lang.t('{{ addslashes($step['desc']['id']) }}', '{{ addslashes($step['desc']['en']) }}', '{{ addslashes($step['desc']['zh']) }}', '{{ addslashes($step['desc']['ar']) }}')">{{ $step['desc']['id'] }}</div>
       </div>
       @endforeach
     </div>
@@ -1509,15 +1509,15 @@
         :style="hov ? 'background:rgba(30,58,95,0.22);border-color:rgba(74,158,218,0.35);transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,0.3)' : ''">
         <div style="width:46px;height:46px;border-radius:12px;background:rgba(30,58,95,0.45);color:#4a9eda;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;margin-bottom:16px;transition:background .25s"
           :style="hov ? 'background:rgba(30,58,95,0.7)' : ''">{{ $f['icon'] }}</div>
-        <div style="font-family:Syne;font-weight:700;font-size:16px;color:#fff;margin-bottom:8px" x-text="$store.lang.t('{{ $f['title']['id'] }}', '{{ $f['title']['en'] }}', '{{ $f['title']['zh'] }}', '{{ $f['title']['ar'] }}')">{{ $f['title']['id'] }}</div>
-        <div style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.7;flex:1" x-text="$store.lang.t('{{ $f['desc']['id'] }}', '{{ $f['desc']['en'] }}', '{{ $f['desc']['zh'] }}', '{{ $f['desc']['ar'] }}')">{{ $f['desc']['id'] }}</div>
+        <div style="font-family:Syne;font-weight:700;font-size:16px;color:#fff;margin-bottom:8px" x-text="$store.lang.t('{{ addslashes($f['title']['id']) }}', '{{ addslashes($f['title']['en']) }}', '{{ addslashes($f['title']['zh']) }}', '{{ addslashes($f['title']['ar']) }}')">{{ $f['title']['id'] }}</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.7;flex:1" x-text="$store.lang.t('{{ addslashes($f['desc']['id']) }}', '{{ addslashes($f['desc']['en']) }}', '{{ addslashes($f['desc']['zh']) }}', '{{ addslashes($f['desc']['ar']) }}')">{{ $f['desc']['id'] }}</div>
         <div x-show="hov" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
           style="margin-top:18px;padding-top:16px;border-top:1px solid rgba(74,158,218,0.25)">
           <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:12px">
             <span style="font-family:Syne;font-weight:800;font-size:26px;color:#4a9eda;line-height:1">{{ $f['stat'] }}</span>
-            <span style="font-size:12px;color:rgba(255,255,255,0.4);line-height:1.3" x-text="$store.lang.t('{{ $f['statLabel']['id'] }}', '{{ $f['statLabel']['en'] }}', '{{ $f['statLabel']['zh'] }}', '{{ $f['statLabel']['ar'] }}')">{{ $f['statLabel']['id'] }}</span>
+            <span style="font-size:12px;color:rgba(255,255,255,0.4);line-height:1.3" x-text="$store.lang.t('{{ addslashes($f['statLabel']['id']) }}', '{{ addslashes($f['statLabel']['en']) }}', '{{ addslashes($f['statLabel']['zh']) }}', '{{ addslashes($f['statLabel']['ar']) }}')">{{ $f['statLabel']['id'] }}</span>
           </div>
-          <a :href="'https://wa.me/6281263027818?text=' + encodeURIComponent($store.lang.t('{{ $f['wa_id'] }}', '{{ $f['wa_en'] }}', '{{ $f['wa_zh'] }}', '{{ $f['wa_ar'] }}'))" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 14px;border-radius:8px;background:#25D366;color:#fff;text-decoration:none;font-weight:700;font-size:12px" x-text="$store.lang.t('💬 Tanya Sekarang', '💬 Ask Now', '💬 立即咨询', '💬 استفسر الآن')">💬 Tanya Sekarang</a>
+          <a :href="'https://wa.me/6281263027818?text=' + encodeURIComponent($store.lang.t('{{ addslashes($f['wa_id']) }}', '{{ addslashes($f['wa_en']) }}', '{{ addslashes($f['wa_zh']) }}', '{{ addslashes($f['wa_ar']) }}'))" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 14px;border-radius:8px;background:#25D366;color:#fff;text-decoration:none;font-weight:700;font-size:12px" x-text="$store.lang.t('💬 Tanya Sekarang', '💬 Ask Now', '💬 立即咨询', '💬 استفسر الآن')">💬 Tanya Sekarang</a>
         </div>
       </div>
       @endforeach
@@ -1572,7 +1572,7 @@
         <div style="padding:14px 16px;border-radius:8px;border:1px solid #e5e2dc;background:#fafaf8">
           <div style="font-size:18px;margin-bottom:4px">{{ $stat[0] }}</div>
           <div style="font-family:Syne;font-weight:800;font-size:16px;color:#1e3a5f">{{ $stat[1] }}</div>
-          <div style="font-size:11px;color:#888" x-text="$store.lang.t('{{ $stat[2]['id'] }}', '{{ $stat[2]['en'] }}', '{{ $stat[2]['zh'] }}', '{{ $stat[2]['ar'] }}')">{{ $stat[2]['id'] }}</div>
+          <div style="font-size:11px;color:#888" x-text="$store.lang.t('{{ addslashes($stat[2]['id']) }}', '{{ addslashes($stat[2]['en']) }}', '{{ addslashes($stat[2]['zh']) }}', '{{ addslashes($stat[2]['ar']) }}')">{{ $stat[2]['id'] }}</div>
         </div>
         @endforeach
       </div>
@@ -1637,8 +1637,8 @@
           <div class="estimator-btn-icon-wrapper">
             <span>{{ $info[0] }}</span>
           </div>
-          <span style="font-family:Syne;font-weight:700;font-size:14px;display:block" x-text="$store.lang.t('{{ $info[1]['id'] }}', '{{ $info[1]['en'] }}', '{{ $info[1]['zh'] }}', '{{ $info[1]['ar'] }}')">{{ $info[1]['id'] }}</span>
-          <span style="font-size:11px;color:rgba(255,255,255,0.45);display:block;line-height:1.4" x-text="$store.lang.t('{{ $info[2]['id'] }}', '{{ $info[2]['en'] }}', '{{ $info[2]['zh'] }}', '{{ $info[2]['ar'] }}')">{{ $info[2]['id'] }}</span>
+          <span style="font-family:Syne;font-weight:700;font-size:14px;display:block" x-text="$store.lang.t('{{ addslashes($info[1]['id']) }}', '{{ addslashes($info[1]['en']) }}', '{{ addslashes($info[1]['zh']) }}', '{{ addslashes($info[1]['ar']) }}')">{{ $info[1]['id'] }}</span>
+          <span style="font-size:11px;color:rgba(255,255,255,0.45);display:block;line-height:1.4" x-text="$store.lang.t('{{ addslashes($info[2]['id']) }}', '{{ addslashes($info[2]['en']) }}', '{{ addslashes($info[2]['zh']) }}', '{{ addslashes($info[2]['ar']) }}')">{{ $info[2]['id'] }}</span>
         </button>
         @endforeach
       </div>
@@ -2114,7 +2114,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <div style="width:40px;height:40px;border-radius:50%;background:rgba(30,58,95,0.1);border:2px solid rgba(30,58,95,0.2);display:flex;align-items:center;justify-content:center;font-family:Syne;font-weight:800;color:#1e3a5f;font-size:16px">{{ substr($t['name'],0,1) }}</div>
           <div>
             <div style="font-weight:700;font-size:14px">{{ $t['name'] }}</div>
-            <div style="font-size:12px;color:#999" x-text="$store.lang.t('{{ $t['title']['id'] }}', '{{ $t['title']['en'] }}', '{{ $t['title']['zh'] }}', '{{ $t['title']['ar'] }}')">{{ $t['title']['id'] }}</div>
+            <div style="font-size:12px;color:#999" x-text="$store.lang.t('{{ addslashes($t['title']['id']) }}', '{{ addslashes($t['title']['en']) }}', '{{ addslashes($t['title']['zh']) }}', '{{ addslashes($t['title']['ar']) }}')">{{ $t['title']['id'] }}</div>
           </div>
         </div>
       </div>
