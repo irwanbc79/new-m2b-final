@@ -2071,9 +2071,17 @@ document.addEventListener('DOMContentLoaded', () => {
       <h2 style="font-family:Syne;font-weight:800;font-size:34px;letter-spacing:-0.8px;margin-top:12px;margin-bottom:12px" x-text="$store.lang.t('Dipercaya Ratusan Klien', 'Trusted by Hundreds of Clients', '赢得数百家客户的信赖', 'موثوق به من مئات العملاء')">Dipercaya Ratusan Klien</h2>
       <p style="color:#666" x-text="$store.lang.t('Dari UKM hingga perusahaan ekspor skala besar.', 'From SMEs to large-scale export companies.', '涵盖中小型跨境商户到大型出口集团。', 'من الشركات الصغيرة والمتوسطة إلى شركات التصدير واسعة النطاق.')">Dari UKM hingga perusahaan ekspor skala besar.</p>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px" class="home-testimonials-grid">
+    <style>
+      @keyframes testiScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+      .testi-marquee{animation:testiScroll 48s linear infinite;will-change:transform}
+      .testi-marquee-wrap:hover .testi-marquee{animation-play-state:paused}
+      @media (prefers-reduced-motion:reduce){.testi-marquee{animation:none;flex-wrap:wrap;justify-content:center;width:auto!important}}
+    </style>
+    <div class="testi-marquee-wrap" style="overflow:hidden;position:relative;-webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent)">
+      <div class="testi-marquee" style="display:flex;gap:20px;width:max-content">
       @php
-      $testimonials = [
+      // Fallback lama dinonaktifkan — testimoni sekarang dari controller (DB portal + fallback terkurasi).
+      $__unused_fallback = [
         [
           'name' => 'Edy Serdawanto',
           'title' => ['id' => 'Direktur — PT. Dira Baraka Mulia', 'en' => 'Director — PT. Dira Baraka Mulia', 'zh' => '董事长 — PT. Dira Baraka Mulia', 'ar' => 'مدير — PT. Dira Baraka Mulia'],
@@ -2106,9 +2114,9 @@ document.addEventListener('DOMContentLoaded', () => {
         ]
       ];
       @endphp
-      @foreach($testimonials as $t)
-      <div style="background:#f7f5f0;border-radius:12px;padding:28px 24px;border:1px solid #e5e2dc">
-        <div style="color:#f5b91c;font-size:18px;margin-bottom:12px">★★★★★</div>
+      @foreach(array_merge($testimonials, $testimonials) as $t)
+      <div style="flex:0 0 340px;width:340px;background:#f7f5f0;border-radius:12px;padding:28px 24px;border:1px solid #e5e2dc">
+        <div style="color:#f5b91c;font-size:18px;margin-bottom:12px;letter-spacing:2px">{{ str_repeat('★', max(1,min(5,(int)($t['rating'] ?? 5)))) }}<span style="color:#e0ddd5">{{ str_repeat('★', 5 - max(1,min(5,(int)($t['rating'] ?? 5)))) }}</span></div>
         <p style="font-size:14px;color:#444;line-height:1.75;margin-bottom:20px;font-style:italic" x-text="$store.lang.t('{{ addslashes($t['quote']['id']) }}', '{{ addslashes($t['quote']['en']) }}', '{{ addslashes($t['quote']['zh']) }}', '{{ addslashes($t['quote']['ar']) }}')">{{ $t['quote']['id'] }}</p>
         <div style="display:flex;gap:10px;align-items:center">
           <div style="width:40px;height:40px;border-radius:50%;background:rgba(30,58,95,0.1);border:2px solid rgba(30,58,95,0.2);display:flex;align-items:center;justify-content:center;font-family:Syne;font-weight:800;color:#1e3a5f;font-size:16px">{{ substr($t['name'],0,1) }}</div>
@@ -2119,6 +2127,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       </div>
       @endforeach
+      </div>
     </div>
   </div>
 </section>
