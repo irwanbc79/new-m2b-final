@@ -38,10 +38,12 @@ return [
 
     'adsense' => [
         'publisher_id'   => env('ADSENSE_PUBLISHER_ID', 'ca-pub-5616961797801657'),
-        'slot_id'        => env('ADSENSE_SLOT_ID', '0000000000'),
-        'slot_in_content' => env('ADSENSE_SLOT_IN_CONTENT', env('ADSENSE_SLOT_ID', '0000000000')),
-        'slot_post_read'  => env('ADSENSE_SLOT_POST_READ',  env('ADSENSE_SLOT_ID', '0000000000')),
-        'slot_in_feed'    => env('ADSENSE_SLOT_IN_FEED',    env('ADSENSE_SLOT_ID', '0000000000')),
+        // Production-safe account slots. Environment variables remain authoritative,
+        // but the application must never fall back to the invalid 0000000000 placeholder.
+        'slot_id'         => env('ADSENSE_SLOT_ID', '4457701474'),
+        'slot_in_content' => env('ADSENSE_SLOT_IN_CONTENT', '8299147673'),
+        'slot_post_read'  => env('ADSENSE_SLOT_POST_READ',  '1448394751'),
+        'slot_in_feed'    => env('ADSENSE_SLOT_IN_FEED',    '4457701474'),
     ],
 
     'mora' => [
