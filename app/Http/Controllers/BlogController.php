@@ -90,4 +90,9 @@ class BlogController extends Controller
             ->view('pages.blog.feed', compact('posts'))
             ->header('Content-Type', 'application/rss+xml; charset=UTF-8');
     }
+
+    public function kalkulator()
+    {
+        return view("pages.blog.kalkulator");
+    }
 }
