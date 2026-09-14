@@ -60,7 +60,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
 @vite(['resources/css/app.css', 'resources/js/app.js'])
 {{-- Preload critical assets untuk LCP --}}
-<link rel="preload" as="image" href="https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?auto=format&fit=crop&w=1600&q=80" fetchpriority="high">
+<link rel="preload" as="image" href="/images/hero-port.jpg" fetchpriority="high">
 <link rel="preload" as="image" href="{{ asset('images/logo_m2b_final.svg') }}" fetchpriority="high">
 <style>
 [x-cloak]{display:none!important}

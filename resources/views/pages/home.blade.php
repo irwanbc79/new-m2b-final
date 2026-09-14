@@ -582,7 +582,7 @@
       this.syncCurrency();
     }
   }" style="position:relative;min-height:640px;display:flex;align-items:center;overflow:hidden">
-  <div style="position:absolute;inset:0;background-image:url(https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?auto=format&fit=crop&w=1600&q=80);background-size:cover;background-position:center"></div>
+  <div style="position:absolute;inset:0;background-image:url(/images/hero-port.jpg);background-size:cover;background-position:center"></div>
   <div style="position:absolute;inset:0;background:linear-gradient(105deg,rgba(11,17,32,0.92) 40%,rgba(11,17,32,0.55) 75%,rgba(11,17,32,0.25) 100%)"></div>
   <div class="home-hero-container" style="display:flex;flex-direction:column;gap:28px;width:100%">
     <!-- Top Part: H1 & Desc -->
