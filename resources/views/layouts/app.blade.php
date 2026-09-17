@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}" x-data="{ get lang() { return $store.lang.current }, set lang(v) { $store.lang.current = v; localStorage.setItem('m2b_lang', v) } }">
 <head>
+@php
+    $canonicalPath = request()->path();
+    $canonicalUrl = 'https://m2b.co.id' . ($canonicalPath === '/' ? '' : '/' . ltrim($canonicalPath, '/'));
+@endphp
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>@yield('title', 'M2B — Freight Forwarder & Customs Broker Indonesia')</title>
@@ -9,14 +13,14 @@
 <meta property="og:description" content="@yield('description', 'PT. Mora Multi Berkah - Mitra logistik ekspor-impor terpercaya.')">
 <meta property="og:image" content="@yield('og_image', asset('images/og-m2b.jpg'))">
 <meta name="twitter:image" content="@yield('og_image', asset('images/og-m2b.jpg'))">
-<meta property="og:url" content="{{ url()->current() }}">
+<meta property="og:url" content="{{ $canonicalUrl }}">
 <meta name="robots" content="index, follow">
 <meta property="og:type" content="@yield('og_type', 'website')">
 <meta property="og:locale" content="id_ID">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="@yield('title', 'M2B — Freight Forwarder & Customs Broker Indonesia')">
 <meta name="twitter:description" content="@yield('description', 'PT. Mora Multi Berkah - Mitra logistik ekspor-impor terpercaya.')">
-<link rel="canonical" href="{{ url()->current() }}">
+<link rel="canonical" href="{{ $canonicalUrl }}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:type" content="image/jpeg">
