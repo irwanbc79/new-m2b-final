@@ -198,7 +198,13 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
 </style>
 @yield('head')
 {{-- ═══ GOOGLE ADSENSE ═══ --}}
+<link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin>
+<link rel="dns-prefetch" href="https://pagead2.googlesyndication.com">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5616961797801657" crossorigin="anonymous"></script>
+<style>
+  ins.adsbygoogle[data-ad-status="unfilled"] { display: none !important; }
+  .ad-container:has(> ins.adsbygoogle[data-ad-status="unfilled"]) { display: none !important; }
+</style>
 {{-- ═══ GOOGLE ANALYTICS 4 — deferred loading, tidak blokir FCP ═══ --}}
 @production
 <script>
@@ -884,7 +890,37 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
     </div>
   </div>
 
-</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var lazyAds = document.querySelectorAll('ins.adsbygoogle[data-ad-lazy="true"]');
+    if (!lazyAds.length) return;
 
+    if ('IntersectionObserver' in window) {
+        var adObserver = new IntersectionObserver(function(entries, observer) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    var ad = entry.target;
+                    ad.removeAttribute('data-ad-lazy');
+                    try {
+                        (adsbygoogle = window.adsbygoogle || []).push({});
+                    } catch (e) {}
+                    observer.unobserve(ad);
+                }
+            });
+        }, { rootMargin: '250px 0px' });
+
+        lazyAds.forEach(function(ad) {
+            adObserver.observe(ad);
+        });
+    } else {
+        lazyAds.forEach(function(ad) {
+            ad.removeAttribute('data-ad-lazy');
+            try {
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            } catch (e) {}
+        });
+    }
+});
+</script>
 </body>
 </html>
