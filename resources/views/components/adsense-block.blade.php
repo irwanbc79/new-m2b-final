@@ -8,6 +8,7 @@ $publisherIsValid = is_string($publisherId)
     && preg_match('/^ca-pub-\d{16}$/', $publisherId) === 1;
 $slotIsValid = is_string($slotId)
     && preg_match('/^\d{10}$/', $slotId) === 1
+    && $slotId !== '0000000000';
 $minHeight = match($type) {
     'in_content' => '250px',
     'post_read'  => '280px',
