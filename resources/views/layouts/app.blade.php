@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}" x-data="{ get lang() { return $store.lang.current }, set lang(v) { $store.lang.current = v; localStorage.setItem('m2b_lang', v) } }">
 <head>
+@php
+    $canonicalPath = request()->path();
+    $canonicalUrl = 'https://m2b.co.id' . ($canonicalPath === '/' ? '' : '/' . ltrim($canonicalPath, '/'));
+@endphp
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>@yield('title', 'M2B — Freight Forwarder & Customs Broker Indonesia')</title>
@@ -9,14 +13,14 @@
 <meta property="og:description" content="@yield('description', 'PT. Mora Multi Berkah - Mitra logistik ekspor-impor terpercaya.')">
 <meta property="og:image" content="@yield('og_image', asset('images/og-m2b.jpg'))">
 <meta name="twitter:image" content="@yield('og_image', asset('images/og-m2b.jpg'))">
-<meta property="og:url" content="{{ url()->current() }}">
+<meta property="og:url" content="{{ $canonicalUrl }}">
 <meta name="robots" content="index, follow">
 <meta property="og:type" content="@yield('og_type', 'website')">
 <meta property="og:locale" content="id_ID">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="@yield('title', 'M2B — Freight Forwarder & Customs Broker Indonesia')">
 <meta name="twitter:description" content="@yield('description', 'PT. Mora Multi Berkah - Mitra logistik ekspor-impor terpercaya.')">
-<link rel="canonical" href="{{ url()->current() }}">
+<link rel="canonical" href="{{ $canonicalUrl }}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:type" content="image/jpeg">
@@ -60,7 +64,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
 @vite(['resources/css/app.css', 'resources/js/app.js'])
 {{-- Preload critical assets untuk LCP --}}
-<link rel="preload" as="image" href="https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?auto=format&fit=crop&w=1600&q=80" fetchpriority="high">
+<link rel="preload" as="image" href="/images/hero-port.jpg" fetchpriority="high">
 <link rel="preload" as="image" href="{{ asset('images/logo_m2b_final.svg') }}" fetchpriority="high">
 <style>
 [x-cloak]{display:none!important}
@@ -194,7 +198,13 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
 </style>
 @yield('head')
 {{-- ═══ GOOGLE ADSENSE ═══ --}}
+<link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin>
+<link rel="dns-prefetch" href="https://pagead2.googlesyndication.com">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5616961797801657" crossorigin="anonymous"></script>
+<style>
+  ins.adsbygoogle[data-ad-status="unfilled"] { display: none !important; }
+  .ad-container:has(> ins.adsbygoogle[data-ad-status="unfilled"]) { display: none !important; }
+</style>
 {{-- ═══ GOOGLE ANALYTICS 4 — deferred loading, tidak blokir FCP ═══ --}}
 @production
 <script>
@@ -880,7 +890,37 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
     </div>
   </div>
 
-</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var lazyAds = document.querySelectorAll('ins.adsbygoogle[data-ad-lazy="true"]');
+    if (!lazyAds.length) return;
 
+    if ('IntersectionObserver' in window) {
+        var adObserver = new IntersectionObserver(function(entries, observer) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    var ad = entry.target;
+                    ad.removeAttribute('data-ad-lazy');
+                    try {
+                        (adsbygoogle = window.adsbygoogle || []).push({});
+                    } catch (e) {}
+                    observer.unobserve(ad);
+                }
+            });
+        }, { rootMargin: '250px 0px' });
+
+        lazyAds.forEach(function(ad) {
+            adObserver.observe(ad);
+        });
+    } else {
+        lazyAds.forEach(function(ad) {
+            ad.removeAttribute('data-ad-lazy');
+            try {
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            } catch (e) {}
+        });
+    }
+});
+</script>
 </body>
 </html>
