@@ -2152,8 +2152,8 @@ document.addEventListener('DOMContentLoaded', () => {
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px" class="home-blog-grid">
       @foreach($latestPosts as $post)
       <a href="{{ route('blog.show', $post->slug) }}" style="text-decoration:none;border-radius:12px;overflow:hidden;border:1px solid #e5e2dc;background:#fff;display:flex;flex-direction:column;transition:box-shadow .2s" onmouseover="this.style.boxShadow='0 8px 32px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow='none'">
-        @if($post->featured_image)
-        <div style="height:200px;background-image:url({{ Str::startsWith($post->featured_image, ['http://', 'https://']) ? $post->featured_image : Storage::url($post->featured_image) }});background-size:cover;background-position:center"></div>
+        @if($image = $post->imageUrl())
+        <div style="height:200px;background-image:url({{ $image }});background-size:cover;background-position:center"></div>
         @else
         <div style="height:200px;background:linear-gradient(135deg,#1e3a5f,#2a5298);display:flex;align-items:center;justify-content:center;font-size:48px">📦</div>
         @endif

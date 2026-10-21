@@ -109,8 +109,8 @@
          onmouseover="this.style.boxShadow='0 16px 48px rgba(30,58,95,0.12)'; this.style.transform='translateY(-3px)'"
          onmouseout="this.style.boxShadow='0 4px 16px rgba(0,0,0,0.04)'; this.style.transform='none'" class="blog-featured-card">
         
-        @if($featured->featured_image)
-        <div style="min-height:320px; background-image:url({{ Str::startsWith($featured->featured_image, ['http://', 'https://']) ? $featured->featured_image : Storage::url($featured->featured_image) }}); background-size:cover; background-position:center; transition: transform .5s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'"></div>
+        @if($fImage = $featured->imageUrl())
+        <div style="min-height:320px; background-image:url({{ $fImage }}); background-size:cover; background-position:center; transition: transform .5s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'"></div>
         @else
         <div style="min-height:320px; background:{{ $fbg }}; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden">
           <span style="position:absolute; font-size:160px; opacity:0.08; line-height:1">{{ $fem }}</span>

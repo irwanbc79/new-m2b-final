@@ -4,6 +4,7 @@ namespace App\Models;
 use App\Services\BlogCache;
 use App\Services\PostViewCounter;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class Post extends Model
@@ -237,17 +238,55 @@ class Post extends Model
         return strtolower($this->title . ' ' . ($this->excerpt ?? '') . ' ' . ($this->category ?? ''));
     }
 
+    /**
+     * URL gambar artikel untuk <img>, background-image, dan og:image/JSON-LD.
+     *
+     * Ini SATU-SATUNYA tempat aturan ini hidup. Sebelumnya aturan yang sama
+     * disalin lima kali di blade (kartu grid, kartu featured, hero halaman
+     * artikel, kartu "Artikel Terkait", strip blog di home) dengan dua bentuk
+     * hasil yang berbeda untuk berkas yang sama:
+     *
+     *  - blade memakai Storage::url() pada disk DEFAULT, sedangkan disk default
+     *    aplikasi ini adalah `local` (root storage/app/private, tanpa kunci url)
+     *    → hasilnya URL RELATIF `/storage/posts/x.jpg`;
+     *  - accessor og:image memakai asset('storage/...') → absolut.
+     *
+     * Dua bentuk itu juga membuat kartu diam-diam berubah perilaku kalau
+     * FILESYSTEM_DISK diganti, sementara og:image tidak.
+     *
+     * Disk 'public' sekarang dipakai eksplisit karena di sanalah FileUpload
+     * Filament menaruh berkasnya (PostResource → directory("posts"),
+     * config('filament.default_filesystem_disk') = 'public', root
+     * storage/app/public yang disajikan lewat symlink public/storage).
+     *
+     * @return string|null null = artikel tidak punya gambar; kartu memakai tema
+     *                     kategori (Post::theme()) dan og:image memakai fallback
+     */
+    public function imageUrl(): ?string
+    {
+        $path = trim((string) $this->featured_image);
+
+        if ($path === '') {
+            return null;
+        }
+
+        // URL absolut (mis. hasil SyncBlogFromCms dari CMS lain) atau
+        // protocol-relative dipakai apa adanya — jangan ditempeli prefix disk.
+        // Dua pemeriksaan sengaja dipakai bersamaan supaya ini superset dari
+        // kedua implementasi lama (Str::startsWith di blade, filter_var di
+        // accessor og:image): URL unicode yang ditolak filter_var tetap lolos.
+        if (filter_var($path, FILTER_VALIDATE_URL) || Str::startsWith($path, ['http://', 'https://', '//'])) {
+            return $path;
+        }
+
+        return Storage::disk('public')->url(ltrim($path, '/'));
+    }
+
     public function getFeaturedImageUrlAttribute(): string
     {
-        if (!$this->featured_image) {
-            return asset('images/og-m2b.jpg');
-        }
-
-        if (filter_var($this->featured_image, FILTER_VALIDATE_URL)) {
-            return $this->featured_image;
-        }
-
-        return asset('storage/' . $this->featured_image);
+        // og:image/twitter:image wajib absolut dan wajib ada isinya, jadi pakai
+        // resolver yang sama dengan kartu + fallback gambar kartu sosial.
+        return $this->imageUrl() ?? asset('images/og-m2b.jpg');
     }
 
     public function getReadingTimeAttribute(): int

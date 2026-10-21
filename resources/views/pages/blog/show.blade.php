@@ -154,8 +154,8 @@ window.addEventListener('scroll',function(){
 
 <section style="padding:60px 40px;background:#f7f5f0">
   <div style="max-width:800px;margin:0 auto">
-     @if($post->featured_image)
-    <img src="{{ Str::startsWith($post->featured_image, ['http://', 'https://']) ? $post->featured_image : Storage::url($post->featured_image) }}" alt="{{ $post->title }}" loading="lazy" style="width:100%;height:420px;object-fit:cover;border-radius:16px;margin-bottom:40px;box-shadow:0 12px 40px rgba(0,0,0,0.12)">
+     @if($heroImage = $post->imageUrl())
+    <img src="{{ $heroImage }}" alt="{{ $post->title }}" loading="lazy" style="width:100%;height:420px;object-fit:cover;border-radius:16px;margin-bottom:40px;box-shadow:0 12px 40px rgba(0,0,0,0.12)">
     @endif
 
     <div id="article-body" style="background:#fff;border-radius:16px;padding:48px;border:1px solid #e5e2dc" class="prose-m2b blog-article-box">
@@ -235,7 +235,8 @@ window.addEventListener('scroll',function(){
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px" class="related-grid">
         @foreach($related as $r)
         <a href="{{ route('blog.show', $r->slug) }}" style="text-decoration:none;border-radius:10px;overflow:hidden;border:1px solid #e5e2dc;background:#fff;transition:box-shadow .2s" onmouseover="this.style.boxShadow='0 6px 20px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'">
-          <div style="height:140px;background:{{ $r->featured_image ? 'url('.(Str::startsWith($r->featured_image, ['http://', 'https://']) ? $r->featured_image : Storage::url($r->featured_image)).') center/cover' : 'linear-gradient(135deg,#1e3a5f,#2a5298)' }}"></div>
+          @php $rImage = $r->imageUrl(); @endphp
+          <div style="height:140px;background:{{ $rImage ? 'url('.$rImage.') center/cover' : 'linear-gradient(135deg,#1e3a5f,#2a5298)' }}"></div>
           <div style="padding:14px 16px">
             <div style="font-family:Syne;font-weight:700;font-size:14px;line-height:1.4;color:#0f0f14;margin-bottom:8px">{{ Str::limit($r->title, 70) }}</div>
             <span style="font-size:12px;color:#1e3a5f;font-weight:600" x-text="$store.lang.t('Baca →', 'Read →', '阅读 →', 'اقرأ ←')">Baca →</span>

@@ -118,10 +118,11 @@ class BlogCardRenderTest extends TestCase
     {
         $html = $this->halaman();
 
-        // Path relatif → dilewatkan Storage::url() (disk default), URL absolut
-        // → dipakai apa adanya. Salah cabang = gambar kartu 404 di production.
-        $this->assertSee($html, 'background-image:url(');
-        $this->assertSee($html, 'kartu-uji-2.jpg');
+        // Path relatif → dijadikan absolut lewat disk public (dulu relatif
+        // "/storage/..." karena Storage::url() memakai disk default `local`),
+        // URL absolut → dipakai apa adanya. Salah cabang = gambar kartu 404.
+        $this->assertSee($html, 'background-image:url('.asset('storage/posts/kartu-uji-2.jpg').')');
+        $this->assertDontSee($html, 'url(/storage/', 'Kartu kembali memakai URL gambar relatif.');
         $this->assertDontSee($html, 'storage/https');
         $this->assertSee($html, 'https://cdn.example.com/kartu-uji-3.jpg');
     }
