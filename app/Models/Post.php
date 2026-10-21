@@ -122,6 +122,121 @@ class Post extends Model
         return $query->limit($limit)->get();
     }
 
+    /**
+     * Tema visual kartu artikel yang tidak punya gambar: [gradient latar, emoji].
+     * Kategori di luar daftar (atau null) memakai fallback di themeFor().
+     */
+    public const CATEGORY_THEMES = [
+        'Ekspor'    => ['linear-gradient(135deg,#1e3a5f 0%,#1a6b3a 100%)', '🚢'],
+        'Impor'     => ['linear-gradient(135deg,#1e3a5f 0%,#4a2a7f 100%)', '📥'],
+        'UMKM'      => ['linear-gradient(135deg,#1e3a5f 0%,#7f5a1e 100%)', '🏪'],
+        'Bea Cukai' => ['linear-gradient(135deg,#5f2a1e 0%,#1e3a5f 100%)', '🛃'],
+    ];
+
+    /**
+     * Label kategori 4 bahasa untuk UI. Sebelumnya peta ini disalin empat kali
+     * di blog/index.blade.php (lihat labelsFor()).
+     */
+    public const CATEGORY_LABELS = [
+        'Ekspor'    => ['id' => 'Ekspor', 'en' => 'Export', 'zh' => '出口', 'ar' => 'التصدير'],
+        'Impor'     => ['id' => 'Impor', 'en' => 'Import', 'zh' => '进口', 'ar' => 'الاستيراد'],
+        'UMKM'      => ['id' => 'UMKM', 'en' => 'SME', 'zh' => '中小企业', 'ar' => 'الشركات الصغيرة والمتوسطة'],
+        'Bea Cukai' => ['id' => 'Bea Cukai', 'en' => 'Customs', 'zh' => '海关与报关', 'ar' => 'الجمارك'],
+    ];
+
+    /**
+     * @return array{0: string, 1: string} [gradient, emoji]
+     */
+    public static function themeFor(?string $category): array
+    {
+        return self::CATEGORY_THEMES[$category]
+            ?? ['linear-gradient(135deg,#1e3a5f 0%,#2a5298 100%)', '📦'];
+    }
+
+    /**
+     * Label id/en/zh/ar untuk satu kategori. Kategori tak dikenal dikembalikan
+     * apa adanya di keempat bahasa — sama seperti fallback peta di blade dulu.
+     *
+     * @return array{id: string, en: string, zh: string, ar: string}
+     */
+    public static function labelsFor(?string $category): array
+    {
+        $kategori = (string) $category;
+
+        return self::CATEGORY_LABELS[$category]
+            ?? ['id' => $kategori, 'en' => $kategori, 'zh' => $kategori, 'ar' => $kategori];
+    }
+
+    /**
+     * @return array{0: string, 1: string} [gradient, emoji]
+     */
+    public function theme(): array
+    {
+        return self::themeFor($this->category);
+    }
+
+    /**
+     * @return array{id: string, en: string, zh: string, ar: string}
+     */
+    public function categoryLabels(): array
+    {
+        return self::labelsFor($this->category);
+    }
+
+    /**
+     * Badge BARU: published dalam $days hari terakhir. Post tanpa published_at
+     * tidak pernah dianggap baru (dulu lewat nilai sentinel 999).
+     */
+    public function isNew(int $days = 7): bool
+    {
+        if (! $this->published_at) {
+            return false;
+        }
+
+        // Sengaja tanpa abs(): tanggal publish di masa depan dulu juga lolos
+        // (diffInDays negatif ≤ 7), jadi jangan diubah di sini.
+        return now()->diffInDays($this->published_at) <= $days;
+    }
+
+    /**
+     * Badge DIPERBARUI: di-update < $days hari lalu DAN update-nya terjadi lebih
+     * dari $graceAfterPublish hari setelah publish (biar revisi sehari setelah
+     * terbit tidak langsung dicap "diperbarui").
+     */
+    public function isUpdated(int $days = 14, int $graceAfterPublish = 3): bool
+    {
+        if (! $this->updated_at || $this->updated_at->diffInDays(now()) >= $days) {
+            return false;
+        }
+
+        // copy(): addDays() memutasi instance Carbon, jangan sampai published_at
+        // artikel ini ikut tergeser tiga hari di halaman yang sama.
+        $patokan = $this->published_at
+            ? $this->published_at->copy()->addDays($graceAfterPublish)
+            : now();
+
+        return $this->updated_at->gt($patokan);
+    }
+
+    /**
+     * Badge 🔥 POPULER: id artikel ada di daftar hasil PostViewCounter.
+     *
+     * @param  array<int, int|string>  $hotIds
+     */
+    public function isHot(array $hotIds): bool
+    {
+        return in_array($this->id, $hotIds);
+    }
+
+    /**
+     * Bahan pencarian client-side (x-show pada kartu): judul + ringkasan +
+     * kategori dalam huruf kecil.
+     */
+    public function searchHaystack(): string
+    {
+        return strtolower($this->title . ' ' . ($this->excerpt ?? '') . ' ' . ($this->category ?? ''));
+    }
+
     public function getFeaturedImageUrlAttribute(): string
     {
         if (!$this->featured_image) {
