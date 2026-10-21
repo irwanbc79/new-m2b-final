@@ -16,7 +16,7 @@
     <pubDate>{{ $post->published_at?->toRfc822String() }}</pubDate>
 @if($post->category)    <category>{{ $post->category }}</category>
 @endif
-    <description><![CDATA[{!! $post->meta_description !!}]]></description>
+    <description><![CDATA[{!! str_replace(']]>', ']]]]><![CDATA[>', $post->meta_description ?? '') !!}]]></description>
   </item>
 @endforeach
 </channel>

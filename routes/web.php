@@ -83,10 +83,15 @@ Route::fallback(function () {
     }
 
     // Handle /%postname%/ dan /%category%/%postname%/ WP permalink formats
+    //
+    // Query langsung tanpa cache: cache per-slug berarti setiap path acak yang
+    // di-request bot menambah satu baris baru di store `database` (tak terbatas),
+    // dan hasil negatif (null) yang ter-cache 1 jam memblokir redirect 301 untuk
+    // post baru yang slug-nya kebetulan sudah pernah di-request. Satu query
+    // ber-index lebih murah dari kedua risiko itu.
     $slug = basename($path);
-    $post = cache()->remember("wp_redirect_{$slug}", 3600, fn () =>
-        \App\Models\Post::where('slug', $slug)->orWhere('slug', $path)->first()
-    );
+    $post = \App\Models\Post::where('slug', $slug)->orWhere('slug', $path)->first();
+
     if ($post) {
         return redirect()->to("/blog/{$post->slug}", 301);
     }
