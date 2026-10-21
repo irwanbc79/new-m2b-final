@@ -582,7 +582,12 @@
       this.syncCurrency();
     }
   }" style="position:relative;min-height:640px;display:flex;align-items:center;overflow:hidden">
-  <div style="position:absolute;inset:0;background-image:url(/images/hero-port.jpg);background-size:cover;background-position:center"></div>
+  <div style="position:absolute;inset:0;overflow:hidden">
+    <picture style="display:block;width:100%;height:100%">
+      <source srcset="{{ asset('images/hero-port.webp') }}" type="image/webp">
+      <img src="{{ asset('images/hero-port.jpg') }}" alt="" width="1280" height="853" fetchpriority="high" style="width:100%;height:100%;object-fit:cover;display:block">
+    </picture>
+  </div>
   <div style="position:absolute;inset:0;background:linear-gradient(105deg,rgba(11,17,32,0.92) 40%,rgba(11,17,32,0.55) 75%,rgba(11,17,32,0.25) 100%)"></div>
   <div class="home-hero-container" style="display:flex;flex-direction:column;gap:28px;width:100%">
     <!-- Top Part: H1 & Desc -->
