@@ -62,10 +62,10 @@ class BlogViewCounterTest extends TestCase
         $this->assertNotContains($sepi->id, $hotIds);
     }
 
-    public function test_cache_populer_featured_dan_hitungan_view_disapu_saat_post_berubah(): void
+    public function test_cache_populer_dan_hitungan_view_disapu_saat_post_berubah(): void
     {
         $post = $this->buatPost('artikel-uji-invalidate', 'Artikel Uji Invalidate');
-        $keys = ['blog_hot_ids', 'blog_popular_posts', 'blog_featured_post', 'blog_feed'];
+        $keys = ['blog_hot_ids', 'blog_popular_posts', 'blog_feed'];
 
         app(PostViewCounter::class)->hit($post->id);
 

@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Post;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
@@ -150,13 +151,38 @@ class BlogCardRenderTest extends TestCase
         }
     }
 
+    /**
+     * Kartu "Sorotan" /blog = artikel terbaru ($posts->first()), bukan nilai
+     * cache terpisah. Dulu ada BlogCache::FEATURED_POST yang dioper controller
+     * ke view tapi selalu ditimpa variabel lokal di blade: satu query + satu
+     * baris cache per halaman dingin, plus satu sapuan tiap post disimpan —
+     * untuk nilai yang tidak pernah dibaca.
+     */
+    public function test_kartu_sorotan_adalah_artikel_terbaru_tanpa_cache_terpisah(): void
+    {
+        Cache::flush();
+
+        $html = $this->halaman();
+
+        $this->assertSee($html, '<h2 style="font-family:Syne; font-weight:800; font-size:24px; line-height:1.25; color:#0b1120; margin-bottom:12px">Kartu Uji 1</h2>');
+
+        $this->assertFalse(
+            Cache::has('blog_featured_post'),
+            'Cache sorotan terpisah sudah dihapus — kartu sorotan memakai $posts->first().'
+        );
+        $this->assertTrue(
+            Cache::has('blog_popular_posts'),
+            'Widget popular tetap punya cache sendiri (isinya bergantung hitungan view, bukan urutan publish).'
+        );
+    }
+
     private function assertSee(string $html, string $needle): void
     {
         $this->assertStringContainsString($needle, $html, "Tidak menemukan: {$needle}");
     }
 
-    private function assertDontSee(string $html, string $needle): void
+    private function assertDontSee(string $html, string $needle, string $pesan = ''): void
     {
-        $this->assertStringNotContainsString($needle, $html, "Seharusnya sudah tidak ada: {$needle}");
+        $this->assertStringNotContainsString($needle, $html, $pesan !== '' ? $pesan : "Seharusnya sudah tidak ada: {$needle}");
     }
 }

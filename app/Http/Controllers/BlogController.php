@@ -48,14 +48,18 @@ class BlogController extends Controller
             return $views->topIds(Post::published()->pluck('id')->all(), BlogCache::HOT_LIMIT);
         });
 
-        $featured = $cache->remember(BlogCache::FEATURED_POST, fn () => Post::published()->first());
-
+        // Tidak ada cache khusus "sorotan": kartu sorotan = artikel pertama di
+        // halaman ini ($posts->first()), dan itu hanya tampil di halaman 1 tanpa
+        // filter. Dulu ada BlogCache::FEATURED_POST berisi Post::published()->
+        // first() yang dioper ke view tapi SELALU ditimpa variabel lokal di
+        // blade — satu query + satu baris cache per load halaman dingin untuk
+        // nilai yang tidak pernah dibaca.
         $popular = $cache->remember(
             BlogCache::POPULAR_POSTS,
             fn () => Post::popularFor($hotIds ?? [], $views, BlogCache::POPULAR_FALLBACK_LIMIT)
         );
 
-        return view("pages.blog.index", compact("posts", "categories", "hotIds", "category", "featured", "popular", "search"));
+        return view("pages.blog.index", compact("posts", "categories", "hotIds", "category", "popular", "search"));
     }
 
     public function show(string $slug, PostViewCounter $views, BlogCache $cache)

@@ -18,8 +18,7 @@ use Illuminate\Support\Str;
  *
  * Catatan bentuk key (dipatok oleh tests/Feature/BlogSearchHardeningTest.php dan
  * BlogViewCounterTest.php): `blog_index_<page>[_<slug-kategori>]`, `blog_post_<slug>`,
- * `blog_related_<id>`, `blog_hot_ids`, `blog_popular_posts`, `blog_featured_post`,
- * `blog_feed`.
+ * `blog_related_<id>`, `blog_hot_ids`, `blog_popular_posts`, `blog_feed`.
  */
 class BlogCache
 {
@@ -49,9 +48,6 @@ class BlogCache
 
     /** Widget Popular di sidebar (3 post + fallback). */
     public const POPULAR_POSTS = 'blog_popular_posts';
-
-    /** Kartu "Sorotan" di /blog. */
-    public const FEATURED_POST = 'blog_featured_post';
 
     /** Feed RSS /blog/feed. */
     public const FEED = 'blog_feed';
@@ -84,16 +80,13 @@ class BlogCache
      * Cache daftar/agregat: isinya berubah setiap ada post disimpan atau dihapus
      * (termasuk unpublish, pergantian kategori, dan hapus).
      *
-     * `blog_popular_posts` dan `blog_featured_post` dulu TIDAK pernah
-     * di-invalidate: post yang di-unpublish/dihapus tetap tampil di widget
-     * popular sampai TTL 1 jam habis, dan post terbaru tidak muncul sebagai
-     * featured.
+     * `blog_popular_posts` dulu TIDAK pernah di-invalidate: post yang di-unpublish
+     * atau dihapus tetap tampil di widget popular sampai TTL 1 jam habis.
      */
     public function forgetLists(): void
     {
         Cache::forget(self::HOT_IDS);
         Cache::forget(self::POPULAR_POSTS);
-        Cache::forget(self::FEATURED_POST);
         Cache::forget(self::FEED);
     }
 

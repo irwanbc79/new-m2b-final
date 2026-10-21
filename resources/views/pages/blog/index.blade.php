@@ -91,25 +91,28 @@
     {{-- ─── LEFT COLUMN: ARTICLES ─── --}}
     <div style="display: flex; flex-direction: column; gap: 28px;">
       
-      {{-- Featured Post --}}
+      {{-- Featured Post — artikel pertama halaman ini ($posts->first()).
+           Hanya dirender tanpa filter & tanpa pencarian; loop grid melewati
+           artikel yang sama dengan syarat yang sama. Controller tidak lagi
+           mengirim variabel featured terpisah. --}}
       @if($posts->count() > 0 && !$search && !$category)
       @php
-        $featured = $posts->first();
-        [$fbg, $fem] = $featured->theme();
-        $flabels = $featured->categoryLabels();
-        $fIsNew = $featured->isNew();
-        $fIsUpdated = $featured->isUpdated();
-        $fIsHot = $featured->isHot($hotIds ?? []);
-        $fSearch = $featured->searchHaystack();
+        $featuredPost = $posts->first();
+        [$fbg, $fem] = $featuredPost->theme();
+        $flabels = $featuredPost->categoryLabels();
+        $fIsNew = $featuredPost->isNew();
+        $fIsUpdated = $featuredPost->isUpdated();
+        $fIsHot = $featuredPost->isHot($hotIds ?? []);
+        $fSearch = $featuredPost->searchHaystack();
       @endphp
-      <a href="{{ route('blog.show', $featured->slug) }}"
+      <a href="{{ route('blog.show', $featuredPost->slug) }}"
          data-search="{{ $fSearch }}"
          x-show="search === '' || $el.dataset.search.includes(search.toLowerCase())"
          style="text-decoration:none; border-radius:20px; overflow:hidden; border:1px solid #e5e2dc; background:#fff; display:grid; grid-template-columns:1.2fr 1fr; transition:all .3s; box-shadow:0 4px 16px rgba(0,0,0,0.04)"
          onmouseover="this.style.boxShadow='0 16px 48px rgba(30,58,95,0.12)'; this.style.transform='translateY(-3px)'"
          onmouseout="this.style.boxShadow='0 4px 16px rgba(0,0,0,0.04)'; this.style.transform='none'" class="blog-featured-card">
         
-        @if($fImage = $featured->imageUrl())
+        @if($fImage = $featuredPost->imageUrl())
         <div style="min-height:320px; background-image:url({{ $fImage }}); background-size:cover; background-position:center; transition: transform .5s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'"></div>
         @else
         <div style="min-height:320px; background:{{ $fbg }}; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden">
@@ -121,16 +124,16 @@
         <div style="padding:40px 32px; display:flex; flex-direction:column; justify-content:center">
           <div style="display:flex; gap:6px; align-items:center; margin-bottom:16px; flex-wrap:wrap">
             <span style="padding:3px 10px; border-radius:20px; background:rgba(245,185,28,0.15); color:#b8860b; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; border:1px solid rgba(245,185,28,0.25)" x-text="$store.lang.t('★ Sorotan', '★ Featured', '★ 精选', '★ مميز')">★ Sorotan</span>
-            @if($featured->category)<span style="padding:3px 10px; border-radius:20px; background:#1e3a5f; color:#fff; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.3px;" x-text="$store.lang.t('{{ $flabels['id'] }}', '{{ $flabels['en'] }}', '{{ $flabels['zh'] }}', '{{ $flabels['ar'] }}')">{{ $featured->category }}</span>@endif
+            @if($featuredPost->category)<span style="padding:3px 10px; border-radius:20px; background:#1e3a5f; color:#fff; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.3px;" x-text="$store.lang.t('{{ $flabels['id'] }}', '{{ $flabels['en'] }}', '{{ $flabels['zh'] }}', '{{ $flabels['ar'] }}')">{{ $featuredPost->category }}</span>@endif
             @if($fIsNew)<span style="padding:2px 8px; border-radius:4px; background:#16a34a; color:#fff; font-size:10px; font-weight:700" x-text="$store.lang.t('BARU', 'NEW', '最新', 'جديد')">BARU</span>
             @elseif($fIsUpdated)<span style="padding:2px 8px; border-radius:4px; background:#ea580c;color:#fff; font-size:10px; font-weight:700" x-text="$store.lang.t('DIPERBARUI', 'UPDATED', '已更新', 'محدث')">DIPERBARUI</span>@endif
             @if($fIsHot)<span style="padding:2px 8px; border-radius:4px; background:#dc2626; color:#fff; font-size:10px; font-weight:700" x-text="$store.lang.t('🔥 POPULER', '🔥 POPULAR', '🔥 热门', '🔥 شائع')">🔥 POPULER</span>@endif
           </div>
-          <h2 style="font-family:Syne; font-weight:800; font-size:24px; line-height:1.25; color:#0b1120; margin-bottom:12px">{{ $featured->title }}</h2>
-          @if($featured->excerpt)<p style="font-size:14px; color:#55637c; line-height:1.75; margin-bottom:20px; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;">{{ $featured->excerpt }}</p>@endif
+          <h2 style="font-family:Syne; font-weight:800; font-size:24px; line-height:1.25; color:#0b1120; margin-bottom:12px">{{ $featuredPost->title }}</h2>
+          @if($featuredPost->excerpt)<p style="font-size:14px; color:#55637c; line-height:1.75; margin-bottom:20px; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;">{{ $featuredPost->excerpt }}</p>@endif
           <div style="display:flex; align-items:center; gap:16px; font-size:12px; color:#94a3b8; margin-top:auto; padding-top:14px; border-top:1px solid #f0ede8;">
-            <span>📅 {{ $featured->published_at?->format('d M Y') }}</span>
-            <span>⏱ {{ $featured->reading_time }} <span x-text="$store.lang.t('menit baca', 'min read', '分钟阅读', 'دقائق قراءة')">menit baca</span></span>
+            <span>📅 {{ $featuredPost->published_at?->format('d M Y') }}</span>
+            <span>⏱ {{ $featuredPost->reading_time }} <span x-text="$store.lang.t('menit baca', 'min read', '分钟阅读', 'دقائق قراءة')">menit baca</span></span>
             <span style="margin-left:auto; color:#1e3a5f; font-weight:700; font-size:13px; transition: color 0.2s;" onmouseover="this.style.color='#4a9eda'" onmouseout="this.style.color='#1e3a5f'" x-text="$store.lang.t('Baca selengkapnya →', 'Read more →', '阅读全文 →', 'اقرأ المزيد ←')">Baca selengkapnya →</span>
           </div>
         </div>
