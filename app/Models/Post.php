@@ -1,9 +1,9 @@
 <?php
 namespace App\Models;
 
+use App\Services\BlogCache;
 use App\Services\PostViewCounter;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 class Post extends Model
@@ -32,53 +32,30 @@ class Post extends Model
     protected static function booted(): void
     {
         static::saved(function (Post $post) {
+            $cache = app(BlogCache::class);
+
             // Forget this post's cache (current slug)
-            Cache::forget("blog_post_{$post->slug}");
+            $cache->forgetPost($post->slug);
 
             // If slug changed, also forget old slug cache
             if ($post->wasChanged('slug') && $post->getOriginal('slug')) {
-                Cache::forget("blog_post_{$post->getOriginal('slug')}");
+                $cache->forgetPost($post->getOriginal('slug'));
             }
 
             // Forget related posts cache for this post
-            Cache::forget("blog_related_{$post->id}");
+            $cache->forgetRelated($post->id);
 
-            static::clearBlogCache();
+            $cache->forgetAll();
         });
 
         static::deleted(function (Post $post) {
-            Cache::forget("blog_post_{$post->slug}");
-            Cache::forget("blog_related_{$post->id}");
+            $cache = app(BlogCache::class);
+
+            $cache->forgetPost($post->slug);
+            $cache->forgetRelated($post->id);
             app(PostViewCounter::class)->forget($post->id);
-            static::clearBlogCache();
+            $cache->forgetAll();
         });
-    }
-
-    /**
-     * Bersihkan cache blog yang bergantung pada daftar/isi post.
-     *
-     * `blog_popular_posts` dan `blog_featured_post` sebelumnya TIDAK pernah
-     * di-invalidate: post yang di-unpublish/dihapus tetap tampil di widget
-     * popular sampai TTL 1 jam habis, dan post terbaru tidak muncul sebagai
-     * featured. Sekarang keduanya ikut disapu setiap post disimpan/dihapus.
-     */
-    protected static function clearBlogCache(): void
-    {
-        Cache::forget('blog_hot_ids');
-        Cache::forget('blog_popular_posts');
-        Cache::forget('blog_featured_post');
-        Cache::forget('blog_feed');
-        static::clearIndexCache();
-    }
-
-    protected static function clearIndexCache(): void
-    {
-        $cats = array_merge([''], array_map(fn($c) => Str::slug($c), self::CATEGORIES));
-        for ($i = 1; $i <= 20; $i++) {
-            foreach ($cats as $slug) {
-                Cache::forget('blog_index_' . $i . ($slug ? '_' . $slug : ''));
-            }
-        }
     }
 
     public function scopePublished($query)

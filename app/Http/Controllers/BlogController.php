@@ -2,16 +2,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Services\BlogCache;
 use App\Services\PostViewCounter;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 class BlogController extends Controller
 {
-    /** Batas halaman yang di-cache, sejajar dengan jangkauan Post::clearIndexCache(). */
-    private const MAX_CACHED_PAGE = 20;
-
-    public function index(PostViewCounter $views)
+    public function index(PostViewCounter $views, BlogCache $cache)
     {
         // ── Normalisasi input GET ────────────────────────────────────────────
         // Semua nilai di bawah dipakai untuk cache key dan direfleksikan ke view,
@@ -20,10 +17,10 @@ class BlogController extends Controller
         //    htmlspecialchars() = TypeError (HTTP 500), dan ke view = error Alpine.
         //  - category bebas → cache key `blog_index_1_<apa-saja>` tanpa batas di
         //    store `database` (baris cache menumpuk). Hanya kategori resmi yang
-        //    boleh masuk, karena Post::clearIndexCache() cuma menyapu 6 kategori
-        //    resmi × 20 halaman.
+        //    boleh masuk, karena BlogCache::forgetIndexes() cuma menyapu 6 kategori
+        //    resmi × BlogCache::MAX_CACHED_PAGE halaman.
         //  - page bebas → sama, cache key tak terbatas; di atas MAX_CACHED_PAGE
-        //    (batas yang sama dengan sapuan clearIndexCache) query langsung.
+        //    (batas yang sama dengan sapuan forgetIndexes) query langsung.
         $rawCategory = request()->get('category');
         $category = is_string($rawCategory) && in_array($rawCategory, Post::CATEGORIES, true)
             ? $rawCategory
@@ -33,30 +30,30 @@ class BlogController extends Controller
         $search = is_string($rawSearch) ? mb_substr(trim($rawSearch), 0, 100) : '';
 
         $page     = max(1, (int) request()->get('page', 1));
-        $cacheKey = 'blog_index_' . $page . ($category ? '_' . Str::slug($category) : '');
+        $cacheKey = $cache->indexKey($page, $category);
 
         $query = Post::published()->latest('published_at');
         if ($category) {
             $query->where('category', $category);
         }
 
-        $posts = $page <= self::MAX_CACHED_PAGE
-            ? Cache::remember($cacheKey, 3600, fn () => $query->paginate(9))
-            : $query->paginate(9);
+        $posts = $page <= BlogCache::MAX_CACHED_PAGE
+            ? $cache->remember($cacheKey, fn () => $query->paginate(BlogCache::PER_PAGE))
+            : $query->paginate(BlogCache::PER_PAGE);
 
         $categories = collect(Post::CATEGORIES);
 
         // POPULER = 3 post dengan view terbanyak (jendela 30 hari). Kalau belum ada
         // view sama sekali, daftar kosong dan widget popular jatuh ke post terbaru.
-        $hotIds = Cache::remember('blog_hot_ids', 3600, function () use ($views) {
-            return $views->topIds(Post::published()->pluck('id')->all(), 3);
+        $hotIds = $cache->remember(BlogCache::HOT_IDS, function () use ($views) {
+            return $views->topIds(Post::published()->pluck('id')->all(), BlogCache::HOT_LIMIT);
         });
 
-        $featured = Cache::remember('blog_featured_post', 3600, function () {
+        $featured = $cache->remember(BlogCache::FEATURED_POST, function () {
             return Post::published()->latest('published_at')->first();
         });
 
-        $popular = Cache::remember('blog_popular_posts', 3600, function () use ($hotIds, $views) {
+        $popular = $cache->remember(BlogCache::POPULAR_POSTS, function () use ($hotIds, $views) {
             $pop = $hotIds
                 ? Post::published()->whereIn('id', $hotIds)->get()
                     ->sortByDesc(fn ($p) => $views->count($p->id))
@@ -64,7 +61,7 @@ class BlogController extends Controller
                 : collect();
 
             if ($pop->isEmpty()) {
-                return Post::published()->latest('published_at')->take(4)->get();
+                return Post::published()->latest('published_at')->take(BlogCache::POPULAR_FALLBACK_LIMIT)->get();
             }
 
             return $pop;
@@ -73,9 +70,9 @@ class BlogController extends Controller
         return view("pages.blog.index", compact("posts", "categories", "hotIds", "category", "featured", "popular", "search"));
     }
 
-    public function show(string $slug, PostViewCounter $views)
+    public function show(string $slug, PostViewCounter $views, BlogCache $cache)
     {
-        $post = Cache::remember("blog_post_{$slug}", 3600, function () use ($slug) {
+        $post = $cache->remember($cache->postKey($slug), function () use ($slug) {
             return Post::where("slug",$slug)->where("status","published")->first();
         });
 
@@ -99,21 +96,21 @@ class BlogController extends Controller
         // recompute on the next index load. The hot list now refreshes at most hourly
         // (and immediately when a post is saved/deleted via Post model hooks).
 
-        $related = Cache::remember("blog_related_{$post->id}", 3600, function () use ($post) {
+        $related = $cache->remember($cache->relatedKey($post->id), function () use ($post) {
             $query = Post::published()->where("id","!=",$post->id);
             if ($post->category) {
                 $query->where("category", $post->category);
             }
-            return $query->limit(3)->get();
+            return $query->limit(BlogCache::RELATED_LIMIT)->get();
         });
 
         return view("pages.blog.show", compact("post","related"));
     }
 
-    public function feed()
+    public function feed(BlogCache $cache)
     {
-        $posts = Cache::remember('blog_feed', 3600, function () {
-            return Post::published()->take(20)->get();
+        $posts = $cache->remember(BlogCache::FEED, function () {
+            return Post::published()->take(BlogCache::FEED_LIMIT)->get();
         });
 
         return response()
