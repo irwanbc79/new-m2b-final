@@ -28,7 +28,51 @@
 <meta name="geo.placename" content="Medan, Sumatera Utara">
 <meta name="geo.position" content="3.5952;98.6722">
 <meta name="ICBM" content="3.5952, 98.6722">
+@if (request()->hasSession())
 <meta name="csrf-token" content="{{ csrf_token() }}">
+@endif
+<script>
+  /*
+   * Halaman GET publik blog dilepas dari session supaya bisa di-cache CDN
+   * (lihat App\Http\Middleware\PublicPageCache), sehingga token CSRF tidak bisa
+   * ditanam di HTML saat render. Endpoint GET /csrf-token menyediakannya
+   * on-demand dan hasilnya ditulis ke <meta name="csrf-token"> — dengan begitu
+   * mora.js dan form lain yang membaca meta tersebut tetap bekerja tanpa diubah.
+   */
+  window.m2bCsrfToken = (function () {
+    var meta  = document.querySelector('meta[name="csrf-token"]');
+    var token = (meta && meta.content) || '';
+    var pending = null;
+
+    return function () {
+      if (token) return Promise.resolve(token);
+      if (pending) return pending;
+
+      pending = fetch('/csrf-token', { credentials: 'same-origin', cache: 'no-store' })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          token = (d && d.token) || '';
+          if (token) {
+            var m = document.querySelector('meta[name="csrf-token"]');
+            if (!m) {
+              m = document.createElement('meta');
+              m.name = 'csrf-token';
+              document.head.appendChild(m);
+            }
+            m.content = token;
+          }
+          pending = null;
+          return token;
+        })
+        .catch(function () { pending = null; return ''; });
+
+      return pending;
+    };
+  })();
+</script>
+@unless (request()->hasSession())
+<script>window.m2bCsrfToken(); /* token disiapkan lebih awal agar widget/form siap pakai */</script>
+@endunless
 <script type="application/ld+json">
 {
   "@@context": "https://schema.org",
@@ -569,7 +613,7 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
       const f3 = document.getElementById('b2b_catalog_file'); if (f3) f3.value = '';
     },
 
-    submitB2bForm() {
+    async submitB2bForm() {
       if (!this.inquiryName || !this.inquiryCompany || !this.inquiryNpwp || !this.inquiryEmail || !this.inquiryPhone) {
         alert(this.$store.lang.t('Mohon lengkapi semua kolom wajib!', 'Please fill in all required fields!', '请填写所有必填字段！', 'يرجى ملء جميع الحقول المطلوبة!'));
         return;
@@ -584,7 +628,7 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
       this.inquiryLoading = true;
       
       const formData = new FormData();
-      formData.append('_token', '{{ csrf_token() }}');
+      formData.append('_token', await window.m2bCsrfToken());
       formData.append('name', this.inquiryName);
       formData.append('company', this.inquiryCompany);
       formData.append('npwp', this.inquiryNpwp);

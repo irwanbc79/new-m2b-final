@@ -7,7 +7,7 @@
   csEmail: '',
   csCompany: '',
   loading: false,
-  submitCSLead(platform) {
+  async submitCSLead(platform) {
     if (!this.csName.trim() || !this.csPhone.trim()) {
       alert(this.$store.lang.t(
         'Nama dan Nomor WhatsApp/Telegram wajib diisi.',
@@ -18,12 +18,14 @@
       return;
     }
     this.loading = true;
+    // Halaman blog yang di-cache CDN tidak memuat token di HTML → ambil on-demand.
+    const csrfToken = await window.m2bCsrfToken();
     fetch('/mora/lead', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        'X-CSRF-TOKEN': csrfToken
       },
       body: JSON.stringify({
         name: this.csName,
