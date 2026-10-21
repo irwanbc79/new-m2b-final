@@ -63,6 +63,65 @@ class Post extends Model
         return $query->where("status","published")->orderByDesc("published_at");
     }
 
+    /**
+     * Batasi ke daftar id POPULER hasil PostViewCounter.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder<Post>  $query
+     * @param  array<int, int|string>  $hotIds
+     */
+    public function scopeHot($query, array $hotIds)
+    {
+        return $query->whereIn('id', $hotIds);
+    }
+
+    /**
+     * Artikel POPULER untuk widget sidebar /blog: yang view-nya terbanyak dulu.
+     *
+     * Kalau belum ada view sama sekali (atau id di cache sudah tidak published),
+     * widget jatuh ke post terbaru sebanyak $fallbackLimit — perilaku lama.
+     *
+     * Urutan akhir ditentukan di PHP (bukan ORDER BY) karena sumbernya counter
+     * cache, bukan kolom DB. Satu panggilan PostViewCounter::counts() dipakai
+     * untuk semua post (Cache::many → satu query di store `database`),
+     * menggantikan count() per post.
+     *
+     * @param  array<int, int|string>  $hotIds
+     * @return \Illuminate\Database\Eloquent\Collection<int, Post>
+     */
+    public static function popularFor(array $hotIds, PostViewCounter $views, int $fallbackLimit = 4)
+    {
+        if ($hotIds !== []) {
+            $counts = $views->counts($hotIds);
+
+            $posts = static::published()->hot($hotIds)->get()
+                ->sortByDesc(fn (Post $post) => $counts[$post->id] ?? 0)
+                ->values();
+
+            if ($posts->isNotEmpty()) {
+                return $posts;
+            }
+        }
+
+        return static::published()->take($fallbackLimit)->get();
+    }
+
+    /**
+     * Artikel "Baca Juga" halaman detail: post published lain di kategori yang
+     * sama (kalau post punya kategori).
+     *
+     * @return \Illuminate\Database\Eloquent\Collection<int, Post>
+     */
+    public static function relatedFor(Post $post, int $limit = 3)
+    {
+        $query = static::published()->where('id', '!=', $post->id);
+
+        if ($post->category) {
+            $query->where('category', $post->category);
+        }
+
+        return $query->limit($limit)->get();
+    }
+
     public function getFeaturedImageUrlAttribute(): string
     {
         if (!$this->featured_image) {

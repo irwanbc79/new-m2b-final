@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use App\Services\BlogCache;
 use App\Services\PostViewCounter;
-use Illuminate\Support\Str;
 
 class BlogController extends Controller
 {
@@ -32,7 +31,7 @@ class BlogController extends Controller
         $page     = max(1, (int) request()->get('page', 1));
         $cacheKey = $cache->indexKey($page, $category);
 
-        $query = Post::published()->latest('published_at');
+        $query = Post::published();
         if ($category) {
             $query->where('category', $category);
         }
@@ -49,23 +48,12 @@ class BlogController extends Controller
             return $views->topIds(Post::published()->pluck('id')->all(), BlogCache::HOT_LIMIT);
         });
 
-        $featured = $cache->remember(BlogCache::FEATURED_POST, function () {
-            return Post::published()->latest('published_at')->first();
-        });
+        $featured = $cache->remember(BlogCache::FEATURED_POST, fn () => Post::published()->first());
 
-        $popular = $cache->remember(BlogCache::POPULAR_POSTS, function () use ($hotIds, $views) {
-            $pop = $hotIds
-                ? Post::published()->whereIn('id', $hotIds)->get()
-                    ->sortByDesc(fn ($p) => $views->count($p->id))
-                    ->values()
-                : collect();
-
-            if ($pop->isEmpty()) {
-                return Post::published()->latest('published_at')->take(BlogCache::POPULAR_FALLBACK_LIMIT)->get();
-            }
-
-            return $pop;
-        });
+        $popular = $cache->remember(
+            BlogCache::POPULAR_POSTS,
+            fn () => Post::popularFor($hotIds ?? [], $views, BlogCache::POPULAR_FALLBACK_LIMIT)
+        );
 
         return view("pages.blog.index", compact("posts", "categories", "hotIds", "category", "featured", "popular", "search"));
     }
@@ -96,13 +84,10 @@ class BlogController extends Controller
         // recompute on the next index load. The hot list now refreshes at most hourly
         // (and immediately when a post is saved/deleted via Post model hooks).
 
-        $related = $cache->remember($cache->relatedKey($post->id), function () use ($post) {
-            $query = Post::published()->where("id","!=",$post->id);
-            if ($post->category) {
-                $query->where("category", $post->category);
-            }
-            return $query->limit(BlogCache::RELATED_LIMIT)->get();
-        });
+        $related = $cache->remember(
+            $cache->relatedKey($post->id),
+            fn () => Post::relatedFor($post, BlogCache::RELATED_LIMIT)
+        );
 
         return view("pages.blog.show", compact("post","related"));
     }
