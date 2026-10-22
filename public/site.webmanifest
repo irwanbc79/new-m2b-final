@@ -1,0 +1,17 @@
+{
+  "name": "M2B — PT. Mora Multi Berkah",
+  "short_name": "M2B",
+  "description": "Freight Forwarder & Customs Broker Indonesia — layanan ekspor-impor, kepabeanan, dan door-to-door ke 20+ negara.",
+  "lang": "id",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f7f5f0",
+  "theme_color": "#0b1120",
+  "icons": [
+    { "src": "/favicon-192x192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/favicon-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png", "purpose": "maskable" },
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

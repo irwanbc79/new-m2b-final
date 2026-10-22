@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="M2B">
+  <!-- Ikon tab browser: kotak membulat, gradasi navy, monogram M2B, aksen biru.
+       Versi SVG dipakai browser modern; PNG/ICO di public/ untuk Google & iOS. -->
+  <defs>
+    <linearGradient id="m2b" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1e3a5f"/>
+      <stop offset="1" stop-color="#0b1120"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#m2b)"/>
+  <text x="32" y="32" text-anchor="middle" dominant-baseline="central"
+        font-family="Arial, Helvetica, sans-serif" font-size="27" font-weight="700"
+        letter-spacing="-0.5" fill="#ffffff">M2B</text>
+  <rect x="21" y="45" width="22" height="3.2" rx="1.6" fill="#4a9eda"/>
+</svg>
