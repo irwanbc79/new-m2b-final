@@ -35,7 +35,13 @@
    onmouseout="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.03)'; this.style.transform='none'">
 
   @if($image = $post->imageUrl())
-  <div style="height:190px; background-image:url({{ $image }}); background-size:cover; background-position:center; transition: transform 0.5s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'"></div>
+  {{-- Thumbnail kartu = <img>, bukan background-image: crawler gambar Google
+       tidak mengindeks gambar latar CSS, sehingga 9 kartu di /blog selama ini
+       tak punya peluang sama sekali di Google Images. Dimensi eksplisit
+       menjaga tinggi kartu tetap 190px tanpa layout shift. --}}
+  <img src="{{ $image }}" alt="{{ $post->title }}" width="400" height="190" loading="lazy" decoding="async"
+       style="width:100%;height:190px;object-fit:cover;display:block;transition:transform .5s"
+       onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
   @else
   <div style="height:190px; background:{{ $bg }}; position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center;">
     <span style="position:absolute; font-size:110px; opacity:0.08; line-height:1">{{ $em }}</span>

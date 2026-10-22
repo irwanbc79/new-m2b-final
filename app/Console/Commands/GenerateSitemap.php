@@ -3,57 +3,106 @@
 namespace App\Console\Commands;
 
 use App\Models\Post;
+use DOMDocument;
+use DOMElement;
 use Illuminate\Console\Command;
-use Spatie\Sitemap\Sitemap;
-use Spatie\Sitemap\Tags\Url;
 
 class GenerateSitemap extends Command
 {
     protected $signature = "sitemap:generate";
     protected $description = "Generate sitemap.xml untuk SEO";
 
+    private const BASE = "https://m2b.co.id";
+
+    /**
+     * Halaman statis → [prioritas, changefreq].
+     *
+     * "/blog/" sengaja ditulis DENGAN trailing slash: /blog (tanpa slash)
+     * dijawab edge hCDN dengan 301 → /blog/, dan sitemap tidak boleh memuat URL
+     * yang di-redirect (GSC: "URL di sitemap mengarah ke redirect").
+     */
+    private const HALAMAN_STATIS = [
+        "/" => ["1.0", "weekly"],
+        "/tentang-kami" => ["0.8", "monthly"],
+        "/tim" => ["0.6", "monthly"],
+        "/blog/" => ["0.9", "daily"],
+        "/blog/kalkulator-bea-masuk" => ["0.8", "monthly"],
+        "/karir" => ["0.7", "weekly"],
+        "/privacy-policy" => ["0.3", "yearly"],
+        "/disclaimer" => ["0.3", "yearly"],
+        "/ketentuan-layanan" => ["0.3", "yearly"],
+    ];
+
+    /**
+     * XML ditulis langsung dengan DOMDocument, bukan spatie/sitemap: paket itu
+     * tidak ada di composer.json/composer.lock, sehingga perintah ini berhenti
+     * dengan "Class Spatie\Sitemap\Sitemap not found" pada instalasi apa pun
+     * hasil composer install (sitemap produksi yang beredar dihasilkan versi
+     * lama yang paketnya masih terpasang).
+     */
     public function handle(): void
     {
-        $sitemap = Sitemap::create();
+        $xml = new DOMDocument("1.0", "UTF-8");
+        $xml->formatOutput = true;
 
-        // Halaman statis
-        $sitemap->add(Url::create("/")->setPriority(1.0)->setChangeFrequency("weekly"));
-        $sitemap->add(Url::create("/tentang-kami")->setPriority(0.8)->setChangeFrequency("monthly"));
-        $sitemap->add(Url::create("/tim")->setPriority(0.6)->setChangeFrequency("monthly"));
-        $sitemap->add(Url::create("/blog")->setPriority(0.9)->setChangeFrequency("daily"));
-        $sitemap->add(Url::create("/blog/kalkulator-bea-masuk")->setPriority(0.8)->setChangeFrequency("monthly"));
-        $sitemap->add(Url::create("/karir")->setPriority(0.7)->setChangeFrequency("weekly"));
-        $sitemap->add(Url::create("/privacy-policy")->setPriority(0.3)->setChangeFrequency("yearly"));
-        $sitemap->add(Url::create("/disclaimer")->setPriority(0.3)->setChangeFrequency("yearly"));
-        $sitemap->add(Url::create("/ketentuan-layanan")->setPriority(0.3)->setChangeFrequency("yearly"));
+        $urlset = $xml->createElement("urlset");
+        $urlset->setAttribute("xmlns", "http://www.sitemaps.org/schemas/sitemap/0.9");
+        $xml->appendChild($urlset);
 
-        // Semua blog post published
-        Post::where("status", "published")
-            ->orderByDesc("published_at")
-            ->each(function (Post $post) use ($sitemap) {
-                $sitemap->add(
-                    Url::create("/blog/{$post->slug}")
-                        ->setLastModificationDate($post->updated_at)
-                        ->setPriority(0.7)
-                        ->setChangeFrequency("monthly")
-                );
-            });
-
-        $filePath = public_path("sitemap.xml");
-        $sitemap->writeToFile($filePath);
-
-        // Sisipkan xml-stylesheet untuk browser visual styling di Safari/Chrome
-        $xmlContent = file_get_contents($filePath);
-        if (!str_contains($xmlContent, "xml-stylesheet")) {
-            $xmlContent = str_replace(
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<?xml-stylesheet type=\"text/xsl\" href=\"/sitemap.xsl\"?>",
-                $xmlContent
-            );
-            file_put_contents($filePath, $xmlContent);
+        foreach (self::HALAMAN_STATIS as $path => [$prioritas, $changefreq]) {
+            $urlset->appendChild($this->url($xml, $path, null, $prioritas, $changefreq));
         }
 
-        $count = Post::where("status", "published")->count();
-        $this->info("Sitemap generated: 9 halaman statis + {$count} blog posts → public/sitemap.xml");
+        $jumlahPost = 0;
+        Post::where("status", "published")
+            ->orderByDesc("published_at")
+            ->each(function (Post $post) use ($xml, $urlset, &$jumlahPost) {
+                $urlset->appendChild($this->url(
+                    $xml,
+                    "/blog/{$post->slug}",
+                    $post->updated_at?->toAtomString(),
+                    "0.7",
+                    "monthly"
+                ));
+                $jumlahPost++;
+            });
+
+        // Browser menampilkan sitemap bergaya lewat /sitemap.xsl (berkas statis
+        // yang sudah ada di public/ server).
+        $xml->insertBefore(
+            $xml->createProcessingInstruction("xml-stylesheet", 'type="text/xsl" href="/sitemap.xsl"'),
+            $xml->documentElement
+        );
+
+        $xml->save(public_path("sitemap.xml"));
+
+        $this->info(sprintf(
+            "Sitemap generated: %d halaman statis + %d blog posts → public/sitemap.xml",
+            count(self::HALAMAN_STATIS),
+            $jumlahPost
+        ));
+    }
+
+    private function url(DOMDocument $xml, string $path, ?string $lastmod, string $prioritas, string $changefreq): DOMElement
+    {
+        $node = $xml->createElement("url");
+
+        // Nilai teks ditulis lewat createTextNode: createElement("loc", $nilai)
+        // tidak meng-escape "&" (slug lama/URL dari CMS bisa memuatnya).
+        $this->teks($xml, $node, "loc", self::BASE . ($path === "/" ? "" : $path));
+
+        if ($lastmod !== null) {
+            $this->teks($xml, $node, "lastmod", $lastmod);
+        }
+
+        $this->teks($xml, $node, "changefreq", $changefreq);
+        $this->teks($xml, $node, "priority", $prioritas);
+
+        return $node;
+    }
+
+    private function teks(DOMDocument $xml, DOMElement $parent, string $nama, string $nilai): void
+    {
+        $parent->appendChild($xml->createElement($nama))->appendChild($xml->createTextNode($nilai));
     }
 }

@@ -25,8 +25,13 @@
 #   4. Halaman artikel (item RSS pertama)              → 200, og:image == gambar hero,
 #      JSON-LD ada. Ini invariant Post::imageUrl(): satu berkas = satu URL di semua
 #      tempat (dulu og:image absolut vs kartu/hero relatif → srcset tak sinkron).
-#   5. /sitemap.xml                                    → 200
-#   6. /ads.txt                                        → 200 & tidak kosong
+#   5. /sitemap.xml & /ads.txt                         → 200 (isi sitemap valid)
+#   6. SEO head (kalibrasi layout blog m2b.co.id): head memuat ikon/manifest/
+#      theme-color, /favicon.ico > 1 KB, kanonikal /blog/ ber-trailing-slash,
+#      robots ?search= = noindex, thumbnail kartu <img> (bukan background-image),
+#      <loc>/blog/</loc> ada & <loc>/blog</loc> tidak ada, robots.txt tidak
+#      menunjuk sitemap yang di-redirect, 1 <h1> + meta description ≤155 di
+#      artikel, www → 301. Bagian ini GAGAL sampai PR SEO ter-deploy.
 #
 set -uo pipefail
 
@@ -132,6 +137,73 @@ fi
 code="$(fetch '/ads.txt' "$TMP/ads.txt")"
 size="$(wc -c < "$TMP/ads.txt" | tr -d ' ')"
 [ "$code" = "200" ] && [ "$size" -gt 10 ] && ok "/ads.txt → 200 ($size byte)" || bad "/ads.txt → HTTP $code, $size byte"
+
+judul "6. SEO head, ikon situs, kanonikal (kalibrasi layout blog m2b.co.id)"
+# Bagian ini memeriksa perbaikan audit SEO 22 Okt 2026. Domain yang tidak
+# memakai modul blog ini (mis. sitemapindex ala dira.co.id) bisa FAIL di sini
+# tanpa berarti ada regresi.
+code="$(fetch '/' "$TMP/home.html")"
+head_hilang=""
+for pola in 'rel="icon"' 'apple-touch-icon' 'rel="manifest"' 'name="theme-color"'; do
+  grep -qF -- "$pola" "$TMP/home.html" || head_hilang="$head_hilang $pola"
+done
+[ "$code" = "200" ] && [ -z "$head_hilang" ] && ok "home → 200, head memuat ikon/manifest/theme-color" \
+  || bad "home → HTTP $code; pola yang hilang:$head_hilang"
+
+# favicon.ico sempat dijawab 200 tapi 0 byte → Google tanpa ikon di SERP.
+code="$(curl -sL --max-time 25 -o "$TMP/favicon.ico" -w '%{http_code}' "$BASE/favicon.ico")"
+size="$(wc -c < "$TMP/favicon.ico" | tr -d ' ')"
+[ "$code" = "200" ] && [ "$size" -gt 1024 ] && ok "/favicon.ico → 200 ($size byte)" \
+  || bad "/favicon.ico → HTTP $code, $size byte (harus > 1 KB)"
+
+kanon="$(grep -oE '<link rel="canonical" href="[^"]+"' "$TMP/blog.html" | head -1 | sed -E 's/.*href="([^"]+)".*/\1/')"
+[ "$kanon" = "$BASE/blog/" ] && ok "kanonikal /blog/: $kanon" \
+  || bad "kanonikal /blog/ = '$kanon' (harus $BASE/blog/ — /blog di-redirect 301 ke /blog/)"
+
+grep -qF '<meta name="robots" content="index, follow">' "$TMP/blog.html" \
+  && ok "robots halaman blog: index, follow" || bad "robots halaman blog bukan index, follow"
+
+code="$(fetch '/blog/?search=bea' "$TMP/search.html")"
+grep -qF '<meta name="robots" content="noindex, follow">' "$TMP/search.html" \
+  && ok "robots halaman ?search=: noindex, follow" \
+  || bad "halaman hasil pencarian masih index,follow (HTTP $code)"
+
+thumb="$(hitung "$TMP/blog.html" '<img src=')"
+[ "$thumb" -ge 5 ] && ok "thumbnail kartu berupa <img>: $thumb" || bad "thumbnail kartu <img> cuma $thumb"
+[ "$(hitung "$TMP/blog.html" 'background-image:url(')" -eq 0 ] \
+  && ok "tidak ada thumbnail background-image (tak terindeks Google Images)" \
+  || bad "masih ada thumbnail background-image di /blog/"
+
+[ "$(hitung "$TMP/sitemap.xml" "<loc>$BASE/blog/</loc>")" -ge 1 ] \
+  && ok "sitemap memuat $BASE/blog/ (bentuk ber-trailing-slash)" \
+  || bad "sitemap tidak memuat $BASE/blog/"
+[ "$(hitung "$TMP/sitemap.xml" "<loc>$BASE/blog</loc>")" -eq 0 ] \
+  && ok "sitemap tidak memuat URL /blog yang di-redirect" \
+  || bad "sitemap masih memuat <loc>$BASE/blog</loc> (URL itu 301 → /blog/)"
+
+code="$(fetch '/robots.txt' "$TMP/robots.txt")"
+if [ "$code" = "200" ] && ! grep -q '/blog/sitemap.xml' "$TMP/robots.txt"; then
+  ok "/robots.txt → 200 & tidak menunjuk sitemap yang di-redirect"
+else
+  bad "/robots.txt → HTTP $code & masih memuat /blog/sitemap.xml (URL itu 301 → /sitemap.xml)"
+fi
+
+if [ -f "$TMP/post.html" ]; then
+  h1="$(hitung "$TMP/post.html" '<h1')"
+  [ "$h1" -eq 1 ] && ok "artikel punya tepat 1 <h1>" || bad "jumlah <h1> di halaman artikel: $h1 (harus 1)"
+
+  # wc -m menghitung karakter (bukan byte) supaya elipsis "…" tidak dihitung 3.
+  desc="$(grep -oE '<meta name="description" content="[^"]*"' "$TMP/post.html" | head -1 | sed -E 's/.*content="([^"]*)"/\1/')"
+  desc_len="$(printf '%s' "$desc" | wc -m | tr -d ' ')"
+  [ "$desc_len" -le 155 ] && ok "meta description artikel $desc_len karakter (≤155)" \
+    || bad "meta description artikel $desc_len karakter (Google memangkas di ±155)"
+fi
+
+if [ "$BASE" = "https://m2b.co.id" ]; then
+  www="$(curl -s -o /dev/null -w '%{http_code}' --max-time 25 https://www.m2b.co.id/)"
+  [ "$www" = "301" ] && ok "https://www.m2b.co.id/ → 301 ke non-www" \
+    || bad "https://www.m2b.co.id/ → HTTP $www (harus 301, dulu 200 = duplikat host)"
+fi
 
 printf '\n\033[1mHasil: %d lolos, %d gagal\033[0m (base: %s)\n' "$PASSED" "$FAIL" "$BASE"
 exit "$FAIL"

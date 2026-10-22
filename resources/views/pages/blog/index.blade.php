@@ -1,6 +1,30 @@
 @extends('layouts.app')
-@section('title', 'Blog & Artikel — M2B Logistik')
-@section('description', 'Artikel terbaru seputar ekspor-impor, regulasi bea cukai, dan tips logistik dari tim M2B.')
+
+@php
+    // Kanonikal & robots halaman /blog.
+    //
+    //  - /blog (tanpa trailing slash) dijawab edge hCDN dengan 301 → /blog/,
+    //    sedangkan /blog/ dijawab 200 oleh aplikasi. Kanonikal karena itu
+    //    memakai bentuk ber-trailing-slash: URL kanonikal tidak boleh mengarah
+    //    ke redirect (GSC: "URL kanonikal mengarah ke URL yang di-redirect").
+    //  - ?search=… = hasil penyaringan yang dikerjakan Alpine di browser; HTML
+    //    yang dikirim server identik dengan halaman 1, jadi noindex + kanonikal
+    //    ke /blog/ (dulu halaman ini ikut index,follow).
+    //  - ?page=N (N > 1) kanonikal ke dirinya sendiri, bukan ke halaman 1 —
+    //    kalau tidak, artikel di halaman belakang kehilangan jalur sinyal.
+    $halamanBlog = max(1, (int) request()->input('page', 1));
+    $adaPencarian = filled(request()->input('search'));
+
+    $kanonikalBlog = 'https://m2b.co.id/blog/';
+    if (! $adaPencarian && $halamanBlog > 1) {
+        $kanonikalBlog .= '?page='.$halamanBlog;
+    }
+@endphp
+@section('canonical', $kanonikalBlog)
+@section('robots', $adaPencarian ? 'noindex, follow' : 'index, follow')
+
+@section('title', 'Blog Ekspor Impor & Regulasi Bea Cukai — M2B')
+@section('description', 'Panduan praktis ekspor impor: regulasi bea cukai, lartas, dokumen PIB/PEB, dan tips logistik dari praktisi PPJK M2B. Diperbarui rutin.')
 
 @section('head')
 <link rel="alternate" type="application/rss+xml" title="M2B Blog — Ekspor Impor" href="{{ route('blog.feed') }}">
@@ -34,8 +58,8 @@
   <div style="max-width:1200px; margin:0 auto; position: relative; z-index: 10;">
     <span style="display:inline-block; padding:4px 12px; border-radius:20px; background:rgba(74,158,218,0.2); color:#4a9eda; font-size:11px; font-weight:700; letter-spacing:0.5px; text-transform:uppercase; margin-bottom:16px; border: 1px solid rgba(74,158,218,0.3);" x-text="$store.lang.t('Blog & Artikel', 'Blog & Articles', '博客与文章', 'المدونة والمقالات')">Blog & Artikel</span>
     <h1 style="font-family:Syne; font-weight:800; font-size:52px; color:#fff; letter-spacing:-1.5px; margin-bottom:16px; line-height:1.05" class="blog-hero-h1">
-      <span x-text="$store.lang.t('Update Logistik &', 'Logistics &', '物流与', 'تحديثات اللوجستيات و')">Update Logistik &</span><br>
-      <span style="color:#4a9eda" x-text="$store.lang.t('Shipment', 'Shipment Updates', '货运动态', 'الشحن')">Shipment</span>
+      <span x-text="$store.lang.t('Blog Ekspor Impor &', 'Export-Import Blog &', '进出口博客与', 'مدونة الاستيراد والتصدير و')">Blog Ekspor Impor &</span><br>
+      <span style="color:#4a9eda" x-text="$store.lang.t('Regulasi Bea Cukai', 'Customs Regulations', '海关法规', 'لوائح الجمارك')">Regulasi Bea Cukai</span>
     </h1>
     <p style="color:rgba(255,255,255,0.7); font-size:17px; max-width:560px; margin-bottom:28px" x-text="$store.lang.t('Info terkini seputar pelabuhan, regulasi bea cukai, dan kegiatan pengiriman internasional.', 'Latest info on ports, customs regulations, and international shipping activities.', '关于港口、海关法规以及国际航运活动的最新信息。', 'أحدث المعلومات حول الموانئ، ولوائح الجمارك، وأنشطة الشحن الدولي.')">Info terkini seputar pelabuhan, regulasi bea cukai, dan kegiatan pengiriman internasional.</p>
 
@@ -113,7 +137,11 @@
          onmouseout="this.style.boxShadow='0 4px 16px rgba(0,0,0,0.04)'; this.style.transform='none'" class="blog-featured-card">
         
         @if($fImage = $featuredPost->imageUrl())
-        <div style="min-height:320px; background-image:url({{ $fImage }}); background-size:cover; background-position:center; transition: transform .5s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'"></div>
+        {{-- Kartu sorotan = elemen LCP /blog: eager + fetchpriority tinggi. --}}
+        <img src="{{ $fImage }}" alt="{{ $featuredPost->title }}" width="720" height="320"
+             fetchpriority="high" decoding="async"
+             style="width:100%;min-height:320px;height:100%;object-fit:cover;display:block;transition:transform .5s"
+             onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
         @else
         <div style="min-height:320px; background:{{ $fbg }}; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden">
           <span style="position:absolute; font-size:160px; opacity:0.08; line-height:1">{{ $fem }}</span>

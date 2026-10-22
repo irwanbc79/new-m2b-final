@@ -155,17 +155,25 @@ window.addEventListener('scroll',function(){
 <section style="padding:60px 40px;background:#f7f5f0">
   <div style="max-width:800px;margin:0 auto">
      @if($heroImage = $post->imageUrl())
-    <img src="{{ $heroImage }}" alt="{{ $post->title }}" loading="lazy" style="width:100%;height:420px;object-fit:cover;border-radius:16px;margin-bottom:40px;box-shadow:0 12px 40px rgba(0,0,0,0.12)">
+    {{-- Gambar hero artikel = kandidat LCP halaman ini, jadi eager +
+         fetchpriority tinggi (dulu lazy: LCP tertunda sampai JS selesai).
+         Dimensi eksplisit mencegah layout shift sebelum CSS/gambar termuat. --}}
+    <img src="{{ $heroImage }}" alt="{{ $post->title }}" width="1200" height="420"
+         fetchpriority="high" decoding="async"
+         style="width:100%;height:420px;object-fit:cover;border-radius:16px;margin-bottom:40px;box-shadow:0 12px 40px rgba(0,0,0,0.12)">
     @endif
 
     <div id="article-body" style="background:#fff;border-radius:16px;padding:48px;border:1px solid #e5e2dc" class="prose-m2b blog-article-box">
       <!-- google_ad_section_start -->
       @php
-        $rawContent = preg_replace('/<!--.*?-->/s', '', $post->content);
+        // contentHtml() membuang H1 duplikat di awal body (judul yang sama
+        // dengan hero) — lihat Post::contentHtml().
+        $rawContent = preg_replace('/<!--.*?-->/s', '', $post->contentHtml());
         $paragraphs = explode('</p>', $rawContent);
         $total = count($paragraphs);
       @endphp
       @foreach($paragraphs as $i => $para)
+        @continue(trim($para) === '')
         {!! $para !!}@if($i < $total - 1)</p>@endif
         @if($i === 3)<x-adsense-block type="in_content" />@endif
         @if($total > 10 && $i === 8)<x-adsense-block type="in_content" />@endif
@@ -236,7 +244,14 @@ window.addEventListener('scroll',function(){
         @foreach($related as $r)
         <a href="{{ route('blog.show', $r->slug) }}" style="text-decoration:none;border-radius:10px;overflow:hidden;border:1px solid #e5e2dc;background:#fff;transition:box-shadow .2s" onmouseover="this.style.boxShadow='0 6px 20px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'">
           @php $rImage = $r->imageUrl(); @endphp
-          <div style="height:140px;background:{{ $rImage ? 'url('.$rImage.') center/cover' : 'linear-gradient(135deg,#1e3a5f,#2a5298)' }}"></div>
+          @if($rImage)
+          {{-- Gambar kartu = <img> (bukan background-image) supaya masuk Google
+               Images: thumbnail CSS tidak pernah diindeks crawler gambar. --}}
+          <img src="{{ $rImage }}" alt="{{ $r->title }}" width="400" height="140" loading="lazy" decoding="async"
+               style="width:100%;height:140px;object-fit:cover;display:block">
+          @else
+          <div style="height:140px;background:linear-gradient(135deg,#1e3a5f,#2a5298)"></div>
+          @endif
           <div style="padding:14px 16px">
             <div style="font-family:Syne;font-weight:700;font-size:14px;line-height:1.4;color:#0f0f14;margin-bottom:8px">{{ Str::limit($r->title, 70) }}</div>
             <span style="font-size:12px;color:#1e3a5f;font-weight:600" x-text="$store.lang.t('Baca →', 'Read →', '阅读 →', 'اقرأ ←')">Baca →</span>

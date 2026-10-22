@@ -2,6 +2,9 @@
 <html lang="{{ app()->getLocale() }}" x-data="{ get lang() { return $store.lang.current }, set lang(v) { $store.lang.current = v; localStorage.setItem('m2b_lang', v) } }">
 <head>
 @php
+    // URL kanonikal default: path request tanpa trailing slash. Halaman yang
+    // URL 200-nya berbentuk lain (mis. /blog → 301 → /blog/ di edge hCDN)
+    // menimpanya lewat @section('canonical', ...) di view halaman itu.
     $canonicalPath = request()->path();
     $canonicalUrl = 'https://m2b.co.id' . ($canonicalPath === '/' ? '' : '/' . ltrim($canonicalPath, '/'));
 @endphp
@@ -13,14 +16,14 @@
 <meta property="og:description" content="@yield('description', 'PT. Mora Multi Berkah - Mitra logistik ekspor-impor terpercaya.')">
 <meta property="og:image" content="@yield('og_image', asset('images/og-m2b.jpg'))">
 <meta name="twitter:image" content="@yield('og_image', asset('images/og-m2b.jpg'))">
-<meta property="og:url" content="{{ $canonicalUrl }}">
-<meta name="robots" content="index, follow">
+<meta property="og:url" content="@yield('canonical', $canonicalUrl)">
+<meta name="robots" content="@yield('robots', 'index, follow')">
 <meta property="og:type" content="@yield('og_type', 'website')">
 <meta property="og:locale" content="id_ID">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="@yield('title', 'M2B — Freight Forwarder & Customs Broker Indonesia')">
 <meta name="twitter:description" content="@yield('description', 'PT. Mora Multi Berkah - Mitra logistik ekspor-impor terpercaya.')">
-<link rel="canonical" href="{{ $canonicalUrl }}">
+<link rel="canonical" href="@yield('canonical', $canonicalUrl)">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:type" content="image/jpeg">
@@ -28,6 +31,16 @@
 <meta name="geo.placename" content="Medan, Sumatera Utara">
 <meta name="geo.position" content="3.5952;98.6722">
 <meta name="ICBM" content="3.5952, 98.6722">
+{{-- Ikon situs. Sebelum ini public/favicon.ico ada tapi 0 byte dan tidak ada
+     satu pun <link rel="icon"> di layout, sehingga Google tidak punya ikon
+     untuk ditampilkan di hasil pencarian (audit SEO m2b.co.id, 22 Okt 2026). --}}
+<link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
+<link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+<link rel="icon" type="image/png" sizes="96x96" href="{{ asset('favicon-96x96.png') }}">
+<link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
+<link rel="manifest" href="{{ asset('site.webmanifest') }}">
+<meta name="theme-color" content="#0b1120">
+
 @if (request()->hasSession())
 <meta name="csrf-token" content="{{ csrf_token() }}">
 @endif

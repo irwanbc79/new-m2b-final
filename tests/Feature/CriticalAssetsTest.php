@@ -31,6 +31,34 @@ class CriticalAssetsTest extends TestCase
         Http::fake(['*' => Http::response('', 200)]);
     }
 
+    public function test_ikon_situs_tersedia_dan_tidak_kosong(): void
+    {
+        // favicon.ico dulu ada tapi 0 byte, dan tidak ada satu pun
+        // <link rel="icon"> di layout → Google tanpa ikon di hasil pencarian.
+        $berkas = [
+            'favicon.ico' => 1024,
+            'favicon-96x96.png' => 1024,
+            'favicon-192x192.png' => 1024,
+            'favicon-512x512.png' => 1024,
+            'apple-touch-icon.png' => 1024,
+            'favicon.svg' => 200,
+            'site.webmanifest' => 200,
+        ];
+
+        foreach ($berkas as $nama => $ukuranMinimal) {
+            $path = public_path($nama);
+
+            $this->assertFileExists($path, "Ikon {$nama} hilang dari public/.");
+            $this->assertGreaterThan($ukuranMinimal, filesize($path), "Ikon {$nama} kosong atau rusak.");
+        }
+
+        $manifest = json_decode((string) file_get_contents(public_path('site.webmanifest')), true);
+
+        $this->assertIsArray($manifest, 'site.webmanifest bukan JSON yang valid.');
+        $this->assertSame('#0b1120', $manifest['theme_color'] ?? null);
+        $this->assertCount(4, $manifest['icons'] ?? [], 'Manifest harus mendaftarkan ikon 192, 512, maskable, dan SVG.');
+    }
+
     public function test_aset_kritis_tersedia_di_public(): void
     {
         foreach (self::ASET as $aset) {

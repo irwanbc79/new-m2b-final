@@ -120,12 +120,29 @@ class BlogCardRenderTest extends TestCase
         $html = $this->halaman();
 
         // Path relatif → dijadikan absolut lewat disk public (dulu relatif
-        // "/storage/..." karena Storage::url() memakai disk default `local`),
-        // URL absolut → dipakai apa adanya. Salah cabang = gambar kartu 404.
-        $this->assertSee($html, 'background-image:url('.asset('storage/posts/kartu-uji-2.jpg').')');
+        // "/storage/..."), URL absolut → dipakai apa adanya. Salah cabang =
+        // gambar kartu 404. Kartu sekarang <img> (dulu <div background-image>).
+        $this->assertSee($html, '<img src="'.asset('storage/posts/kartu-uji-2.jpg').'"');
         $this->assertDontSee($html, 'url(/storage/', 'Kartu kembali memakai URL gambar relatif.');
         $this->assertDontSee($html, 'storage/https');
-        $this->assertSee($html, 'https://cdn.example.com/kartu-uji-3.jpg');
+        $this->assertSee($html, '<img src="https://cdn.example.com/kartu-uji-3.jpg"');
+    }
+
+    /**
+     * Thumbnail kartu wajib jadi <img>, bukan CSS background-image: crawler
+     * gambar Google mengabaikan gambar latar CSS, jadi selama ini tidak satu pun
+     * dari 9 kartu di /blog punya peluang muncul di Google Images.
+     * Alt + width/height juga wajib: alt = konteks gambar bagi crawler, dimensi
+     * eksplisit mencegah layout shift di grid.
+     */
+    public function test_thumbnail_kartu_dirender_sebagai_img_dengan_alt_dan_dimensi(): void
+    {
+        $html = $this->halaman();
+
+        $this->assertDontSee($html, 'background-image:url(', 'Thumbnail kartu tidak boleh lagi berupa background-image CSS.');
+        $this->assertSee($html, 'alt="Kartu Uji 2"');
+        $this->assertSee($html, 'width="400" height="190"');
+        $this->assertSee($html, 'loading="lazy"');
     }
 
     public function test_label_kategori_empat_bahasa_dirender_dari_model(): void

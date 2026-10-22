@@ -9,6 +9,14 @@ CacheLookup off
 
     RewriteEngine On
 
+    # ═══ 301: www → non-www ═══
+    # Kanonikal situs ini https://m2b.co.id (tanpa www). Sebelum aturan ini,
+    # https://www.m2b.co.id/ menjawab 200 dengan konten yang identik — duplikat
+    # host yang membelah sinyal (audit SEO 22 Okt 2026). Ditaruh paling atas
+    # supaya berlaku untuk semua path, termasuk berkas statis.
+    RewriteCond %{HTTP_HOST} ^www\.m2b\.co\.id$ [NC]
+    RewriteRule ^(.*)$ https://m2b.co.id/$1 [R=301,L]
+
     # ═══ 301 Redirect: WordPress /%postname%/ → Laravel /blog/{slug} ═══
     # Tangkap slug lama WP (root-level) dan arahkan ke /blog/
     # Kecualikan semua route Laravel yang sudah ada
