@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
     <url>
     <loc>https://m2b.co.id</loc>
@@ -21,6 +22,11 @@
     <priority>0.9</priority>
             </url>
     <url>
+    <loc>https://m2b.co.id/blog/kalkulator-bea-masuk</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+            </url>
+    <url>
     <loc>https://m2b.co.id/karir</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -41,158 +47,338 @@
     <priority>0.3</priority>
             </url>
     <url>
+    <loc>https://m2b.co.id/blog/cara-impor-sparepart-panduan-lengkap-pemula</loc>
+    <lastmod>2026-08-16T16:10:03+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+            </url>
+    <url>
+    <loc>https://m2b.co.id/blog/impor-mesin-industri-indonesia-2026</loc>
+    <lastmod>2026-08-14T16:10:04+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+            </url>
+    <url>
+    <loc>https://m2b.co.id/blog/panduan-impor-taobao-indonesia</loc>
+    <lastmod>2026-08-12T16:10:04+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+            </url>
+    <url>
+    <loc>https://m2b.co.id/blog/cara-impor-1688-com-grosir-m2b</loc>
+    <lastmod>2026-08-10T16:10:04+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+            </url>
+    <url>
+    <loc>https://m2b.co.id/blog/cara-impor-barang-dari-singapura-ke-indonesia</loc>
+    <lastmod>2026-08-08T16:10:04+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+            </url>
+    <url>
+    <loc>https://m2b.co.id/blog/impor-barang-dari-malaysia-ke-indonesia-2026</loc>
+    <lastmod>2026-08-06T16:10:05+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+            </url>
+    <url>
+    <loc>https://m2b.co.id/blog/cara-impor-barang-dari-thailand-ke-indonesia</loc>
+    <lastmod>2026-08-06T14:10:03+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+            </url>
+    <url>
+    <loc>https://m2b.co.id/blog/impor-barang-dari-jepang-ke-indonesia-panduan-lengkap</loc>
+    <lastmod>2026-08-06T14:10:03+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+            </url>
+    <url>
+    <loc>https://m2b.co.id/blog/cara-impor-barang-dari-korea-selatan-ke-indonesia-terbaru-2026</loc>
+    <lastmod>2026-08-06T14:10:04+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+            </url>
+    <url>
+    <loc>https://m2b.co.id/blog/checklist-dokumen-impor-tanjung-priok-2026</loc>
+    <lastmod>2026-08-06T14:10:04+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+            </url>
+    <url>
+    <loc>https://m2b.co.id/blog/checklist-dokumen-bea-cukai-impor-belawan</loc>
+    <lastmod>2026-08-06T14:10:04+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+            </url>
+    <url>
+    <loc>https://m2b.co.id/blog/checklist-dokumen-impor-alat-berat-via-tanjung-priok</loc>
+    <lastmod>2026-08-06T14:10:04+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+            </url>
+    <url>
+    <loc>https://m2b.co.id/blog/dokumen-wajib-ekspor-via-tanjung-priok</loc>
+    <lastmod>2026-08-06T14:10:04+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+            </url>
+    <url>
+    <loc>https://m2b.co.id/blog/cara-umkm-impor-bahan-baku-via-ppjk-tanjung-priok</loc>
+    <lastmod>2026-08-06T14:10:05+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+            </url>
+    <url>
+    <loc>https://m2b.co.id/blog/checklist-dokumen-impor-via-tanjung-priok</loc>
+    <lastmod>2026-08-06T14:10:05+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+            </url>
+    <url>
+    <loc>https://m2b.co.id/blog/prosedur-kepabeanan-impor-alat-berat-via-tanjung-priok</loc>
+    <lastmod>2026-08-06T14:10:05+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+            </url>
+    <url>
+    <loc>https://m2b.co.id/blog/jasa-customs-clearance-tanjung-priok-2026</loc>
+    <lastmod>2026-08-06T14:10:05+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+            </url>
+    <url>
+    <loc>https://m2b.co.id/blog/cara-ekspor-minyak-atsiri-panduan-umkm-2026</loc>
+    <lastmod>2026-07-21T09:36:19+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+            </url>
+    <url>
+    <loc>https://m2b.co.id/blog/ekspor-arang-briket-panduan-lengkap-7-langkah-umkm</loc>
+    <lastmod>2026-07-21T09:36:19+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+            </url>
+    <url>
+    <loc>https://m2b.co.id/blog/impor-kosmetik-panduan-izin-bpom-2026</loc>
+    <lastmod>2026-07-21T09:36:20+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+            </url>
+    <url>
+    <loc>https://m2b.co.id/blog/cara-impor-dari-alibaba-panduan-lengkap-pemula</loc>
+    <lastmod>2026-07-21T09:36:20+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+            </url>
+    <url>
+    <loc>https://m2b.co.id/blog/impor-barang-dari-china-ke-indonesia-2026</loc>
+    <lastmod>2026-07-21T09:36:20+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+            </url>
+    <url>
+    <loc>https://m2b.co.id/blog/freight-forwarder-medan</loc>
+    <lastmod>2026-07-21T09:36:20+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+            </url>
+    <url>
+    <loc>https://m2b.co.id/blog/panduan-lengkap-tarif-bmad-barang-elektronik-impor-2026</loc>
+    <lastmod>2026-07-21T09:36:20+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+            </url>
+    <url>
+    <loc>https://m2b.co.id/blog/cara-hitung-bea-masuk-impor-2025-panduan-ppjk</loc>
+    <lastmod>2026-07-21T09:36:21+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+            </url>
+    <url>
+    <loc>https://m2b.co.id/blog/panduan-lengkap-dokumen-ekspor-pelabuhan-belawan-2026</loc>
+    <lastmod>2026-07-21T09:36:21+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+            </url>
+    <url>
+    <loc>https://m2b.co.id/blog/panduan-lengkap-bea-cukai-barang-kiriman-umkm-2026</loc>
+    <lastmod>2026-07-21T09:36:21+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+            </url>
+    <url>
+    <loc>https://m2b.co.id/blog/panduan-lengkap-cek-7-biaya-ppjk-impor-tanjung-priok-2026</loc>
+    <lastmod>2026-07-21T09:36:21+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+            </url>
+    <url>
+    <loc>https://m2b.co.id/blog/customs-clearance-belawan</loc>
+    <lastmod>2026-07-21T09:36:21+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+            </url>
+    <url>
+    <loc>https://m2b.co.id/blog/panduan-lengkap-dokumen-impor-barang-belawan-2026</loc>
+    <lastmod>2026-07-21T09:36:21+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+            </url>
+    <url>
     <loc>https://m2b.co.id/blog/panduan-lengkap-ekspor-furniture-ke-eropa-dokumen-perizinan</loc>
-    <lastmod>2026-06-26T16:00:07+00:00</lastmod>
+    <lastmod>2026-07-21T09:36:22+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
     <loc>https://m2b.co.id/blog/panduan-lengkap-ekspor-ikan-beku-belawan-jepang-2026</loc>
-    <lastmod>2026-06-24T16:00:05+00:00</lastmod>
+    <lastmod>2026-07-21T09:36:22+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
     <loc>https://m2b.co.id/blog/cara-hitung-pajak-impor-pakaian-tiongkok-2026</loc>
-    <lastmod>2026-06-22T16:00:05+00:00</lastmod>
+    <lastmod>2026-07-21T09:36:22+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
     <loc>https://m2b.co.id/blog/ekspor-umkm-tanjung-priok-panduan-efisien-2026</loc>
-    <lastmod>2026-06-21T00:33:23+00:00</lastmod>
+    <lastmod>2026-07-21T09:36:22+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
     <loc>https://m2b.co.id/blog/ekspor-ikan-beku-belawan-jepang-m2b</loc>
-    <lastmod>2026-06-21T00:33:23+00:00</lastmod>
+    <lastmod>2026-07-21T09:36:22+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
     <loc>https://m2b.co.id/blog/panduan-lengkap-biaya-freight-forwarding-ekspor-2026</loc>
-    <lastmod>2026-06-21T00:33:23+00:00</lastmod>
+    <lastmod>2026-07-21T09:36:23+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
     <loc>https://m2b.co.id/blog/panduan-lengkap-jalur-merah-vs-jalur-hijau-bea-cukai-2026</loc>
-    <lastmod>2026-06-21T00:33:23+00:00</lastmod>
+    <lastmod>2026-07-21T09:36:23+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
     <loc>https://m2b.co.id/blog/panduan-lengkap-dokumen-ekspor-pemula</loc>
-    <lastmod>2026-06-21T00:33:23+00:00</lastmod>
+    <lastmod>2026-07-21T09:36:23+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
     <loc>https://m2b.co.id/blog/panduan-lengkap-prosedur-impor-barang-bekas-2026-indonesia</loc>
-    <lastmod>2026-06-21T00:33:23+00:00</lastmod>
+    <lastmod>2026-07-21T09:36:23+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
     <loc>https://m2b.co.id/blog/panduan-lengkap-fungsi-kawasan-berikat-2026-ekspor-impor</loc>
-    <lastmod>2026-06-21T00:33:23+00:00</lastmod>
+    <lastmod>2026-07-21T09:36:23+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
     <loc>https://m2b.co.id/blog/panduan-lengkap-kemitraan-ekspor-bea-cukai-umkm</loc>
-    <lastmod>2026-06-21T00:33:23+00:00</lastmod>
+    <lastmod>2026-07-21T09:36:24+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
     <loc>https://m2b.co.id/blog/dampak-regulasi-bea-masuk-umkm</loc>
-    <lastmod>2026-06-21T00:33:23+00:00</lastmod>
+    <lastmod>2026-07-21T09:36:24+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
     <loc>https://m2b.co.id/blog/panduan-lengkap-ekspor-barang-pertama-kali-umkm</loc>
-    <lastmod>2026-06-21T00:33:23+00:00</lastmod>
+    <lastmod>2026-07-21T09:36:24+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
     <loc>https://m2b.co.id/blog/panduan-lengkap-mengurus-api-u-impor-2026-syarat-langkah</loc>
-    <lastmod>2026-06-21T00:33:23+00:00</lastmod>
+    <lastmod>2026-07-21T09:36:24+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
     <loc>https://m2b.co.id/blog/panduan-lengkap-cara-menentukan-hs-code-barang-2026</loc>
-    <lastmod>2026-06-21T00:33:23+00:00</lastmod>
+    <lastmod>2026-07-21T09:36:24+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
     <loc>https://m2b.co.id/blog/cara-praktis-umkm-tembus-pasar-ekspor-lewat-ppjk</loc>
-    <lastmod>2026-06-21T00:33:23+00:00</lastmod>
+    <lastmod>2026-07-21T09:36:24+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
     <loc>https://m2b.co.id/blog/kawasan-berikat-panduan-lengkap-ekspor-impor</loc>
-    <lastmod>2026-06-21T00:33:23+00:00</lastmod>
+    <lastmod>2026-07-21T09:36:25+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
     <loc>https://m2b.co.id/blog/panduan-lengkap-ekspor-umkm-pemula-2026</loc>
-    <lastmod>2026-06-21T00:33:23+00:00</lastmod>
+    <lastmod>2026-07-21T09:36:25+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
     <loc>https://m2b.co.id/blog/panduan-lengkap-dokumen-ekspor-pemula-2026</loc>
-    <lastmod>2026-06-21T00:33:23+00:00</lastmod>
+    <lastmod>2026-07-21T09:36:25+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
     <loc>https://m2b.co.id/blog/panduan-lengkap-mengurus-izin-impor-api-u-2026</loc>
-    <lastmod>2026-06-21T00:33:23+00:00</lastmod>
+    <lastmod>2026-07-21T09:36:25+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
     <loc>https://m2b.co.id/blog/panduan-lengkap-prosedur-impor-barang-bekas-indonesia-2026</loc>
-    <lastmod>2026-06-21T00:33:23+00:00</lastmod>
+    <lastmod>2026-07-21T09:36:25+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
     <loc>https://m2b.co.id/blog/panduan-lengkap-menentukan-hs-code-agar-tidak-kena-denda-bea-cukai</loc>
-    <lastmod>2026-06-21T00:33:23+00:00</lastmod>
+    <lastmod>2026-07-21T09:36:26+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
     <loc>https://m2b.co.id/blog/7-langkah-mudah-urus-layanan-kemitraan-ekspor-bea-cukai-2026</loc>
-    <lastmod>2026-06-21T00:33:23+00:00</lastmod>
+    <lastmod>2026-07-21T09:36:26+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
     <loc>https://m2b.co.id/blog/panduan-lengkap-fungsi-kawasan-berikat-ekspor-impor-2026</loc>
-    <lastmod>2026-06-21T00:33:23+00:00</lastmod>
+    <lastmod>2026-07-21T09:36:26+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
     <loc>https://m2b.co.id/blog/panduan-lengkap-jalur-merah-kuning-hijau-bea-cukai-2026</loc>
-    <lastmod>2026-06-21T00:33:23+00:00</lastmod>
+    <lastmod>2026-07-21T09:36:26+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
     <loc>https://m2b.co.id/blog/panduan-lengkap-biaya-freight-forwarding-komponen-cara-hitung</loc>
-    <lastmod>2026-06-21T00:33:23+00:00</lastmod>
+    <lastmod>2026-07-21T09:36:26+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
             </url>
@@ -617,12 +803,6 @@
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://m2b.co.id/blog/indonesia-eu-trade-deal-export-2</loc>
-    <lastmod>2026-05-31T04:58:06+00:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-            </url>
-    <url>
     <loc>https://m2b.co.id/blog/indonesia-eu-trade-deal-export</loc>
     <lastmod>2026-05-31T04:58:06+00:00</lastmod>
     <changefreq>monthly</changefreq>
@@ -708,7 +888,7 @@
             </url>
     <url>
     <loc>https://m2b.co.id/blog/steps-non-residents-export-to-indonesia</loc>
-    <lastmod>2026-05-31T04:58:06+00:00</lastmod>
+    <lastmod>2026-08-27T13:55:38+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
             </url>
@@ -738,7 +918,7 @@
             </url>
     <url>
     <loc>https://m2b.co.id/blog/incoterms-2020-fob-cif-dap-penting</loc>
-    <lastmod>2026-05-31T04:58:06+00:00</lastmod>
+    <lastmod>2026-08-27T13:52:29+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
             </url>
@@ -756,7 +936,7 @@
             </url>
     <url>
     <loc>https://m2b.co.id/blog/biaya-kirim-barang-ke-amerika-laut-vs-udara</loc>
-    <lastmod>2026-05-31T04:58:06+00:00</lastmod>
+    <lastmod>2026-08-27T13:54:14+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
             </url>
@@ -816,12 +996,6 @@
             </url>
     <url>
     <loc>https://m2b.co.id/blog/biaya-pengiriman-internasional-2025</loc>
-    <lastmod>2026-05-31T04:58:05+00:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-            </url>
-    <url>
-    <loc>https://m2b.co.id/blog/cara-ekspor-barang-umkm</loc>
     <lastmod>2026-05-31T04:58:05+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -923,12 +1097,6 @@
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://m2b.co.id/blog/cara-ekspor-produk-umkm</loc>
-    <lastmod>2026-05-31T04:58:05+00:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-            </url>
-    <url>
     <loc>https://m2b.co.id/blog/peluang-tantangan-ekspor-impor-indonesia</loc>
     <lastmod>2026-05-31T04:58:05+00:00</lastmod>
     <changefreq>monthly</changefreq>
@@ -961,12 +1129,6 @@
     <url>
     <loc>https://m2b.co.id/blog/langkah-langkah-impor-barang-luar-negeri-pemula</loc>
     <lastmod>2026-05-31T04:58:05+00:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-            </url>
-    <url>
-    <loc>https://m2b.co.id/blog/langkah-langkah-impor-barang-pemula</loc>
-    <lastmod>2026-05-31T04:58:04+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
             </url>
