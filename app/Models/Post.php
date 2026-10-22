@@ -289,6 +289,44 @@ class Post extends Model
         return $this->imageUrl() ?? asset('images/og-m2b.jpg');
     }
 
+    /**
+     * Konten artikel siap render.
+     *
+     * Body artikel dari CMS diawali <h1 id="slug"> — heading judul artikel itu
+     * sendiri — sementara hero halaman sudah merender <h1> judul yang sama.
+     * Akibatnya satu halaman artikel punya DUA <h1> dan judulnya tercetak dua
+     * kali beruntun.
+     *
+     * Aturan di sini:
+     *  1. H1 pertama yang teksnya sama dengan judul artikel DIHAPUS (hero sudah
+     *     menampilkannya). Tidak ada tautan jangkar ke id-nya pada artikel
+     *     produksi, jadi tidak ada navigasi yang putus.
+     *  2. H1 lain (teksnya berbeda dari judul) diturunkan jadi H2 dengan atribut
+     *     utuh, supaya syarat "satu H1 per halaman" tetap terpenuhi.
+     */
+    public function contentHtml(): string
+    {
+        $html = (string) $this->content;
+        $judul = $this->normalisasiHeading((string) $this->title);
+
+        return preg_replace_callback(
+            '#<h1(\s[^>]*)?>(.*?)</h1>#is',
+            function (array $m) use ($judul): string {
+                $teks = $this->normalisasiHeading($m[2]);
+
+                return $teks === $judul ? '' : '<h2'.($m[1] ?? '').'>'.$m[2].'</h2>';
+            },
+            $html
+        ) ?? $html;
+    }
+
+    private function normalisasiHeading(string $html): string
+    {
+        $teks = html_entity_decode(strip_tags($html), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+        return mb_strtolower(trim((string) preg_replace('/\s+/u', ' ', $teks)));
+    }
+
     public function getReadingTimeAttribute(): int
     {
         return max(1, (int) ceil(str_word_count(strip_tags($this->content)) / 200));
@@ -301,6 +339,36 @@ class Post extends Model
 
     public function getMetaDescriptionAttribute($value): string
     {
-        return $value ?: Str::limit(strip_tags($this->excerpt ?? $this->content), 160);
+        return self::metaSnippet($value ?: ($this->excerpt ?: $this->content));
+    }
+
+    /**
+     * Ringkas teks (boleh HTML) jadi meta description ≤ $max karakter.
+     *
+     * Kolom meta_description dari CMS lama berisi sampai 185 karakter, sementara
+     * Google memangkas deskripsi di sekitar 155 karakter — sisa kalimatnya
+     * terbuang dan potongan pertamanya jatuh di tengah kata. Di sini teks
+     * dibersihkan dari tag/entitas, spasi dirapikan, lalu dipotong di batas kata
+     * dan ditutup elipsis. Panjang akhir SELALU ≤ $max.
+     */
+    public static function metaSnippet(?string $text, int $max = 155): string
+    {
+        $teks = (string) strip_tags((string) $text);
+        $teks = trim((string) preg_replace('/\s+/u', ' ', html_entity_decode($teks, ENT_QUOTES | ENT_HTML5, 'UTF-8')));
+
+        if (mb_strlen($teks) <= $max) {
+            return $teks;
+        }
+
+        $potong = mb_substr($teks, 0, $max - 1);
+        $spasi = mb_strrpos($potong, ' ');
+
+        // Potong di batas kata terakhir, kecuali sisanya jadi terlalu pendek
+        // (< 60% kuota) — teks tanpa spasi panjang tetap utuh dipotong di $max.
+        if ($spasi !== false && $spasi >= (int) ($max * 0.6)) {
+            $potong = mb_substr($potong, 0, $spasi);
+        }
+
+        return rtrim($potong, " \t\n\r\0\x0B.,;:!?…") . '…';
     }
 }

@@ -2153,7 +2153,11 @@ document.addEventListener('DOMContentLoaded', () => {
       @foreach($latestPosts as $post)
       <a href="{{ route('blog.show', $post->slug) }}" style="text-decoration:none;border-radius:12px;overflow:hidden;border:1px solid #e5e2dc;background:#fff;display:flex;flex-direction:column;transition:box-shadow .2s" onmouseover="this.style.boxShadow='0 8px 32px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow='none'">
         @if($image = $post->imageUrl())
-        <div style="height:200px;background-image:url({{ $image }});background-size:cover;background-position:center"></div>
+        {{-- Thumbnail = <img> (dulu background-image CSS): crawler gambar Google
+             tidak mengindeks gambar latar, jadi tiga kartu di halaman depan ini
+             tidak pernah punya peluang di Google Images. --}}
+        <img src="{{ $image }}" alt="{{ $post->title }}" width="400" height="200" loading="lazy" decoding="async"
+             style="width:100%;height:200px;object-fit:cover;display:block">
         @else
         <div style="height:200px;background:linear-gradient(135deg,#1e3a5f,#2a5298);display:flex;align-items:center;justify-content:center;font-size:48px">📦</div>
         @endif
