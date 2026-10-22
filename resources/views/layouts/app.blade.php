@@ -33,8 +33,15 @@
 <meta name="ICBM" content="3.5952, 98.6722">
 {{-- Ikon situs. Sebelum ini public/favicon.ico ada tapi 0 byte dan tidak ada
      satu pun <link rel="icon"> di layout, sehingga Google tidak punya ikon
-     untuk ditampilkan di hasil pencarian (audit SEO m2b.co.id, 22 Okt 2026). --}}
-<link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
+     untuk ditampilkan di hasil pencarian (audit SEO m2b.co.id, 22 Okt 2026).
+     favicon.ico diberi ?v= karena hCDN m2b.co.id masih menyimpan respons lama
+     0 byte di URL polos /favicon.ico (cache-control max-age 7 hari), sehingga
+     Google/browser menerima ikon kosong sampai entri itu kedaluwarsa. Query
+     unik membuat URL-nya jadi kunci cache baru → berkas asli (3,6 KB) tersaji.
+     Angka versi boleh dinaikkan kapan pun berkasnya berubah; kalau entri polos
+     sudah bersih (cek: curl -sI https://m2b.co.id/favicon.ico | grep age), baris
+     ini boleh kembali polos. --}}
+<link rel="icon" href="{{ asset('favicon.ico') }}?v=20261022" sizes="any">
 <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
 <link rel="icon" type="image/png" sizes="96x96" href="{{ asset('favicon-96x96.png') }}">
 <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">

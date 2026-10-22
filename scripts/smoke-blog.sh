@@ -27,11 +27,13 @@
 #      tempat (dulu og:image absolut vs kartu/hero relatif → srcset tak sinkron).
 #   5. /sitemap.xml & /ads.txt                         → 200 (isi sitemap valid)
 #   6. SEO head (kalibrasi layout blog m2b.co.id): head memuat ikon/manifest/
-#      theme-color, /favicon.ico > 1 KB, kanonikal /blog/ ber-trailing-slash,
-#      robots ?search= = noindex, thumbnail kartu <img> (bukan background-image),
-#      <loc>/blog/</loc> ada & <loc>/blog</loc> tidak ada, robots.txt tidak
-#      menunjuk sitemap yang di-redirect, 1 <h1> + meta description ≤155 di
-#      artikel, www → 301. Bagian ini GAGAL sampai PR SEO ter-deploy.
+#      theme-color, /favicon.ico > 1 KB (dibaca dengan cache-buster karena hCDN
+#      bisa menyimpan respons 0 byte yang lama; URL polosnya hanya WARN),
+#      kanonikal /blog/ ber-trailing-slash, robots ?search= = noindex,
+#      thumbnail kartu <img> (bukan background-image), <loc>/blog/</loc> ada &
+#      <loc>/blog</loc> tidak ada, robots.txt tidak menunjuk sitemap yang
+#      di-redirect, 1 <h1> + meta description ≤155 di artikel, www root &
+#      www /blog/* → 301. Gerbang ini hijau sejak audit SEO 22 Okt 2026 live.
 #
 set -uo pipefail
 
@@ -46,6 +48,7 @@ FAIL=0
 judul() { printf '\n\033[1m%s\033[0m\n' "$1"; }
 ok()    { PASSED=$((PASSED + 1)); printf '\033[32m  PASS\033[0m %s\n' "$1"; }
 bad()   { FAIL=$((FAIL + 1));     printf '\033[31m  FAIL\033[0m %s\n' "$1"; }
+warn()  { printf '\033[33m  WARN\033[0m %s\n' "$1"; }
 
 # Ikuti redirect (Hostinger mengalihkan /blog → /blog/) dan simpan body ke file.
 # Mencetak status code HTTP terakhir.
@@ -151,10 +154,22 @@ done
   || bad "home → HTTP $code; pola yang hilang:$head_hilang"
 
 # favicon.ico sempat dijawab 200 tapi 0 byte → Google tanpa ikon di SERP.
-code="$(curl -sL --max-time 25 -o "$TMP/favicon.ico" -w '%{http_code}' "$BASE/favicon.ico")"
+# hCDN bisa menyimpan respons lama itu (cache-control max-age 7 hari) di URL
+# polos /favicon.ico, jadi gate ini memakai cache-buster untuk memeriksa berkas
+# yang benar-benar disajikan origin. URL polos diperiksa terpisah sebagai
+# peringatan (bukan kegagalan) karena ia sembuh sendiri setelah TTL habis.
+code="$(curl -sL --max-time 25 -o "$TMP/favicon.ico" -w '%{http_code}' "$BASE/favicon.ico?cb=$RANDOM")"
 size="$(wc -c < "$TMP/favicon.ico" | tr -d ' ')"
 [ "$code" = "200" ] && [ "$size" -gt 1024 ] && ok "/favicon.ico → 200 ($size byte)" \
   || bad "/favicon.ico → HTTP $code, $size byte (harus > 1 KB)"
+
+code="$(curl -sL --max-time 25 -o "$TMP/favicon-polos.ico" -w '%{http_code}' "$BASE/favicon.ico")"
+size="$(wc -c < "$TMP/favicon-polos.ico" | tr -d ' ')"
+if [ "$code" = "200" ] && [ "$size" -gt 1024 ]; then
+  ok "URL polos /favicon.ico → 200 ($size byte)"
+else
+  warn "URL polos /favicon.ico → HTTP $code, $size byte (entri hCDN lama, self-heal ≤ 7 hari; purge CDN di hPanel untuk mempercepat)"
+fi
 
 kanon="$(grep -oE '<link rel="canonical" href="[^"]+"' "$TMP/blog.html" | head -1 | sed -E 's/.*href="([^"]+)".*/\1/')"
 [ "$kanon" = "$BASE/blog/" ] && ok "kanonikal /blog/: $kanon" \
@@ -203,6 +218,20 @@ if [ "$BASE" = "https://m2b.co.id" ]; then
   www="$(curl -s -o /dev/null -w '%{http_code}' --max-time 25 https://www.m2b.co.id/)"
   [ "$www" = "301" ] && ok "https://www.m2b.co.id/ → 301 ke non-www" \
     || bad "https://www.m2b.co.id/ → HTTP $www (harus 301, dulu 200 = duplikat host)"
+
+  # Path /blog/* ditangani public_html/blog/.htaccess (per-dir terdalam di
+  # LiteSpeed), jadi aturan www di .htaccess doc root TIDAK berlaku di sana —
+  # dulu https://www.m2b.co.id/blog/ menjawab 200 = seluruh arsip blog punya
+  # duplikat host. Slug artikel diambil dari $path (item RSS pertama) supaya
+  # tidak ada slug hard-code yang bisa basi.
+  www_blog="$(curl -s -o /dev/null -w '%{http_code}' --max-time 25 https://www.m2b.co.id/blog/)"
+  www_artikel=""
+  if [ -n "${path:-}" ]; then
+    www_artikel="$(curl -s -o /dev/null -w '%{http_code}' --max-time 25 "https://www.m2b.co.id$path")"
+  fi
+  [ "$www_blog" = "301" ] && [ "$www_artikel" = "301" ] \
+    && ok "www /blog/ & www $path → 301 ke non-www" \
+    || bad "www /blog/=$www_blog, www ${path:-<tak ada>}=$www_artikel (harus 301)"
 fi
 
 printf '\n\033[1mHasil: %d lolos, %d gagal\033[0m (base: %s)\n' "$PASSED" "$FAIL" "$BASE"
