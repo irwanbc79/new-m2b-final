@@ -1,4 +1,9 @@
+# Catatan: produksi sempat memuat baris kedua
+#   Sitemap: https://m2b.co.id/blog/sitemap.xml
+# tapi URL itu dijawab 301 → /sitemap.xml oleh edge hCDN, sehingga GSC melaporkan
+# sitemap yang di-redirect. /sitemap.xml sudah memuat seluruh artikel blog,
+# jadi baris itu dibuang (audit SEO 22 Okt 2026).
 User-agent: *
-Disallow:
+Allow: /
 
 Sitemap: https://m2b.co.id/sitemap.xml
