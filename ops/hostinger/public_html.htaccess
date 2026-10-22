@@ -1,0 +1,55 @@
+AddType application/xml .xml
+AddType text/xml .xml
+
+DirectoryIndex index.php
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+# BEGIN 301 www -> non-www (audit SEO 22 Okt 2026)
+    # Kanonikal situs = apex https://m2b.co.id. www menjawab 200 dengan konten
+    # identik -> duplikat host. Target memakai %{REQUEST_URI} (path asli) bukan
+    # $1, karena mod_rewrite bisa dipanggil ulang dengan path relatif kosong.
+    RewriteCond %{HTTP_HOST} ^www[.]m2b[.]co[.]id$ [NC]
+    RewriteRule ^ https://m2b.co.id%{REQUEST_URI} [R=301,L]
+    # END 301 www -> non-www
+    # BEGIN dedup-redirects 2026-07-04
+    RewriteRule ^blog/indonesia-eu-trade-deal-export-2/?$ /blog/indonesia-eu-trade-deal-export [R=301,L]
+    RewriteRule ^blog/panduan-lengkap-fungsi-kawasan-berikat-ekspor-impor-2026/?$ /blog/panduan-lengkap-fungsi-kawasan-berikat-2026-ekspor-impor [R=301,L]
+    RewriteRule ^blog/kawasan-berikat-panduan-lengkap-ekspor-impor/?$ /blog/panduan-lengkap-fungsi-kawasan-berikat-2026-ekspor-impor [R=301,L]
+    RewriteRule ^blog/panduan-lengkap-prosedur-impor-barang-bekas-indonesia-2026/?$ /blog/panduan-lengkap-prosedur-impor-barang-bekas-2026-indonesia [R=301,L]
+    RewriteRule ^blog/ekspor-ikan-beku-belawan-jepang-m2b/?$ /blog/panduan-lengkap-ekspor-ikan-beku-belawan-jepang-2026 [R=301,L]
+    RewriteRule ^blog/panduan-lengkap-dokumen-ekspor-pemula-2026/?$ /blog/panduan-lengkap-dokumen-ekspor-pemula [R=301,L]
+    RewriteRule ^blog/panduan-lengkap-jalur-merah-kuning-hijau-bea-cukai-2026/?$ /blog/panduan-lengkap-jalur-merah-vs-jalur-hijau-bea-cukai-2026 [R=301,L]
+    RewriteRule ^blog/cara-ekspor-produk-umkm/?$ /blog/cara-ekspor-barang-umkm-2026 [R=301,L]
+    RewriteRule ^blog/cara-ekspor-barang-umkm/?$ /blog/cara-ekspor-barang-umkm-2026 [R=301,L]
+    RewriteRule ^blog/panduan-lengkap-biaya-freight-forwarding-komponen-cara-hitung/?$ /blog/panduan-lengkap-biaya-freight-forwarding-ekspor-2026 [R=301,L]
+    RewriteRule ^blog/langkah-langkah-impor-barang-pemula/?$ /blog/langkah-langkah-impor-barang-luar-negeri-pemula [R=301,L]
+    # END dedup-redirects
+
+    # Serve existing FILES directly (bukan directory)
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+
+    # Static assets dari Laravel public/
+    RewriteCond %{DOCUMENT_ROOT}/new-m2b/public%{REQUEST_URI} -f
+    RewriteRule ^(.+)$ new-m2b/public/$1 [L]
+
+    # Jangan tangkap /app/ — PWA karyawan M2B
+    RewriteCond %{REQUEST_URI} ^/app
+    RewriteRule ^ - [L]
+
+    # Semua request ke Laravel
+    RewriteRule ^ index.php [L]
+</IfModule>
+
+# Berkas statis yang isinya sering berubah dan dampaknya langsung terasa:
+# robots.txt (dibaca Google Search Console) dan ads.txt (dibaca penjual iklan).
+# TTL default hCDN terlalu panjang — salinan lama robots.txt masih tersaji
+# berjam-jam setelah berkasnya diperbarui (audit SEO 22 Okt 2026). max-age=300
+# membuat perubahan terlihat dalam ≤5 menit. Sitemap.xml tidak perlu aturan ini
+# karena dihasilkan PHP (x-hcdn-cache-status: DYNAMIC).
+<IfModule mod_headers.c>
+    <FilesMatch "^(robots|ads)\.txt$">
+        Header set Cache-Control "public, max-age=300"
+    </FilesMatch>
+</IfModule>

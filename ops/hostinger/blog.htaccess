@@ -1,0 +1,46 @@
+# Static Next.js export (stale, dibuat untuk blog.m2b.co.id yang tidak pernah aktif).
+# Semua 111 slug sudah ada di blog Laravel live → 301 ke URL live.
+# Rollback: hapus file ini.
+RewriteEngine On
+RewriteBase /blog
+# BEGIN 301 www -> non-www (audit SEO 22 Okt 2026)
+    # Kanonikal situs = apex https://m2b.co.id. www menjawab 200 dengan konten
+    # identik -> duplikat host. Target memakai %{REQUEST_URI} (path asli) bukan
+    # $1, karena mod_rewrite bisa dipanggil ulang dengan path relatif kosong.
+    RewriteCond %{HTTP_HOST} ^www[.]m2b[.]co[.]id$ [NC]
+    RewriteRule ^ https://m2b.co.id%{REQUEST_URI} [R=301,L]
+    # END 301 www -> non-www
+
+
+# BEGIN dedup-redirects 2026-07-04 (duplikat artikel -> kanonik)
+RewriteRule ^indonesia-eu-trade-deal-export-2/?$ /blog/indonesia-eu-trade-deal-export [R=301,L]
+RewriteRule ^panduan-lengkap-fungsi-kawasan-berikat-ekspor-impor-2026/?$ /blog/panduan-lengkap-fungsi-kawasan-berikat-2026-ekspor-impor [R=301,L]
+RewriteRule ^kawasan-berikat-panduan-lengkap-ekspor-impor/?$ /blog/panduan-lengkap-fungsi-kawasan-berikat-2026-ekspor-impor [R=301,L]
+RewriteRule ^panduan-lengkap-prosedur-impor-barang-bekas-indonesia-2026/?$ /blog/panduan-lengkap-prosedur-impor-barang-bekas-2026-indonesia [R=301,L]
+RewriteRule ^ekspor-ikan-beku-belawan-jepang-m2b/?$ /blog/panduan-lengkap-ekspor-ikan-beku-belawan-jepang-2026 [R=301,L]
+RewriteRule ^panduan-lengkap-dokumen-ekspor-pemula-2026/?$ /blog/panduan-lengkap-dokumen-ekspor-pemula [R=301,L]
+RewriteRule ^panduan-lengkap-jalur-merah-kuning-hijau-bea-cukai-2026/?$ /blog/panduan-lengkap-jalur-merah-vs-jalur-hijau-bea-cukai-2026 [R=301,L]
+RewriteRule ^cara-ekspor-produk-umkm/?$ /blog/cara-ekspor-barang-umkm-2026 [R=301,L]
+RewriteRule ^cara-ekspor-barang-umkm/?$ /blog/cara-ekspor-barang-umkm-2026 [R=301,L]
+RewriteRule ^panduan-lengkap-biaya-freight-forwarding-komponen-cara-hitung/?$ /blog/panduan-lengkap-biaya-freight-forwarding-ekspor-2026 [R=301,L]
+RewriteRule ^langkah-langkah-impor-barang-pemula/?$ /blog/langkah-langkah-impor-barang-luar-negeri-pemula [R=301,L]
+# END dedup-redirects
+
+# Sitemap basi (berisi URL blog.m2b.co.id yang mati) → sitemap live
+RewriteRule ^sitemap(-0)?\.xml$ /sitemap.xml [R=301,L]
+
+# Halaman index export → blog live
+RewriteRule ^index\.html$ /blog? [R=301,L]
+
+# Artikel export: /blog/blog/<slug>/ → /blog/<slug> (semua slug ada di DB live)
+RewriteRule ^blog/([^/]+)/?(index\.html)?$ /blog/$1 [R=301,L]
+
+# Halaman listing export yang tidak punya padanan → blog index live
+RewriteRule ^(category|tags|archive|404)(/.*)?$ /blog? [R=301,L]
+
+# File yang masih ada (aset, gambar) tetap diserve langsung
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# Sisanya → front controller Laravel (perilaku sama dengan .htaccess root)
+RewriteRule ^ /index.php [L]
