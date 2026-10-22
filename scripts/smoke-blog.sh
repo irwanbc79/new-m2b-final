@@ -200,15 +200,36 @@ code="$(fetch '/robots.txt' "$TMP/robots.txt")"
 if [ "$code" = "200" ] && ! grep -q '/blog/sitemap.xml' "$TMP/robots.txt"; then
   ok "/robots.txt → 200 & tidak menunjuk sitemap yang di-redirect"
 else
-  bad "/robots.txt → HTTP $code & masih memuat /blog/sitemap.xml (URL itu 301 → /sitemap.xml)"
+  # hCDN menyimpan robots.txt statis lama (file-nya jarang berubah), jadi salinan
+  # edge bisa tertinggal beberapa jam setelah berkas aslinya diperbarui. Bedakan
+  # dua sebab supaya operator tidak salah menyalahkan repo.
+  curl -sL --max-time 25 -o "$TMP/robots-bust.txt" "$BASE/robots.txt?cb=$RANDOM" || true
+  if grep -q '/blog/sitemap.xml' "$TMP/robots-bust.txt"; then
+    bad "/robots.txt → HTTP $code & masih memuat /blog/sitemap.xml (URL itu 301 → /sitemap.xml)"
+  else
+    bad "/robots.txt → salinan hCDN masih basi (HTTP $code, memuat /blog/sitemap.xml) padahal berkas asal sudah bersih — purge cache di hPanel atau tunggu TTL edge"
+  fi
 fi
 
 if [ -f "$TMP/post.html" ]; then
   h1="$(hitung "$TMP/post.html" '<h1')"
   [ "$h1" -eq 1 ] && ok "artikel punya tepat 1 <h1>" || bad "jumlah <h1> di halaman artikel: $h1 (harus 1)"
 
-  # wc -m menghitung karakter (bukan byte) supaya elipsis "…" tidak dihitung 3.
   desc="$(grep -oE '<meta name="description" content="[^"]*"' "$TMP/post.html" | head -1 | sed -E 's/.*content="([^"]*)"/\1/')"
+
+  # Nilai atribut di HTML sudah di-escape Blade, jadi entity harus didekode dulu:
+  # satu karakter "&" menjadi "&amp;" (5 karakter) sehingga deskripsi 155
+  # karakter tampak 158 karakter di HTML mentah. Nyata terjadi pada
+  # /blog/cara-impor-sparepart-panduan-lengkap-pemula (audit 22 Okt 2026) dan
+  # dulu dilaporkan gagal padahal nilai aslinya sudah di bawah batas.
+  # Urutan: entity lain dulu, &amp; terakhir, supaya "&amp;lt;" tidak didekode dua kali.
+  desc="$(printf '%s' "$desc" | sed -e 's/&lt;/</g' -e 's/&gt;/>/g' -e 's/&quot;/"/g' -e "s/&#0*39;/'/g" -e 's/&amp;/\&/g')"
+
+  # wc -m menghitung karakter (bukan byte) selama locale UTF-8; pastikan dulu,
+  # kalau tidak elipsis "…" ikut terhitung 3 (byte) dan gate jadi palsu.
+  if [ "$(printf '…' | wc -m | tr -d ' ')" != "1" ]; then
+    warn "locale bukan UTF-8 — hitungan karakter bisa berupa byte (set LANG=C.UTF-8)"
+  fi
   desc_len="$(printf '%s' "$desc" | wc -m | tr -d ' ')"
   [ "$desc_len" -le 155 ] && ok "meta description artikel $desc_len karakter (≤155)" \
     || bad "meta description artikel $desc_len karakter (Google memangkas di ±155)"

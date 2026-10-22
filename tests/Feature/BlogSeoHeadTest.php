@@ -138,6 +138,35 @@ class BlogSeoHeadTest extends TestCase
         $this->assertStringContainsString('<meta name="theme-color" content="#0b1120">', $html);
     }
 
+    public function test_deskripsi_ber_ampersand_dihitung_setelah_entity_didekode(): void
+    {
+        // Kasus nyata /blog/cara-impor-sparepart-panduan-lengkap-pemula: deskripsi
+        // terbaca 158 karakter di HTML mentah karena "&" di-escape Blade menjadi
+        // "&amp;" (5 karakter). Teks aslinya 154 karakter — sudah di bawah batas
+        // Google. Gate scripts/smoke-blog.sh pernah melaporkan ini sebagai gagal,
+        // jadi invariant yang dijaga di sini ada dua: pemangkasan tetap ≤155
+        // SETELAH entity didekode, dan og/twitter memakai nilai yang identik.
+        $panjang = 'Ingin impor sparepart tapi bingung caranya? Panduan lengkap ini akan membantu Anda! Pelajari semua langkah penting & temukan solusi impor sparepart mudah bersama praktisi PPJK M2B.';
+        $this->assertGreaterThan(155, mb_strlen($panjang), 'Data uji harus lebih panjang dari batas Google.');
+
+        $post = $this->artikel(1, null, $panjang);
+
+        $html = $this->get('/blog/'.$post->slug)->assertOk()->getContent();
+
+        preg_match('/<meta name="description" content="([^"]*)"/', $html, $cocok);
+        $this->assertNotEmpty($cocok, 'Meta description tidak dirender.');
+        $this->assertStringContainsString('&amp;', $cocok[1], 'Ampersand harus ter-escape sebagai entity di atribut.');
+
+        $teks = html_entity_decode($cocok[1], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $this->assertLessThanOrEqual(155, mb_strlen($teks), 'Panjang diukur setelah entity didekode.');
+        $this->assertGreaterThan(100, mb_strlen($teks), 'Deskripsi tidak boleh terpotong terlalu pendek.');
+        $this->assertStringStartsWith('Ingin impor sparepart', $teks);
+        $this->assertStringEndsWith('…', $teks, 'Pemangkasan ditandai elipsis.');
+
+        $this->assertStringContainsString('<meta property="og:description" content="'.$cocok[1].'">', $html);
+        $this->assertStringContainsString('<meta name="twitter:description" content="'.$cocok[1].'">', $html);
+    }
+
     private function artikel(int $i, ?string $content = null, ?string $metaDescription = null): Post
     {
         return Post::create([
