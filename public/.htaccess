@@ -13,6 +13,13 @@ CacheLookup off
     # Tangkap slug lama WP (root-level) dan arahkan ke /blog/
     # Kecualikan semua route Laravel yang sudah ada
     RewriteCond %{REQUEST_URI} !^/blog
+    # Rute Laravel satu-segmen (pola di bawah menangkap SEMUA path satu segmen).
+    # Tanpa pengecualian ini /csrf-token (token form MORA & B2B), /up (health
+    # check) dan /portal-m2b-hq (dashboard Filament) ikut ter-301 ke /blog/...
+    # Rute satu-segmen baru WAJIB ditambahkan di sini.
+    RewriteCond %{REQUEST_URI} !^/csrf-token
+    RewriteCond %{REQUEST_URI} !^/up
+    RewriteCond %{REQUEST_URI} !^/portal-m2b-hq
     RewriteCond %{REQUEST_URI} !^/tentang-kami
     RewriteCond %{REQUEST_URI} !^/tim
     RewriteCond %{REQUEST_URI} !^/karir

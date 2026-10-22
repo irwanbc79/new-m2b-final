@@ -582,7 +582,12 @@
       this.syncCurrency();
     }
   }" style="position:relative;min-height:640px;display:flex;align-items:center;overflow:hidden">
-  <div style="position:absolute;inset:0;background-image:url(https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?auto=format&fit=crop&w=1600&q=80);background-size:cover;background-position:center"></div>
+  <div style="position:absolute;inset:0;overflow:hidden">
+    <picture style="display:block;width:100%;height:100%">
+      <source srcset="{{ asset('images/hero-port.webp') }}" type="image/webp">
+      <img src="{{ asset('images/hero-port.jpg') }}" alt="" width="1280" height="853" fetchpriority="high" style="width:100%;height:100%;object-fit:cover;display:block">
+    </picture>
+  </div>
   <div style="position:absolute;inset:0;background:linear-gradient(105deg,rgba(11,17,32,0.92) 40%,rgba(11,17,32,0.55) 75%,rgba(11,17,32,0.25) 100%)"></div>
   <div class="home-hero-container" style="display:flex;flex-direction:column;gap:28px;width:100%">
     <!-- Top Part: H1 & Desc -->
@@ -2147,8 +2152,8 @@ document.addEventListener('DOMContentLoaded', () => {
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px" class="home-blog-grid">
       @foreach($latestPosts as $post)
       <a href="{{ route('blog.show', $post->slug) }}" style="text-decoration:none;border-radius:12px;overflow:hidden;border:1px solid #e5e2dc;background:#fff;display:flex;flex-direction:column;transition:box-shadow .2s" onmouseover="this.style.boxShadow='0 8px 32px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow='none'">
-        @if($post->featured_image)
-        <div style="height:200px;background-image:url({{ Str::startsWith($post->featured_image, ['http://', 'https://']) ? $post->featured_image : Storage::url($post->featured_image) }});background-size:cover;background-position:center"></div>
+        @if($image = $post->imageUrl())
+        <div style="height:200px;background-image:url({{ $image }});background-size:cover;background-position:center"></div>
         @else
         <div style="height:200px;background:linear-gradient(135deg,#1e3a5f,#2a5298);display:flex;align-items:center;justify-content:center;font-size:48px">📦</div>
         @endif

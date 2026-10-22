@@ -96,7 +96,12 @@
 </script>
 @endsection
 
-@section('title', $post->meta_title)
+@php
+    // meta_title dari CMS sering berupa keyword pendek mentah — pakai hanya bila layak jadi judul
+    $seoTitle = ($post->meta_title && mb_strlen($post->meta_title) >= 35) ? $post->meta_title : $post->title;
+    if (!str_contains(mb_strtolower($seoTitle), 'm2b')) $seoTitle .= ' | M2B';
+@endphp
+@section('title', $seoTitle)
 @section('description', $post->meta_description)
 
 @section('content')
@@ -149,8 +154,8 @@ window.addEventListener('scroll',function(){
 
 <section style="padding:60px 40px;background:#f7f5f0">
   <div style="max-width:800px;margin:0 auto">
-     @if($post->featured_image)
-    <img src="{{ Str::startsWith($post->featured_image, ['http://', 'https://']) ? $post->featured_image : Storage::url($post->featured_image) }}" alt="{{ $post->title }}" loading="lazy" style="width:100%;height:420px;object-fit:cover;border-radius:16px;margin-bottom:40px;box-shadow:0 12px 40px rgba(0,0,0,0.12)">
+     @if($heroImage = $post->imageUrl())
+    <img src="{{ $heroImage }}" alt="{{ $post->title }}" loading="lazy" style="width:100%;height:420px;object-fit:cover;border-radius:16px;margin-bottom:40px;box-shadow:0 12px 40px rgba(0,0,0,0.12)">
     @endif
 
     <div id="article-body" style="background:#fff;border-radius:16px;padding:48px;border:1px solid #e5e2dc" class="prose-m2b blog-article-box">
@@ -170,6 +175,26 @@ window.addEventListener('scroll',function(){
 
     {{-- Post-read ad — zona engagement tinggi setelah selesai baca --}}
     <x-adsense-block type="post_read" />
+
+    {{-- Interactive Calculator Contextual Callout --}}
+    <div style="background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 100%);border-radius:14px;padding:24px 28px;margin:32px 0;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;box-shadow:0 8px 24px rgba(15,23,42,0.12)">
+      <div style="flex:1;min-width:260px">
+        <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(245,185,28,0.2);color:#f5b91c;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;margin-bottom:8px">
+          <span>⚙️</span> FITUR INTERAKTIF
+        </div>
+        <div style="font-family:Syne,sans-serif;font-weight:800;font-size:18px;color:#fff;margin-bottom:4px">
+          Hitung Estimasi Bea Masuk &amp; Pajak Impor Anda
+        </div>
+        <div style="font-size:13px;color:#cbd5e1;line-height:1.5">
+          Gunakan kalkulator online resmi M2B untuk menghitung Bea Masuk, PPN 11%, dan PPh 22 secara instan.
+        </div>
+      </div>
+      <div>
+        <a href="{{ route('blog.kalkulator') }}" style="display:inline-flex;align-items:center;gap:8px;background:#f5b91c;color:#0f0f14;padding:12px 20px;border-radius:10px;font-weight:700;font-size:13.5px;text-decoration:none;white-space:nowrap;transition:transform .15s">
+          <span>🧮 Buka Kalkulator Pabean</span> →
+        </a>
+      </div>
+    </div>
 
     {{-- Social Sharing --}}
     <div style="margin-top:32px;padding:20px 28px;background:#fff;border-radius:12px;border:1px solid #e5e2dc;display:flex;align-items:center;gap:12px;flex-wrap:wrap" class="share-row">
@@ -210,7 +235,8 @@ window.addEventListener('scroll',function(){
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px" class="related-grid">
         @foreach($related as $r)
         <a href="{{ route('blog.show', $r->slug) }}" style="text-decoration:none;border-radius:10px;overflow:hidden;border:1px solid #e5e2dc;background:#fff;transition:box-shadow .2s" onmouseover="this.style.boxShadow='0 6px 20px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'">
-          <div style="height:140px;background:{{ $r->featured_image ? 'url('.(Str::startsWith($r->featured_image, ['http://', 'https://']) ? $r->featured_image : Storage::url($r->featured_image)).') center/cover' : 'linear-gradient(135deg,#1e3a5f,#2a5298)' }}"></div>
+          @php $rImage = $r->imageUrl(); @endphp
+          <div style="height:140px;background:{{ $rImage ? 'url('.$rImage.') center/cover' : 'linear-gradient(135deg,#1e3a5f,#2a5298)' }}"></div>
           <div style="padding:14px 16px">
             <div style="font-family:Syne;font-weight:700;font-size:14px;line-height:1.4;color:#0f0f14;margin-bottom:8px">{{ Str::limit($r->title, 70) }}</div>
             <span style="font-size:12px;color:#1e3a5f;font-weight:600" x-text="$store.lang.t('Baca →', 'Read →', '阅读 →', 'اقرأ ←')">Baca →</span>

@@ -26,7 +26,7 @@
 @endsection
 
 @section('content')
-<div x-data="{ search: '{{ $search ?? '' }}' }">
+<div x-data="{ search: {{ \Illuminate\Support\Js::from($search ?? '') }} }">
 
 {{-- ═══ HERO ═══ --}}
 <div style="background:linear-gradient(135deg, #0B1120 0%, #1e3a5f 100%); padding: 80px 20px 60px; position: relative; overflow: hidden;" class="blog-hero">
@@ -54,61 +54,19 @@
         style="padding:8px 20px; border-radius:20px; border:1.5px solid; text-decoration:none; font-size:13px; font-weight:700; transition:all .2s; white-space:nowrap; font-family:'DM Sans'; {{ !$category ? 'background:#4a9eda; color:#fff; border-color:#4a9eda; box-shadow: 0 4px 14px rgba(74,158,218,0.3);' : 'background:rgba(255,255,255,0.06); color:rgba(255,255,255,0.6); border-color:rgba(255,255,255,0.12)' }}"
         x-text="$store.lang.t('Semua', 'All', '全部', 'الكل')">Semua</a>
       @foreach($categories as $cat)
-      @php
-        $catEn = [
-          'Ekspor' => 'Export',
-          'Impor' => 'Import',
-          'UMKM' => 'SME',
-          'Bea Cukai' => 'Customs',
-        ][$cat] ?? $cat;
-
-        $catZh = [
-          'Ekspor' => '出口',
-          'Impor' => '进口',
-          'UMKM' => '中小企业',
-          'Bea Cukai' => '海关与报关',
-        ][$cat] ?? $catEn;
-
-        $catAr = [
-          'Ekspor' => 'التصدير',
-          'Impor' => 'الاستيراد',
-          'UMKM' => 'الشركات الصغيرة والمتوسطة',
-          'Bea Cukai' => 'الجمارك',
-        ][$cat] ?? $catEn;
-      @endphp
+      @php $catLabels = \App\Models\Post::labelsFor($cat); @endphp
       <a href="{{ route('blog.index', ['category' => $cat]) }}"
         style="padding:8px 20px; border-radius:20px; border:1.5px solid; text-decoration:none; font-size:13px; font-weight:700; transition:all .2s; white-space:nowrap; font-family:'DM Sans'; {{ $category === $cat ? 'background:#4a9eda; color:#fff; border-color:#4a9eda; box-shadow: 0 4px 14px rgba(74,158,218,0.3);' : 'background:rgba(255,255,255,0.06); color:rgba(255,255,255,0.6); border-color:rgba(255,255,255,0.12)' }}"
-        x-text="$store.lang.t('{{ $cat }}', '{{ $catEn }}', '{{ $catZh }}', '{{ $catAr }}')">{{ $cat }}</a>
+        x-text="$store.lang.t('{{ $catLabels['id'] }}', '{{ $catLabels['en'] }}', '{{ $catLabels['zh'] }}', '{{ $catLabels['ar'] }}')">{{ $cat }}</a>
       @endforeach
     </div>
 
     {{-- Active filter indicator --}}
     <div style="margin-top:14px; display:flex; align-items:center; gap:8px; font-size:12px; color:rgba(255,255,255,0.4); flex-wrap:wrap">
       @if($category)
-      @php
-        $catEn = [
-          'Ekspor' => 'Export',
-          'Impor' => 'Import',
-          'UMKM' => 'SME',
-          'Bea Cukai' => 'Customs',
-        ][$category] ?? $category;
-
-        $catZh = [
-          'Ekspor' => '出口',
-          'Impor' => '进口',
-          'UMKM' => '中小企业',
-          'Bea Cukai' => '海关与报关',
-        ][$category] ?? $catEn;
-
-        $catAr = [
-          'Ekspor' => 'التصدير',
-          'Impor' => 'الاستيراد',
-          'UMKM' => 'الشركات الصغيرة والمتوسطة',
-          'Bea Cukai' => 'الجمارك',
-        ][$category] ?? $catEn;
-      @endphp
+      @php $catLabels = \App\Models\Post::labelsFor($category); @endphp
       <span style="padding:3px 12px; border-radius:12px; background:rgba(74,158,218,0.15); color:#4a9eda; border:1px solid rgba(74,158,218,0.3)">
-        📂 <span x-text="$store.lang.t('{{ $category }}', '{{ $catEn }}', '{{ $catZh }}', '{{ $catAr }}')">{{ $category }}</span>
+        📂 <span x-text="$store.lang.t('{{ $catLabels['id'] }}', '{{ $catLabels['en'] }}', '{{ $catLabels['zh'] }}', '{{ $catLabels['ar'] }}')">{{ $category }}</span>
       </span>
       <a href="{{ route('blog.index') }}" style="color:#4a9eda; text-decoration:underline; font-family:'DM Sans'; font-weight:600;" x-text="$store.lang.t('Reset ×', 'Reset ×', '重置 ×', 'إعادة تعيين ×')">Reset ×</a>
       @endif
@@ -133,59 +91,29 @@
     {{-- ─── LEFT COLUMN: ARTICLES ─── --}}
     <div style="display: flex; flex-direction: column; gap: 28px;">
       
-      {{-- Featured Post --}}
+      {{-- Featured Post — artikel pertama halaman ini ($posts->first()).
+           Hanya dirender tanpa filter & tanpa pencarian; loop grid melewati
+           artikel yang sama dengan syarat yang sama. Controller tidak lagi
+           mengirim variabel featured terpisah. --}}
       @if($posts->count() > 0 && !$search && !$category)
       @php
-        $featured = $posts->first();
-        $fc = $featured->category ?? '';
-        $fbg = 'linear-gradient(135deg,#1e3a5f 0%,#2a5298 100%)';
-        $fem = '📦';
-        if ($fc === 'Ekspor') {
-          [$fbg, $fem] = ['linear-gradient(135deg,#1e3a5f 0%,#1a6b3a 100%)', '🚢'];
-        } elseif ($fc === 'Impor') {
-          [$fbg, $fem] = ['linear-gradient(135deg,#1e3a5f 0%,#4a2a7f 100%)', '📥'];
-        } elseif ($fc === 'UMKM') {
-          [$fbg, $fem] = ['linear-gradient(135deg,#1e3a5f 0%,#7f5a1e 100%)', '🏪'];
-        } elseif ($fc === 'Bea Cukai') {
-          [$fbg, $fem] = ['linear-gradient(135deg,#5f2a1e 0%,#1e3a5f 100%)', '🛃'];
-        }
-        $fDaysOld = $featured->published_at ? now()->diffInDays($featured->published_at) : 999;
-        $fIsNew = $fDaysOld <= 7;
-        $fIsUpdated = $featured->updated_at && $featured->updated_at->diffInDays(now()) < 14
-                      && $featured->updated_at->gt($featured->published_at?->addDays(3) ?? now());
-        $fIsHot = isset($hotIds) && in_array($featured->id, $hotIds);
-        $fSearch = strtolower($featured->title . ' ' . ($featured->excerpt ?? '') . ' ' . ($featured->category ?? ''));
-        
-        $fcEn = [
-          'Ekspor' => 'Export',
-          'Impor' => 'Import',
-          'UMKM' => 'SME',
-          'Bea Cukai' => 'Customs',
-        ][$fc] ?? $fc;
-
-        $fcZh = [
-          'Ekspor' => '出口',
-          'Impor' => '进口',
-          'UMKM' => '中小企业',
-          'Bea Cukai' => '海关与报关',
-        ][$fc] ?? $fcEn;
-
-        $fcAr = [
-          'Ekspor' => 'التصدير',
-          'Impor' => 'الاستيراد',
-          'UMKM' => 'الشركات الصغيرة والمتوسطة',
-          'Bea Cukai' => 'الجمارك',
-        ][$fc] ?? $fcEn;
+        $featuredPost = $posts->first();
+        [$fbg, $fem] = $featuredPost->theme();
+        $flabels = $featuredPost->categoryLabels();
+        $fIsNew = $featuredPost->isNew();
+        $fIsUpdated = $featuredPost->isUpdated();
+        $fIsHot = $featuredPost->isHot($hotIds ?? []);
+        $fSearch = $featuredPost->searchHaystack();
       @endphp
-      <a href="{{ route('blog.show', $featured->slug) }}"
+      <a href="{{ route('blog.show', $featuredPost->slug) }}"
          data-search="{{ $fSearch }}"
          x-show="search === '' || $el.dataset.search.includes(search.toLowerCase())"
          style="text-decoration:none; border-radius:20px; overflow:hidden; border:1px solid #e5e2dc; background:#fff; display:grid; grid-template-columns:1.2fr 1fr; transition:all .3s; box-shadow:0 4px 16px rgba(0,0,0,0.04)"
          onmouseover="this.style.boxShadow='0 16px 48px rgba(30,58,95,0.12)'; this.style.transform='translateY(-3px)'"
          onmouseout="this.style.boxShadow='0 4px 16px rgba(0,0,0,0.04)'; this.style.transform='none'" class="blog-featured-card">
         
-        @if($featured->featured_image)
-        <div style="min-height:320px; background-image:url({{ Str::startsWith($featured->featured_image, ['http://', 'https://']) ? $featured->featured_image : Storage::url($featured->featured_image) }}); background-size:cover; background-position:center; transition: transform .5s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'"></div>
+        @if($fImage = $featuredPost->imageUrl())
+        <div style="min-height:320px; background-image:url({{ $fImage }}); background-size:cover; background-position:center; transition: transform .5s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'"></div>
         @else
         <div style="min-height:320px; background:{{ $fbg }}; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden">
           <span style="position:absolute; font-size:160px; opacity:0.08; line-height:1">{{ $fem }}</span>
@@ -196,16 +124,16 @@
         <div style="padding:40px 32px; display:flex; flex-direction:column; justify-content:center">
           <div style="display:flex; gap:6px; align-items:center; margin-bottom:16px; flex-wrap:wrap">
             <span style="padding:3px 10px; border-radius:20px; background:rgba(245,185,28,0.15); color:#b8860b; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; border:1px solid rgba(245,185,28,0.25)" x-text="$store.lang.t('★ Sorotan', '★ Featured', '★ 精选', '★ مميز')">★ Sorotan</span>
-            @if($featured->category)<span style="padding:3px 10px; border-radius:20px; background:#1e3a5f; color:#fff; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.3px;" x-text="$store.lang.t('{{ $featured->category }}', '{{ $fcEn }}', '{{ $fcZh }}', '{{ $fcAr }}')">{{ $featured->category }}</span>@endif
+            @if($featuredPost->category)<span style="padding:3px 10px; border-radius:20px; background:#1e3a5f; color:#fff; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.3px;" x-text="$store.lang.t('{{ $flabels['id'] }}', '{{ $flabels['en'] }}', '{{ $flabels['zh'] }}', '{{ $flabels['ar'] }}')">{{ $featuredPost->category }}</span>@endif
             @if($fIsNew)<span style="padding:2px 8px; border-radius:4px; background:#16a34a; color:#fff; font-size:10px; font-weight:700" x-text="$store.lang.t('BARU', 'NEW', '最新', 'جديد')">BARU</span>
             @elseif($fIsUpdated)<span style="padding:2px 8px; border-radius:4px; background:#ea580c;color:#fff; font-size:10px; font-weight:700" x-text="$store.lang.t('DIPERBARUI', 'UPDATED', '已更新', 'محدث')">DIPERBARUI</span>@endif
             @if($fIsHot)<span style="padding:2px 8px; border-radius:4px; background:#dc2626; color:#fff; font-size:10px; font-weight:700" x-text="$store.lang.t('🔥 POPULER', '🔥 POPULAR', '🔥 热门', '🔥 شائع')">🔥 POPULER</span>@endif
           </div>
-          <h2 style="font-family:Syne; font-weight:800; font-size:24px; line-height:1.25; color:#0b1120; margin-bottom:12px">{{ $featured->title }}</h2>
-          @if($featured->excerpt)<p style="font-size:14px; color:#55637c; line-height:1.75; margin-bottom:20px; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;">{{ $featured->excerpt }}</p>@endif
+          <h2 style="font-family:Syne; font-weight:800; font-size:24px; line-height:1.25; color:#0b1120; margin-bottom:12px">{{ $featuredPost->title }}</h2>
+          @if($featuredPost->excerpt)<p style="font-size:14px; color:#55637c; line-height:1.75; margin-bottom:20px; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;">{{ $featuredPost->excerpt }}</p>@endif
           <div style="display:flex; align-items:center; gap:16px; font-size:12px; color:#94a3b8; margin-top:auto; padding-top:14px; border-top:1px solid #f0ede8;">
-            <span>📅 {{ $featured->published_at?->format('d M Y') }}</span>
-            <span>⏱ {{ $featured->reading_time }} <span x-text="$store.lang.t('menit baca', 'min read', '分钟阅读', 'دقائق قراءة')">menit baca</span></span>
+            <span>📅 {{ $featuredPost->published_at?->format('d M Y') }}</span>
+            <span>⏱ {{ $featuredPost->reading_time }} <span x-text="$store.lang.t('menit baca', 'min read', '分钟阅读', 'دقائق قراءة')">menit baca</span></span>
             <span style="margin-left:auto; color:#1e3a5f; font-weight:700; font-size:13px; transition: color 0.2s;" onmouseover="this.style.color='#4a9eda'" onmouseout="this.style.color='#1e3a5f'" x-text="$store.lang.t('Baca selengkapnya →', 'Read more →', '阅读全文 →', 'اقرأ المزيد ←')">Baca selengkapnya →</span>
           </div>
         </div>
@@ -222,47 +150,6 @@
         @continue(empty($post->title) || empty($post->slug))
         @continue($posts->count() > 0 && $post->id === $posts->first()->id && !$search && !$category)
         
-        @php
-          $pc = $post->category ?? '';
-          $bg = 'linear-gradient(135deg,#1e3a5f 0%,#2a5298 100%)';
-          $em = '📦';
-          if ($pc === 'Ekspor') {
-            [$bg, $em] = ['linear-gradient(135deg,#1e3a5f 0%,#1a6b3a 100%)', '🚢'];
-          } elseif ($pc === 'Impor') {
-            [$bg, $em] = ['linear-gradient(135deg,#1e3a5f 0%,#4a2a7f 100%)', '📥'];
-          } elseif ($pc === 'UMKM') {
-            [$bg, $em] = ['linear-gradient(135deg,#1e3a5f 0%,#7f5a1e 100%)', '🏪'];
-          } elseif ($pc === 'Bea Cukai') {
-            [$bg, $em] = ['linear-gradient(135deg,#5f2a1e 0%,#1e3a5f 100%)', '🛃'];
-          }
-          $daysOld = $post->published_at ? now()->diffInDays($post->published_at) : 999;
-          $isNew     = $daysOld <= 7;
-          $isUpdated = $post->updated_at && $post->updated_at->diffInDays(now()) < 14
-                       && $post->updated_at->gt($post->published_at?->addDays(3) ?? now());
-          $isHot     = isset($hotIds) && in_array($post->id, $hotIds);
-          $searchData = strtolower($post->title . ' ' . ($post->excerpt ?? '') . ' ' . ($post->category ?? ''));
-          
-          $pcEn = [
-            'Ekspor' => 'Export',
-            'Impor' => 'Import',
-            'UMKM' => 'SME',
-            'Bea Cukai' => 'Customs',
-          ][$pc] ?? $pc;
-
-          $pcZh = [
-            'Ekspor' => '出口',
-            'Impor' => '进口',
-            'UMKM' => '中小企业',
-            'Bea Cukai' => '海关与报关',
-          ][$pc] ?? $pcEn;
-
-          $pcAr = [
-            'Ekspor' => 'التصدير',
-            'Impor' => 'الاستيراد',
-            'UMKM' => 'الشركات الصغيرة والمتوسطة',
-            'Bea Cukai' => 'الجمارك',
-          ][$pc] ?? $pcEn;
-        @endphp
 
         {{-- In-feed E-book CTA after card 2 --}}
         @if($cardIndex === 2)
@@ -283,39 +170,7 @@
         </div>
         @endif
 
-        {{-- Post Card --}}
-        <a href="{{ route('blog.show', $post->slug) }}"
-           data-search="{{ $searchData }}"
-           x-show="search === '' || $el.dataset.search.includes(search.toLowerCase())"
-           style="text-decoration:none; border-radius:16px; overflow:hidden; border:1px solid #e5e2dc; background:#fff; display:flex; flex-direction:column; transition:all .3s; box-shadow: 0 2px 8px rgba(0,0,0,0.03)"
-           onmouseover="this.style.boxShadow='0 12px 36px rgba(30,58,95,0.08)'; this.style.transform='translateY(-3px)'"
-           onmouseout="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.03)'; this.style.transform='none'">
-
-          @if($post->featured_image)
-          <div style="height:190px; background-image:url({{ Str::startsWith($post->featured_image, ['http://', 'https://']) ? $post->featured_image : Storage::url($post->featured_image) }}); background-size:cover; background-position:center; transition: transform 0.5s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'"></div>
-          @else
-          <div style="height:190px; background:{{ $bg }}; position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center;">
-            <span style="position:absolute; font-size:110px; opacity:0.08; line-height:1">{{ $em }}</span>
-            <span style="font-size:44px; position:relative; z-index:1">{{ $em }}</span>
-          </div>
-          @endif
-
-          <div style="padding:24px; flex:1; display:flex; flex-direction:column">
-            <div style="display:flex; align-items:center; gap:6px; margin-bottom:12px; flex-wrap:wrap">
-              @if($post->category)<span style="padding:2px 8px; border-radius:4px; background:#1e3a5f; color:#fff; font-size:9px; font-weight:700; text-transform:uppercase" x-text="$store.lang.t('{{ $post->category }}', '{{ $pcEn }}', '{{ $pcZh }}', '{{ $pcAr }}')">{{ $post->category }}</span>@endif
-              @if($isNew)<span style="padding:2px 6px; border-radius:4px; background:#16a34a; color:#fff; font-size:9px; font-weight:700" x-text="$store.lang.t('BARU', 'NEW', '最新', 'جديد')">BARU</span>
-              @elseif($isUpdated)<span style="padding:2px 6px; border-radius:4px; background:#ea580c; color:#fff; font-size:9px; font-weight:700" x-text="$store.lang.t('DIPERBARUI', 'UPDATED', '已更新', 'محدث')">DIPERBARUI</span>@endif
-              @if($isHot)<span style="padding:2px 6px; border-radius:4px; background:#dc2626; color:#fff; font-size:9px; font-weight:700" x-text="$store.lang.t('🔥 POPULER', '🔥 POPULAR', '🔥 热门', '🔥 شائع')">🔥 POPULER</span>@endif
-            </div>
-            <h3 style="font-family:Syne; font-weight:700; font-size:17px; line-height:1.4; color:#0b1120; margin-bottom:8px; flex:1; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">{{ $post->title }}</h3>
-            @if($post->excerpt)<p style="font-size:13px; color:#55637c; line-height:1.65; margin-bottom:16px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">{{ $post->excerpt }}</p>@endif
-            
-            <div style="display:flex; justify-content:space-between; align-items:center; padding-top:12px; border-top:1px solid #f0ede8; font-size:11.5px; color:#94a3b8;">
-              <span>⏱ {{ $post->reading_time }} <span x-text="$store.lang.t('menit baca', 'min read', '分钟阅读', 'دقائق قراءة')">menit baca</span></span>
-              <span style="color:#1e3a5f; font-weight:700; font-size:12.5px" x-text="$store.lang.t('Baca →', 'Read →', '阅读 →', 'اقرأ ←')">Baca →</span>
-            </div>
-          </div>
-        </a>
+        <x-post-card :post="$post" :hot-ids="$hotIds ?? []" />
         @php $cardIndex++; @endphp
 
         @empty
@@ -369,32 +224,11 @@
         </h3>
         <div style="display:flex; flex-direction:column; gap:4px">
           @foreach($categories as $cat)
-          @php
-            $catEn = [
-              'Ekspor' => 'Export',
-              'Impor' => 'Import',
-              'UMKM' => 'SME',
-              'Bea Cukai' => 'Customs',
-            ][$cat] ?? $cat;
-
-            $catZh = [
-              'Ekspor' => '出口',
-              'Impor' => '进口',
-              'UMKM' => '中小企业',
-              'Bea Cukai' => '海关与报关',
-            ][$cat] ?? $catEn;
-
-            $catAr = [
-              'Ekspor' => 'التصدير',
-              'Impor' => 'الاستيراد',
-              'UMKM' => 'الشركات الصغيرة والمتوسطة',
-              'Bea Cukai' => 'الجمارك',
-            ][$cat] ?? $catEn;
-          @endphp
+            @php $catLabels = \App\Models\Post::labelsFor($cat); @endphp
           <a href="{{ route('blog.index', ['category' => $cat]) }}"
              style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #f0ede8; text-decoration:none; transition: padding-left 0.2s;"
              onmouseover="this.style.paddingLeft='4px'" onmouseout="this.style.paddingLeft='0'">
-            <span style="font-size:13.5px; font-weight:600; color:#55637c;" x-text="$store.lang.t('{{ $cat }}', '{{ $catEn }}', '{{ $catZh }}', '{{ $catAr }}')">{{ $cat }}</span>
+            <span style="font-size:13.5px; font-weight:600; color:#55637c;" x-text="$store.lang.t('{{ $catLabels['id'] }}', '{{ $catLabels['en'] }}', '{{ $catLabels['zh'] }}', '{{ $catLabels['ar'] }}')">{{ $cat }}</span>
             <span style="font-size:12px; color:#cbd5e1;">➔</span>
           </a>
           @endforeach
