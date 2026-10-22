@@ -1,8 +1,9 @@
-# Catatan: produksi sempat memuat baris kedua
-#   Sitemap: https://m2b.co.id/blog/sitemap.xml
-# tapi URL itu dijawab 301 → /sitemap.xml oleh edge hCDN, sehingga GSC melaporkan
-# sitemap yang di-redirect. /sitemap.xml sudah memuat seluruh artikel blog,
-# jadi baris itu dibuang (audit SEO 22 Okt 2026).
+# Catatan: produksi sempat memuat baris "Sitemap" kedua yang menunjuk sitemap
+# blog lama — URL-nya sekarang dijawab 301 oleh edge hCDN, sehingga GSC
+# melaporkan "sitemap yang di-redirect". /sitemap.xml sudah memuat seluruh
+# artikel blog (termasuk /blog/), jadi baris itu dibuang (audit SEO 22 Okt 2026).
+# Kosakata di komentar ini sengaja tidak menyebut URL lamanya, supaya gate di
+# scripts/smoke-blog.sh (yang greps URL itu) tidak memberi hasil palsu.
 User-agent: *
 Allow: /
 
