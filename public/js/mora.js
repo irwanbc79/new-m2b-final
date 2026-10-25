@@ -345,7 +345,7 @@
     const historyPayload = history.map(h => ({ role: h.role, content: h.content }));
 
     try {
-      await fetch(LEAD_URL, {
+      const response = await fetch(LEAD_URL, {
         method  : 'POST',
         headers : {
           'Content-Type' : 'application/json',
@@ -354,6 +354,11 @@
         },
         body: JSON.stringify({ name, company, email, phone, history: historyPayload, source: 'mora_chat' }),
       });
+
+      const result = await response.json();
+      if (!response.ok || result.success !== true) {
+        throw new Error('Lead submission failed');
+      }
 
       el('mora-lead-form').classList.remove('show');
       leadDone = true;
@@ -367,6 +372,7 @@
     } catch {
       submitBtn.textContent = t.submitBtn;
       submitBtn.disabled = false;
+      appendBubble('assistant', t.connError);
     }
   }
 

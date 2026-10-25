@@ -25,14 +25,14 @@ class B2bInquiryController extends Controller
             'phone'             => 'required|string|max:30',
             'service_type'      => 'required|in:paid,free_ship',
             'cargo_direction'   => 'required|in:impor,ekspor,domestik',
-            'shipment_type'     => 'required_if:service_type,free_ship|nullable|string|max:50',
+            'shipment_type'     => 'required_if:service_type,free_ship|nullable|string|max:30',
             'volume'            => 'required_if:service_type,free_ship|nullable|string|max:100',
             'route_origin'      => 'nullable|string|max:100',
             'route_destination' => 'nullable|string|max:100',
             'est_shipment_date' => 'nullable|string|max:100',
-            'invoice_file'      => 'nullable|file|max:10240', // Max 10MB
-            'packing_list_file' => 'nullable|file|max:10240', 
-            'catalog_file'      => 'nullable|file|max:15360', // Max 15MB
+            'invoice_file'      => 'nullable|file|mimes:pdf,jpg,jpeg,png,webp,gif|extensions:pdf,jpg,jpeg,png,webp,gif|max:10240',
+            'packing_list_file' => 'nullable|file|mimes:pdf,jpg,jpeg,png,webp,gif|extensions:pdf,jpg,jpeg,png,webp,gif|max:10240',
+            'catalog_file'      => 'nullable|file|mimes:pdf,jpg,jpeg,png,webp,gif|extensions:pdf,jpg,jpeg,png,webp,gif|max:15360',
         ]);
 
         // 2. Handle File Uploads
@@ -44,10 +44,13 @@ class B2bInquiryController extends Controller
                 try {
                     $file = $request->file($field);
                     $originalName = $file->getClientOriginalName();
-                    $mimeType = $file->getClientMimeType();
+                    $mimeType = $file->getMimeType();
                     
                     // Store file in storage/app/inquiries
-                    $path = $file->store('inquiries');
+                    $path = $file->store('inquiries', 'local');
+                    if (! $path) {
+                        throw new \RuntimeException('Document storage failed');
+                    }
 
                     $storedFiles[] = [
                         'field'         => $field,
@@ -56,7 +59,9 @@ class B2bInquiryController extends Controller
                         'mime_type'     => $mimeType,
                     ];
                 } catch (\Throwable $e) {
-                    Log::error("Failed to upload file {$field}", ['error' => $e->getMessage()]);
+                    $this->cleanupFiles($storedFiles);
+                    Log::error("Failed to upload file {$field}", ['exception' => $e::class]);
+                    return response()->json(['error' => 'Gagal menyimpan dokumen. Silakan coba kembali.'], 503);
                 }
             }
         }
@@ -80,8 +85,8 @@ class B2bInquiryController extends Controller
                 'phone'             => $request->input('phone'),
                 'service_type'      => $request->input('service_type'),
                 'cargo_direction'   => $request->input('cargo_direction'),
-                'shipment_type'     => $request->input('shipment_type'),
-                'volume'            => $request->input('volume'),
+                'shipment_type'     => $request->input('shipment_type') ?? '',
+                'volume'            => $request->input('volume') ?? '',
                 'route_origin'      => $request->input('route_origin'),
                 'route_destination' => $request->input('route_destination'),
                 'est_shipment_date' => $request->input('est_shipment_date'),
@@ -91,6 +96,7 @@ class B2bInquiryController extends Controller
                 'emailed'           => false
             ]);
         } catch (\Throwable $e) {
+            $this->cleanupFiles($storedFiles);
             Log::error("Failed to save B2bInquiry to DB", ['error' => $e->getMessage()]);
             return response()->json(['error' => 'Gagal menyimpan data ke database. Silakan coba kembali.'], 500);
         }
@@ -104,7 +110,7 @@ class B2bInquiryController extends Controller
 
                 // Attach files
                 foreach ($storedFiles as $file) {
-                    $filePath = Storage::path($file['path']);
+                    $filePath = Storage::disk('local')->path($file['path']);
                     if (file_exists($filePath)) {
                         $message->attach($filePath, [
                             'as'   => $file['original_name'],
@@ -142,9 +148,20 @@ class B2bInquiryController extends Controller
         ]);
     }
 
-    /**
-     * Generate pre-filled WhatsApp message
-     */
+    private function cleanupFiles(array $files): void
+    {
+        foreach ($files as $file) {
+            try {
+                if (! Storage::disk('local')->delete($file['path'])) {
+                    Log::warning('Failed to clean up inquiry document');
+                }
+            } catch (\Throwable $e) {
+                Log::warning('Failed to clean up inquiry document', ['exception' => $e::class]);
+            }
+        }
+    }
+
+    /** Generate pre-filled WhatsApp message. */
     private function getWhatsAppMessage(B2bInquiry $inquiry): string
     {
         $type = $inquiry->service_type === 'paid' 

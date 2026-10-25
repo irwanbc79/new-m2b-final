@@ -72,4 +72,4 @@
   </div>
 </div>
 
-<script src="{{ asset('js/mora.js') }}?v=2.0" defer></script>
+<script src="{{ asset('js/mora.js') }}?v=20261025" defer></script>

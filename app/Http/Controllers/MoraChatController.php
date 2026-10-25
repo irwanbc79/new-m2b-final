@@ -268,7 +268,7 @@ PROMPT;
             'history.*.role'    => 'required|in:user,assistant',
             'history.*.content' => 'required|string|max:2000',
             'image'             => 'nullable|array',
-            'image.data'        => 'required_with:image|string',
+            'image.data'        => 'required_with:image|string|max:6990508',
             'image.mimeType'    => 'required_with:image|string|in:image/jpeg,image/png,image/webp,image/gif',
         ]);
 
@@ -290,7 +290,13 @@ PROMPT;
         foreach ($order as $p) {
             $tried[] = $p;
             $currentProvider = $p;
-            [$reply, $error] = $this->callProvider($p, $history, $image);
+            try {
+                [$reply, $error] = $this->callProvider($p, $history, $image);
+            } catch (\Illuminate\Http\Client\ConnectionException $e) {
+                // Do not log exception URLs: some providers put API keys there.
+                $reply = null;
+                $error = 'connection_failed';
+            }
             if (!$error && $reply) {
                 break;
             }
@@ -299,7 +305,7 @@ PROMPT;
 
         if (!$reply) {
             Log::error('MORA Chat failed completely. All providers failed.', [
-                'history' => $history,
+                'message_count' => count($history),
                 'tried'   => $tried
             ]);
             return response()->json(['error' => 'Maaf, layanan sedang tidak tersedia. Silakan hubungi kami via WhatsApp.'], 503);

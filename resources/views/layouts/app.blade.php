@@ -866,16 +866,16 @@ body{background:#f7f5f0;font-family:'DM Sans',sans-serif;color:#0f0f14;font-size
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
               <div>
                 <label class="calc-label" style="font-size:9.5px!important" x-text="$store.lang.t('Upload Invoice (PDF/Img) *', 'Invoice File (PDF/Img) *', '上传发票 (PDF/图片) *', 'تحميل الفاتورة *')">Upload Invoice (PDF/Img) *</label>
-                <input type="file" id="b2b_invoice_file" accept=".pdf,image/*" style="font-size:11px;color:rgba(255,255,255,0.6)" />
+                <input type="file" id="b2b_invoice_file" accept=".pdf,.jpg,.jpeg,.png,.webp,.gif" style="font-size:11px;color:rgba(255,255,255,0.6)" />
               </div>
               <div>
                 <label class="calc-label" style="font-size:9.5px!important" x-text="$store.lang.t('Upload Packing List (PDF/Img)', 'Packing List File (PDF/Img)', '上传箱单 (PDF/图片)', 'تحميل بيان التعبئة')">Upload Packing List (PDF/Img)</label>
-                <input type="file" id="b2b_pl_file" accept=".pdf,image/*" style="font-size:11px;color:rgba(255,255,255,0.6)" />
+                <input type="file" id="b2b_pl_file" accept=".pdf,.jpg,.jpeg,.png,.webp,.gif" style="font-size:11px;color:rgba(255,255,255,0.6)" />
               </div>
             </div>
             <div style="margin-top:10px">
               <label class="calc-label" style="font-size:9.5px!important" x-text="$store.lang.t('Upload Brosur / Spek Teknis (Opsional)', 'Technical Specs / Catalog (Optional)', '上传产品说明书/技术规格书（选填）', 'تحميل الكتالوج / المواصفات الفنية')">Upload Brosur / Spek Teknis (Opsional)</label>
-              <input type="file" id="b2b_catalog_file" accept=".pdf,image/*" style="font-size:11px;color:rgba(255,255,255,0.6);width:100%" />
+              <input type="file" id="b2b_catalog_file" accept=".pdf,.jpg,.jpeg,.png,.webp,.gif" style="font-size:11px;color:rgba(255,255,255,0.6);width:100%" />
             </div>
           </div>
         </div>
