@@ -1536,8 +1536,8 @@
     <div style="position:relative">
       <div style="border-radius:16px;overflow:hidden;aspect-ratio:4/5;border:1px solid #e5e2dc;box-shadow:0 16px 48px rgba(0,0,0,0.12);position:relative">
         <picture style="display:block;width:100%;height:100%">
-          <source srcset="{{ asset('images/director-eka.webp') }}" type="image/webp">
-          <img src="{{ asset('images/director-eka.jpg') }}" alt="Eka Mayang Sari Harahap, S.E." style="width:100%;height:100%;object-fit:cover;object-position:center top;display:block">
+          <source srcset="{{ asset('images/director-eka.webp').'?v=20261025' }}" type="image/webp">
+          <img src="{{ asset('images/director-eka.jpg').'?v=20261025' }}" alt="Eka Mayang Sari Harahap, S.E." style="width:100%;height:100%;object-fit:cover;object-position:center top;display:block">
         </picture>
         <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(11,17,32,0.8),transparent);padding:20px 18px 16px">
           <div style="font-family:Syne;font-weight:800;font-size:14px;color:#fff">Eka Mayang Sari Harahap, S.E.</div>

@@ -32,8 +32,8 @@
       {{-- Director photo --}}
       <div style="border-radius:16px;overflow:hidden;aspect-ratio:4/5;box-shadow:0 16px 48px rgba(0,0,0,0.14);position:relative">
         <picture style="display:block;width:100%;height:100%">
-          <source srcset="{{ asset('images/director-eka.webp') }}" type="image/webp">
-          <img src="{{ asset('images/director-eka.jpg') }}"
+          <source srcset="{{ asset('images/director-eka.webp').'?v=20261025' }}" type="image/webp">
+          <img src="{{ asset('images/director-eka.jpg').'?v=20261025' }}"
                alt="Eka Mayang Sari Harahap, S.E. — Direktur PT. Mora Multi Berkah"
                style="width:100%;height:100%;object-fit:cover;object-position:center top;display:block">
         </picture>
