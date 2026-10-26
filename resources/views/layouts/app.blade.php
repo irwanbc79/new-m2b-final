@@ -41,11 +41,11 @@
      Angka versi boleh dinaikkan kapan pun berkasnya berubah; kalau entri polos
      sudah bersih (cek: curl -sI https://m2b.co.id/favicon.ico | grep age), baris
      ini boleh kembali polos. --}}
-<link rel="icon" href="{{ asset('favicon.ico') }}?v=20261022" sizes="any">
-<link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
-<link rel="icon" type="image/png" sizes="96x96" href="{{ asset('favicon-96x96.png') }}">
-<link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
-<link rel="manifest" href="{{ asset('site.webmanifest') }}">
+<link rel="icon" href="{{ asset('favicon.ico') }}?v=brand20261025" sizes="any">
+<link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}?v=brand20261025">
+<link rel="icon" type="image/png" sizes="96x96" href="{{ asset('favicon-96x96.png') }}?v=brand20261025">
+<link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}?v=brand20261025">
+<link rel="manifest" href="{{ asset('site.webmanifest') }}?v=brand20261025">
 <meta name="theme-color" content="#0b1120">
 
 @if (request()->hasSession())
